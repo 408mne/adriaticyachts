@@ -5,843 +5,287 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Montenegro Yacht Charter</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-:root {
-  --bg:     #f7f5f1;
-  --bg2:    #ffffff;
-  --bg3:    #f0ede7;
-  --bg4:    #e8e4dc;
-  --border: rgba(0,0,0,0.08);
-  --border2:rgba(0,0,0,0.14);
-  --navy:   #1a2640;
-  --navy2:  #243352;
-  --gold:   #b5893a;
-  --gold2:  #c9a24e;
-  --gold-dim:rgba(181,137,58,0.12);
-  --gold-dim2:rgba(181,137,58,0.06);
-  --text:   #1a2035;
-  --text2:  #5a6070;
-  --text3:  #9aa0ad;
-  --green:  #2a7a56;
-  --red:    #c04040;
-  --radius: 16px;
-  --rs:     10px;
-  --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.06);
-  --shadow-hover: 0 4px 8px rgba(0,0,0,0.1), 0 8px 28px rgba(0,0,0,0.09);
-}
-* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
-html,body { height:100%; background:var(--bg); color:var(--text); font-family:'Jost',sans-serif; font-size:14px; overflow-x:hidden; }
-body { display:flex; flex-direction:column; min-height:100vh; }
-
-/* ── HEADER ── */
-.app-header {
-  background: rgba(247,245,241,0.95);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  padding: 12px 16px 0;
-  position: sticky; top:0; z-index:50;
-}
-.header-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-.logo {
-  font-family:'Cormorant Garamond',serif;
-  font-size:20px; font-weight:500; letter-spacing:0.06em;
-  color: var(--navy);
-}
-.logo span { color:var(--gold); font-style:italic; }
-.lang-switcher { display:flex; gap:4px; }
-.lang-btn {
-  background:transparent; border:1px solid var(--border2);
-  border-radius:6px; color:var(--text2); font-size:11px;
-  padding:4px 9px; cursor:pointer; transition:.15s;
-  font-family:'Jost',sans-serif; font-weight:400; letter-spacing:.04em;
-}
-.lang-btn.active { background:var(--navy); border-color:var(--navy); color:#fff; }
-
-/* SPECIAL BANNER */
-.special-banner {
-  background: linear-gradient(90deg, rgba(181,137,58,0.1), rgba(181,137,58,0.03));
-  border: 1px solid rgba(181,137,58,0.25);
-  border-radius: var(--rs);
-  padding: 10px 14px;
-  margin: 0 16px 12px;
-  display: flex; align-items:center; gap:10px;
-  cursor:pointer; transition:.15s;
-}
-.special-banner:hover { background: linear-gradient(90deg, rgba(181,137,58,0.16), rgba(181,137,58,0.06)); }
-.special-icon { width:34px; height:34px; border-radius:8px; background:var(--gold-dim); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.special-icon svg { width:17px; height:17px; stroke:var(--gold); fill:none; stroke-width:2; }
-.special-text { flex:1; }
-.special-title { color:var(--gold); font-size:13px; font-weight:500; letter-spacing:.02em; }
-.special-sub { color:var(--text2); font-size:11px; margin-top:1px; }
-.special-arrow { color:var(--gold); font-size:18px; opacity:.7; }
-
-/* CATEGORIES */
-.cats-scroll { display:flex; gap:7px; overflow-x:auto; scrollbar-width:none; padding:0 16px 12px; }
-.cats-scroll::-webkit-scrollbar { display:none; }
-.cat-pill {
-  background:var(--bg2); border:1px solid var(--border2);
-  border-radius:20px; color:var(--text2); font-size:12px; font-weight:400; letter-spacing:.03em;
-  padding:6px 14px; white-space:nowrap; cursor:pointer; transition:.15s; flex-shrink:0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-.cat-pill.active { background:var(--navy); border-color:var(--navy); color:#fff; }
-
-/* ── MAIN ── */
-.main { flex:1; padding:16px 14px 100px; }
-.section-title {
-  font-family:'Cormorant Garamond',serif;
-  font-size:22px; font-weight:400; color:var(--navy);
-  margin-bottom:16px; letter-spacing:0.03em;
-}
-
-/* ── CARDS GRID ── */
-.cards-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-
-.card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  cursor: pointer;
-  transition: .22s;
-  position: relative;
-  box-shadow: var(--shadow);
-}
-.card:hover {
-  border-color: rgba(0,0,0,0.18);
-  box-shadow: var(--shadow-hover);
-  transform: translateY(-2px);
-}
-.card:active { transform: scale(0.98); box-shadow: var(--shadow); }
-
-.card-img {
-  width:100%; height:96px;
-  display:flex; align-items:center; justify-content:center;
-  position:relative; overflow:hidden;
-}
-.card-img::after {
-  content:''; position:absolute; inset:0;
-  background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.18));
-}
-.card-img svg { width:38px; height:38px; position:relative; z-index:1; }
-
-.card-badge {
-  position:absolute; top:7px; left:7px; z-index:2;
-  background:rgba(255,255,255,0.92);
-  border:1px solid rgba(0,0,0,0.08);
-  border-radius:5px; font-size:9px; color:var(--text2); font-weight:500; letter-spacing:.04em;
-  padding:2px 7px;
-}
-.card-badge.avail { border-color:rgba(42,122,86,0.3); color:var(--green); background:rgba(42,122,86,0.08); }
-
-.card-fav {
-  position:absolute; top:6px; right:6px; z-index:2;
-  background:rgba(255,255,255,0.85);
-  border:1px solid var(--border);
-  border-radius:50%; width:28px; height:28px;
-  display:flex; align-items:center; justify-content:center; cursor:pointer;
-  transition:.15s;
-}
-.card-fav svg { width:13px; height:13px; stroke:var(--text3); fill:none; stroke-width:2; transition:.15s; }
-.card-fav.on svg { stroke:var(--red); fill:var(--red); }
-
-.card-body { padding:10px 11px 11px; }
-.card-divider { height:1px; background:var(--border); margin:0 11px; }
-.card-name { color:var(--navy); font-size:13px; font-weight:500; margin-bottom:2px; line-height:1.3; letter-spacing:.01em; }
-.card-meta { color:var(--text3); font-size:10px; margin-bottom:7px; font-weight:400; }
-.card-price { color:var(--gold); font-size:13px; font-weight:500; text-align:right; letter-spacing:.01em; }
-.card-price span { color:var(--text3); font-size:10px; font-weight:400; }
-
-/* ── BOTTOM NAV ── */
-.bottom-nav {
-  position:fixed; bottom:0; left:0; right:0;
-  background:rgba(255,255,255,0.97);
-  backdrop-filter: blur(12px);
-  border-top:1px solid var(--border);
-  display:flex; padding:8px 0 16px;
-  z-index:50;
-  box-shadow: 0 -2px 16px rgba(0,0,0,0.07);
-}
-.nav-item {
-  flex:1; display:flex; flex-direction:column; align-items:center;
-  gap:3px; cursor:pointer; color:var(--text3);
-  font-size:10px; letter-spacing:.03em; transition:.15s;
-}
-.nav-item.active { color:var(--navy); }
-.nav-item svg { width:21px; height:21px; stroke:currentColor; fill:none; stroke-width:1.7; }
-
-/* ── MODAL ── */
-.modal-overlay {
-  position:fixed; inset:0; background:rgba(20,26,40,0.5);
-  z-index:100; display:none; align-items:flex-end;
-  backdrop-filter: blur(4px);
-}
-.modal-overlay.open { display:flex; }
-.modal-sheet {
-  background:var(--bg2); border-radius:22px 22px 0 0;
-  width:100%; max-height:92vh; overflow-y:auto;
-  padding:0 0 32px;
-  animation:slideUp .26s cubic-bezier(.32,.72,0,1);
-  border-top: 1px solid var(--border);
-  box-shadow: 0 -8px 40px rgba(0,0,0,0.14);
-}
-@keyframes slideUp { from{transform:translateY(48px);opacity:0} to{transform:translateY(0);opacity:1} }
-
-.modal-handle { width:36px; height:4px; background:var(--border2); border-radius:2px; margin:14px auto 0; }
-
-.modal-img {
-  width:100%; height:160px;
-  display:flex; align-items:center; justify-content:center; margin-top:12px;
-}
-.modal-img svg { width:52px; height:52px; }
-
-.modal-body { padding:18px 16px; }
-.modal-title { font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:500; color:var(--navy); margin-bottom:4px; letter-spacing:.02em; }
-.modal-sub { color:var(--text2); font-size:13px; margin-bottom:12px; font-weight:400; }
-
-.tag-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
-.tag {
-  background:var(--bg3); border:1px solid var(--border2);
-  border-radius:6px; color:var(--text2); font-size:11px; padding:3px 9px; font-weight:400;
-}
-.tag.gold { background:var(--gold-dim); border-color:rgba(181,137,58,0.3); color:var(--gold); }
-.tag.green { background:rgba(42,122,86,0.08); border-color:rgba(42,122,86,0.25); color:var(--green); }
-
-.desc-text { color:var(--text2); font-size:13px; line-height:1.7; margin-bottom:16px; font-weight:400; }
-
-.section-lbl {
-  font-size:11px; font-weight:500; color:var(--text3);
-  text-transform:uppercase; letter-spacing:.08em;
-  margin-bottom:8px; margin-top:16px;
-}
-
-.features-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:0; }
-.feat {
-  background:var(--bg3); border:1px solid var(--border); border-radius:var(--rs);
-  padding:8px 10px; display:flex; align-items:center; gap:7px;
-}
-.feat svg { width:14px; height:14px; stroke:var(--gold); fill:none; stroke-width:2; flex-shrink:0; }
-.feat span { color:var(--text2); font-size:12px; line-height:1.3; }
-
-/* PRICE CALC */
-.price-calc {
-  background:var(--bg3); border:1px solid var(--border);
-  border-radius:var(--radius); padding:14px; margin-top:4px;
-}
-.mode-tabs { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:12px; }
-.mode-tab {
-  background:var(--bg2); border:1px solid var(--border2);
-  border-radius:var(--rs); color:var(--text2); font-size:12px;
-  padding:8px; text-align:center; cursor:pointer; transition:.15s;
-  font-family:'Jost',sans-serif;
-}
-.mode-tab.active { background:var(--navy); border-color:var(--navy); color:#fff; font-weight:500; }
-.slider-label { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
-.slider-label span { color:var(--text2); font-size:12px; }
-.slider-label strong { color:var(--navy); font-size:13px; font-weight:500; }
-input[type=range] { width:100%; accent-color:var(--navy); margin-bottom:12px; }
-
-.price-result { display:flex; align-items:baseline; gap:8px; }
-.price-big { color:var(--navy); font-family:'Cormorant Garamond',serif; font-size:34px; font-weight:500; }
-.price-detail { color:var(--text3); font-size:12px; }
-
-/* EXTRAS */
-.extras-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:0; }
-.extra {
-  background:var(--bg2); border:1px solid var(--border2);
-  border-radius:var(--rs); padding:9px 10px;
-  cursor:pointer; transition:.15s; display:flex; align-items:center; gap:7px;
-}
-.extra.sel { background:var(--gold-dim); border-color:var(--gold); }
-.extra svg { width:15px; height:15px; stroke:var(--text3); fill:none; stroke-width:2; flex-shrink:0; transition:.15s; }
-.extra.sel svg { stroke:var(--gold); }
-.extra-name { color:var(--text2); font-size:12px; transition:.15s; }
-.extra.sel .extra-name { color:var(--gold); font-weight:500; }
-.extra-p { color:var(--text3); font-size:11px; margin-top:1px; }
-
-/* FORM */
-.form-section { margin-top:16px; }
-.date-pair { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px; }
-.date-field {
-  background:var(--bg3); border:1px solid var(--border2);
-  border-radius:var(--rs); padding:9px 12px; cursor:pointer; transition:.15s;
-}
-.date-field:hover { border-color:var(--navy); }
-.df-label { color:var(--text3); font-size:11px; margin-bottom:3px; letter-spacing:.03em; }
-.df-val { color:var(--text); font-size:13px; display:flex; align-items:center; justify-content:space-between; font-weight:400; }
-.df-val svg { width:14px; height:14px; stroke:var(--navy); fill:none; stroke-width:2; }
-input[type=date],input[type=time] { position:absolute; opacity:0; height:0; width:0; }
-
-.inp {
-  background:var(--bg3); border:1px solid var(--border2);
-  border-radius:var(--rs); padding:10px 12px;
-  color:var(--text); font-size:13px; width:100%; outline:none;
-  font-family:'Jost',sans-serif; transition:.15s; margin-bottom:8px;
-}
-.inp:focus { border-color:var(--navy); background:var(--bg2); }
-.inp::placeholder { color:var(--text3); }
-.inp.err { border-color:var(--red); }
-.err-msg { color:var(--red); font-size:11px; margin:-4px 0 6px 4px; }
-
-.guests-row { display:flex; align-items:center; gap:10px; margin-bottom:0; }
-.g-btn {
-  background:var(--bg3); border:1px solid var(--border2);
-  border-radius:var(--rs); color:var(--navy); width:36px; height:36px;
-  display:flex; align-items:center; justify-content:center;
-  cursor:pointer; font-size:20px; transition:.15s;
-}
-.g-btn:hover { background:var(--navy); color:#fff; border-color:var(--navy); }
-.g-num { color:var(--navy); font-size:16px; font-weight:500; min-width:28px; text-align:center; }
-.g-cap { color:var(--text3); font-size:12px; }
-
-/* PENDING */
-.pending-notice {
-  background: rgba(181,137,58,0.07); border:1px solid rgba(181,137,58,0.2);
-  border-radius:var(--rs); padding:10px 12px; margin-top:14px;
-  display:flex; gap:10px; align-items:flex-start;
-}
-.pending-notice svg { width:15px; height:15px; stroke:var(--gold); fill:none; stroke-width:2; flex-shrink:0; margin-top:2px; }
-.pending-text { color:var(--text2); font-size:12px; line-height:1.6; }
-.pending-text strong { color:var(--gold); }
-
-.book-btn {
-  background:var(--navy); color:#fff; border:none;
-  border-radius:var(--rs); width:100%; padding:14px;
-  font-size:14px; font-weight:500; cursor:pointer;
-  font-family:'Jost',sans-serif; transition:.18s;
-  margin-top:14px; letter-spacing:.04em;
-}
-.book-btn:hover { background:var(--navy2); }
-
-/* CONFIRMATION */
-.confirm-wrap { padding:26px 16px; }
-.confirm-icon-ring {
-  width:58px; height:58px; border-radius:50%;
-  background:rgba(42,122,86,0.1); border:1px solid rgba(42,122,86,0.25);
-  display:flex; align-items:center; justify-content:center;
-  margin:0 auto 14px;
-}
-.confirm-icon-ring svg { width:26px; height:26px; stroke:var(--green); fill:none; stroke-width:2.5; }
-.confirm-title-big { font-family:'Cormorant Garamond',serif; font-size:24px; text-align:center; font-weight:400; color:var(--navy); margin-bottom:6px; }
-.confirm-sub { color:var(--text2); font-size:13px; text-align:center; line-height:1.6; margin-bottom:16px; }
-
-.timer-box {
-  background:var(--gold-dim); border:1px solid rgba(181,137,58,0.22);
-  border-radius:var(--rs); padding:12px; margin-bottom:14px; text-align:center;
-}
-.timer-label { color:var(--text2); font-size:12px; margin-bottom:5px; letter-spacing:.03em; }
-.timer-count { font-family:'Cormorant Garamond',serif; font-size:30px; color:var(--gold); font-weight:500; letter-spacing:3px; }
-
-.summary-card { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); padding:12px; margin-bottom:12px; }
-.sline { display:flex; justify-content:space-between; align-items:flex-start; padding:5px 0; border-bottom:1px solid var(--border); }
-.sline:last-child { border-bottom:none; }
-.sl { color:var(--text3); font-size:12px; flex-shrink:0; padding-right:8px; }
-.sv { color:var(--navy); font-size:12px; font-weight:500; text-align:right; }
-.sv.gold { color:var(--gold); font-size:14px; }
-
-.tg-preview { background:var(--bg3); border-radius:var(--rs); border-left:2px solid var(--gold); padding:10px 12px; margin-bottom:14px; }
-.tg-preview-label { color:var(--gold); font-size:11px; font-weight:500; margin-bottom:6px; letter-spacing:.04em; }
-.tg-preview-msg { color:var(--text2); font-size:12px; line-height:1.8; font-family:monospace; white-space:pre-wrap; }
-
-.new-btn {
-  background:transparent; border:1px solid var(--border2);
-  border-radius:var(--rs); color:var(--text2); font-size:13px;
-  width:100%; padding:12px; cursor:pointer;
-  font-family:'Jost',sans-serif; transition:.15s;
-}
-.new-btn:hover { border-color:var(--navy); color:var(--navy); }
-
-/* SPECIAL MODAL */
-.special-modal { padding:20px 16px 12px; }
-.spec-title { font-family:'Cormorant Garamond',serif; font-size:23px; font-weight:400; color:var(--navy); margin-bottom:4px; }
-.spec-sub { color:var(--text2); font-size:13px; margin-bottom:16px; line-height:1.6; }
-.urgency-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
-.urg-card {
-  background:var(--bg3); border:1px solid var(--border2);
-  border-radius:var(--rs); padding:12px 10px; cursor:pointer; transition:.15s; text-align:center;
-}
-.urg-card.sel { background:var(--gold-dim); border-color:var(--gold); }
-.urg-icon { font-size:22px; margin-bottom:5px; }
-.urg-label { color:var(--text2); font-size:12px; line-height:1.4; }
-.urg-card.sel .urg-label { color:var(--gold); font-weight:500; }
-textarea.inp { resize:none; height:80px; }
-
-/* DIVIDER */
-.modal-divider { height:1px; background:var(--border); margin:16px 0; }
+:root{--bg:#f7f5f1;--bg2:#ffffff;--bg3:#f0ede7;--bg4:#e8e4dc;--border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);--navy:#1a2640;--navy2:#243352;--gold:#b5893a;--gold2:#c9a24e;--gold-dim:rgba(181,137,58,0.12);--gold-dim2:rgba(181,137,58,0.07);--text:#1a2035;--text2:#5a6070;--text3:#9aa0ad;--green:#2a7a56;--red:#c04040;--radius:16px;--rs:10px;--shadow:0 1px 3px rgba(0,0,0,0.07),0 4px 16px rgba(0,0,0,0.06);--shadow-hover:0 4px 8px rgba(0,0,0,0.1),0 8px 28px rgba(0,0,0,0.09)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Jost',sans-serif;font-size:14px;overflow-x:hidden}
+body{display:flex;flex-direction:column;min-height:100vh}
+.app-header{background:rgba(247,245,241,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 16px 0;position:sticky;top:0;z-index:50}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;letter-spacing:0.06em;color:var(--navy)}
+.logo span{color:var(--gold);font-style:italic}
+.lang-switcher{display:flex;gap:4px}
+.lang-btn{background:transparent;border:1px solid var(--border2);border-radius:6px;color:var(--text2);font-size:11px;padding:4px 9px;cursor:pointer;transition:.15s;font-family:'Jost',sans-serif}
+.lang-btn.active{background:var(--navy);border-color:var(--navy);color:#fff}
+.special-banner{background:linear-gradient(90deg,rgba(181,137,58,0.1),rgba(181,137,58,0.03));border:1px solid rgba(181,137,58,0.25);border-radius:var(--rs);padding:10px 14px;margin:10px 16px 0;display:flex;align-items:center;gap:10px;cursor:pointer;transition:.15s}
+.special-icon{width:34px;height:34px;border-radius:8px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+.special-text{flex:1}
+.special-title{color:var(--gold);font-size:13px;font-weight:500}
+.special-sub{color:var(--text2);font-size:11px;margin-top:1px}
+.cats-scroll{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding:10px 16px 12px}
+.cats-scroll::-webkit-scrollbar{display:none}
+.cat-pill{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;color:var(--text2);font-size:12px;padding:6px 14px;white-space:nowrap;cursor:pointer;transition:.15s;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+.cat-pill.active{background:var(--navy);border-color:var(--navy);color:#fff}
+.main{flex:1;padding:16px 14px 100px}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--navy);margin-bottom:16px;letter-spacing:0.03em}
+.cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:.2s;position:relative;box-shadow:var(--shadow)}
+.card:hover{border-color:rgba(0,0,0,0.18);box-shadow:var(--shadow-hover);transform:translateY(-2px)}
+.card-img{width:100%;height:110px;object-fit:cover;display:block;background:var(--bg3)}
+.card-img-placeholder{width:100%;height:110px;display:flex;align-items:center;justify-content:center;background:var(--bg3)}
+.card-badge{position:absolute;top:7px;left:7px;background:rgba(255,255,255,0.92);border:1px solid rgba(0,0,0,0.08);border-radius:5px;font-size:9px;color:var(--green);font-weight:500;letter-spacing:.04em;padding:2px 7px}
+.card-fav{position:absolute;top:6px;right:6px;background:rgba(255,255,255,0.85);border:1px solid var(--border);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.card-fav svg{width:13px;height:13px;stroke:var(--text3);fill:none;stroke-width:2;transition:.15s}
+.card-fav.on svg{stroke:var(--red);fill:var(--red)}
+.weekly-badge{position:absolute;top:32px;left:7px;background:rgba(181,137,58,0.12);border:1px solid rgba(181,137,58,0.3);border-radius:5px;font-size:9px;color:var(--gold);padding:2px 7px}
+.card-divider{height:1px;background:var(--border)}
+.card-body{padding:10px 11px 11px}
+.card-name{color:var(--navy);font-size:13px;font-weight:500;margin-bottom:2px;line-height:1.3}
+.card-meta{color:var(--text3);font-size:10px;margin-bottom:7px}
+.card-price{color:var(--gold);font-size:13px;font-weight:500;text-align:right}
+.card-price span{color:var(--text3);font-size:10px;font-weight:400}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;padding:8px 0 16px;z-index:50;box-shadow:0 -2px 16px rgba(0,0,0,0.07)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:var(--text3);font-size:10px;letter-spacing:.03em;transition:.15s}
+.nav-item.active{color:var(--navy)}
+.nav-item svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.7}
+.modal-overlay{position:fixed;inset:0;background:rgba(20,26,40,0.5);z-index:100;display:none;align-items:flex-end;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal-sheet{background:var(--bg2);border-radius:22px 22px 0 0;width:100%;max-height:92vh;overflow-y:auto;padding:0 0 32px;animation:slideUp .26s cubic-bezier(.32,.72,0,1);border-top:1px solid var(--border);box-shadow:0 -8px 40px rgba(0,0,0,0.14)}
+@keyframes slideUp{from{transform:translateY(48px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:14px auto 0}
+.modal-gallery{width:100%;height:220px;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin-top:12px}
+.modal-gallery::-webkit-scrollbar{display:none}
+.modal-gallery img{width:100%;height:220px;object-fit:cover;display:block;flex-shrink:0;scroll-snap-align:start}
+.modal-gallery-placeholder{width:100%;height:160px;display:flex;align-items:center;justify-content:center;margin-top:12px;background:var(--bg3)}
+.modal-body{padding:18px 16px}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;color:var(--navy);margin-bottom:4px}
+.modal-sub{color:var(--text2);font-size:13px;margin-bottom:12px}
+.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tag{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text2);font-size:11px;padding:3px 9px}
+.tag.gold{background:var(--gold-dim);border-color:rgba(181,137,58,0.3);color:var(--gold)}
+.tag.green{background:rgba(42,122,86,0.08);border-color:rgba(42,122,86,0.25);color:var(--green)}
+.desc-text{color:var(--text2);font-size:13px;line-height:1.7;margin-bottom:16px}
+.section-lbl{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;margin-top:16px}
+.features-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.feat{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:8px 10px;display:flex;align-items:center;gap:7px}
+.feat svg{width:14px;height:14px;stroke:var(--gold);fill:none;stroke-width:2;flex-shrink:0}
+.feat span{color:var(--text2);font-size:12px;line-height:1.3}
+.price-box{background:var(--gold-dim);border:1px solid rgba(181,137,58,0.2);border-radius:var(--rs);padding:14px;margin-top:4px;text-align:center}
+.price-label{font-size:11px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.price-amount{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:500;color:var(--navy);margin-bottom:4px}
+.price-note{font-size:11px;color:var(--text3)}
+.extras-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.extra{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rs);padding:9px 10px;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:7px}
+.extra.sel{background:var(--gold-dim);border-color:var(--gold)}
+.extra svg{width:15px;height:15px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0;transition:.15s}
+.extra.sel svg{stroke:var(--gold)}
+.extra-name{color:var(--text2);font-size:12px;transition:.15s}
+.extra.sel .extra-name{color:var(--gold);font-weight:500}
+.extra-p{color:var(--text3);font-size:11px}
+.modal-divider{height:1px;background:var(--border);margin:16px 0}
+.form-section{margin-top:16px}
+.inp{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 12px;color:var(--text);font-size:13px;width:100%;outline:none;font-family:'Jost',sans-serif;transition:.15s;margin-bottom:8px}
+.inp:focus{border-color:var(--navy);background:var(--bg2)}
+.inp::placeholder{color:var(--text3)}
+.inp.err{border-color:var(--red)}
+.err-msg{color:var(--red);font-size:11px;margin:-4px 0 6px 4px}
+.dur-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.dur-btn{padding:7px 12px;border-radius:var(--rs);border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:13px;transition:.15s;font-family:'Jost',sans-serif}
+.dur-btn.sel-h{background:var(--navy);border-color:var(--navy);color:#fff}
+.dur-btn.sel-d{background:var(--gold-dim);border-color:var(--gold);color:var(--gold)}
+.guests-row{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.g-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);color:var(--navy);width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;transition:.15s}
+.g-btn:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+.g-num{color:var(--navy);font-size:16px;font-weight:500;min-width:28px;text-align:center}
+.g-cap{color:var(--text3);font-size:12px}
+.pending-notice{background:rgba(181,137,58,0.07);border:1px solid rgba(181,137,58,0.2);border-radius:var(--rs);padding:10px 12px;margin-top:14px;display:flex;gap:10px;align-items:flex-start}
+.pending-notice svg{width:15px;height:15px;stroke:var(--gold);fill:none;stroke-width:2;flex-shrink:0;margin-top:2px}
+.pending-text{color:var(--text2);font-size:12px;line-height:1.6}
+.pending-text strong{color:var(--gold)}
+.book-btn{background:var(--navy);color:#fff;border:none;border-radius:var(--rs);width:100%;padding:14px;font-size:14px;font-weight:500;cursor:pointer;font-family:'Jost',sans-serif;transition:.18s;margin-top:14px;letter-spacing:.04em}
+.book-btn:hover{background:var(--navy2)}
+.confirm-wrap{padding:26px 16px}
+.confirm-icon-ring{width:58px;height:58px;border-radius:50%;background:rgba(42,122,86,0.1);border:1px solid rgba(42,122,86,0.25);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.confirm-icon-ring svg{width:26px;height:26px;stroke:var(--green);fill:none;stroke-width:2.5}
+.confirm-title-big{font-family:'Cormorant Garamond',serif;font-size:24px;text-align:center;font-weight:400;color:var(--navy);margin-bottom:6px}
+.confirm-sub{color:var(--text2);font-size:13px;text-align:center;line-height:1.6;margin-bottom:16px}
+.timer-box{background:var(--gold-dim);border:1px solid rgba(181,137,58,0.22);border-radius:var(--rs);padding:12px;margin-bottom:14px;text-align:center}
+.timer-label{color:var(--text2);font-size:12px;margin-bottom:5px}
+.timer-count{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--gold);font-weight:500;letter-spacing:3px}
+.summary-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:12px}
+.sline{display:flex;justify-content:space-between;align-items:flex-start;padding:5px 0;border-bottom:1px solid var(--border)}
+.sline:last-child{border-bottom:none}
+.sl{color:var(--text3);font-size:12px;flex-shrink:0;padding-right:8px}
+.sv{color:var(--navy);font-size:12px;font-weight:500;text-align:right}
+.sv.gold{color:var(--gold);font-size:14px}
+.new-btn{background:transparent;border:1px solid var(--border2);border-radius:var(--rs);color:var(--text2);font-size:13px;width:100%;padding:12px;cursor:pointer;font-family:'Jost',sans-serif;transition:.15s}
+.special-modal{padding:20px 16px 12px}
+.spec-title{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:400;color:var(--navy);margin-bottom:4px}
+.spec-sub{color:var(--text2);font-size:13px;margin-bottom:16px;line-height:1.6}
+.urgency-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.urg-card{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);padding:12px 10px;cursor:pointer;transition:.15s;text-align:center}
+.urg-card.sel{background:var(--gold-dim);border-color:var(--gold)}
+.urg-icon{font-size:22px;margin-bottom:5px}
+.urg-label{color:var(--text2);font-size:12px;line-height:1.4}
+.urg-card.sel .urg-label{color:var(--gold);font-weight:500}
 </style>
 </head>
 <body>
-
-
-
-<!-- HEADER -->
 <div class="app-header">
   <div class="header-top">
     <div class="logo">ADRIATIC<span>yachts</span></div>
     <div class="lang-switcher">
-      <button class="lang-btn active" onclick="setLang('ru')">RU</button>
-      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('ru')">RU</button>
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
       <button class="lang-btn" onclick="setLang('me')">ME</button>
     </div>
   </div>
 </div>
-
-<!-- SPECIAL BANNER -->
-<div class="special-banner" id="specialBanner" onclick="openSpecial()" style="margin-top:10px">
-  <div class="special-icon">
-    <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-  </div>
+<div class="special-banner" id="specialBanner" onclick="openSpecial()" style="margin-top:0">
+  <div class="special-icon">⭐</div>
   <div class="special-text">
-    <div class="special-title" id="sbanTitle">Спецзапрос / Срочная аренда</div>
-    <div class="special-sub" id="sbanSub">Не нашли нужную яхту? Опишем и найдём</div>
+    <div class="special-title" id="sbanTitle">Special Request / Urgent Charter</div>
+    <div class="special-sub" id="sbanSub">Can't find your yacht? Describe it — we'll find it</div>
   </div>
-  <div class="special-arrow">›</div>
+  <div style="color:var(--gold);font-size:18px;opacity:.7">›</div>
 </div>
-
-<!-- CATS -->
-<div style="padding-top:8px">
-  <div class="cats-scroll" id="catsScroll"></div>
-</div>
-
-<!-- MAIN -->
+<div style="padding-top:4px"><div class="cats-scroll" id="catsScroll"></div></div>
 <div class="main" id="mainCatalog">
-  <div class="section-title" id="sectionTitle">Яхты Черногории</div>
+  <div class="section-title" id="sectionTitle">Montenegro Yachts</div>
   <div class="cards-grid" id="cardsGrid"></div>
 </div>
-
-<!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <div class="nav-item active" id="navCatalog" onclick="showView('catalog')">
     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-    <span id="navCatalogLbl">Каталог</span>
+    <span id="navCatalogLbl">Catalog</span>
   </div>
   <div class="nav-item" id="navOrders" onclick="showOrders()">
     <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-    <span id="navOrdersLbl">Заказы</span>
+    <span id="navOrdersLbl">Bookings</span>
   </div>
   <div class="nav-item" id="navSpecial" onclick="openSpecial()">
     <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-    <span id="navSpecialLbl">VIP запрос</span>
+    <span id="navSpecialLbl">VIP</span>
   </div>
 </div>
-
-<!-- DETAIL MODAL -->
 <div class="modal-overlay" id="detailModal" onclick="if(event.target===this)closeDetail()">
   <div class="modal-sheet"><div class="modal-handle"></div><div id="detailContent"></div></div>
 </div>
-
-<!-- SPECIAL MODAL -->
 <div class="modal-overlay" id="specialModal" onclick="if(event.target===this)closeSpecial()">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
     <div class="special-modal">
-      <div class="spec-title" id="specTitle">Спецзапрос</div>
-      <div class="spec-sub" id="specSub">Не нашли нужную яхту в каталоге? Опишите что нужно — мы найдём суперяхту, организуем корпоратив или срочную аренду.</div>
-      <div class="section-lbl" id="specUrgLabel">Срочность</div>
+      <div class="spec-title" id="specTitle">Special Request</div>
+      <div class="spec-sub" id="specSub">Looking for a superyacht or special event? Describe it — we'll make it happen.</div>
+      <div class="section-lbl" id="specUrgLabel">Urgency</div>
       <div class="urgency-grid">
-        <div class="urg-card sel" id="urg0" onclick="selUrg(0)"><div class="urg-icon">⚡</div><div class="urg-label" id="urgL0">Сегодня / Завтра</div></div>
-        <div class="urg-card" id="urg1" onclick="selUrg(1)"><div class="urg-icon">📅</div><div class="urg-label" id="urgL1">На эту неделю</div></div>
-        <div class="urg-card" id="urg2" onclick="selUrg(2)"><div class="urg-icon">🗓</div><div class="urg-label" id="urgL2">Планирую заранее</div></div>
-        <div class="urg-card" id="urg3" onclick="selUrg(3)"><div class="urg-icon">👑</div><div class="urg-label" id="urgL3">VIP / Суперяхта</div></div>
+        <div class="urg-card sel" id="urg0" onclick="selUrg(0)"><div class="urg-icon">⚡</div><div class="urg-label" id="urgL0">Today / Tomorrow</div></div>
+        <div class="urg-card" id="urg1" onclick="selUrg(1)"><div class="urg-icon">📅</div><div class="urg-label" id="urgL1">This week</div></div>
+        <div class="urg-card" id="urg2" onclick="selUrg(2)"><div class="urg-icon">🗓</div><div class="urg-label" id="urgL2">Planning ahead</div></div>
+        <div class="urg-card" id="urg3" onclick="selUrg(3)"><div class="urg-icon">👑</div><div class="urg-label" id="urgL3">VIP / Superyacht</div></div>
       </div>
-      <div class="section-lbl" id="specReqLabel">Описание запроса</div>
-      <textarea class="inp" id="specRequest" style="height:80px;resize:none;margin-bottom:8px" placeholder="Например: нужна яхта на 15 человек для свадьбы 20 июня, бюджет до 2000€..."></textarea>
-      <div class="section-lbl">Контакт</div>
-      <input class="inp" id="specContact" placeholder="Telegram / телефон" type="text">
-      <button class="book-btn" id="specSendBtn" onclick="sendSpecial()" style="margin-bottom:12px">Отправить запрос</button>
+      <div class="section-lbl" id="specReqLabel">Request description</div>
+      <textarea class="inp" id="specRequest" style="height:80px;resize:none;margin-bottom:8px" placeholder="E.g. yacht for 15 people, wedding June 20..."></textarea>
+      <div class="section-lbl">Contact</div>
+      <input class="inp" id="specContact" placeholder="Telegram / phone" type="text">
+      <button class="book-btn" id="specSendBtn" onclick="sendSpecial()" style="margin-bottom:12px">Send request</button>
     </div>
   </div>
 </div>
-
 <script>
-const T = {
-  ru: {
-    catalog:"Каталог",orders:"Заказы",vipReq:"VIP запрос",
-    sbanTitle:"Спецзапрос / Срочная аренда",sbanSub:"Не нашли нужную яхту? Опишем и найдём",
-    sectionTitle:"Яхты Черногории",avail:"Доступна",byHour:"По часам",byDay:"По дням",
-    hours:"Часов",days:"Дней",total:"итого",included:"Что включено:",extras:"Дополнительно",
-    dateTime:"Дата и время",startDate:"Дата",startTime:"Время",contacts:"Ваши контакты",
-    name:"Ваше имя",phone:"Telegram / телефон",comment:"Комментарий (необязательно)",
-    guests:"Гостей на борту",of:"из",avail2:"доступных",
-    pendingNote:"<strong>Бронь под подтверждение.</strong> Мы подтвердим вашу заявку в течение 4 часов — как только проверим доступность яхты.",
-    bookBtn:"Забронировать",reqSent:"Заявка отправлена!",
-    confirmSub:(n,c)=>`${n}, ваша заявка передана менеджеру. Ожидайте ответа на ${c} в течение 4 часов.`,
-    timerLabel:"Подтверждение в течение",
-    summaryYacht:"Яхта",summaryDate:"Дата",summaryTime:"Время / длит.",summaryGuests:"Гостей",summaryExtras:"Допы",summaryTotal:"Итого",
-    tgLabel:"Сообщение владельцу",newBooking:"Новая заявка",
-    specTitle:"Спецзапрос",specSub:"Не нашли нужную яхту? Опишите — мы найдём суперяхту, организуем корпоратив или срочную аренду.",
-    specUrgLabel:"Срочность",specReqLabel:"Описание запроса",
-    specReqPlaceholder:"Например: нужна яхта на 15 человек для свадьбы 20 июня...",
-    specContactPlaceholder:"Telegram / телефон",specSend:"Отправить запрос",
-    urgLabels:["Сегодня / Завтра","На эту неделю","Планирую заранее","VIP / Суперяхта"],
-    cats:["Все","Моторные","Парусные","Катамараны","Катера","Свадьбы & события","Недельные","Рыбалка","VIP"],
-    noDate:"Выберите дату и время",noName:"Введите имя",noPhone:"Введите контакт",choose:"выбрать",
-    durLabel:"Продолжительность",
-    overnight:"с ночевкой",
-    calcTitle:"Рассчитайте стоимость",
-  },
-  en: {
-    catalog:"Catalog",orders:"Bookings",vipReq:"VIP",
-    sbanTitle:"Special Request / Urgent Charter",sbanSub:"Can't find your yacht? Describe it — we'll find it",
-    sectionTitle:"Montenegro Yachts",avail:"Available",byHour:"By hour",byDay:"By day",
-    hours:"Hours",days:"Days",total:"total",included:"What's included:",extras:"Add-ons",
-    dateTime:"Date & time",startDate:"Date",startTime:"Time",contacts:"Your contacts",
-    name:"Your name",phone:"Telegram / phone",comment:"Comment (optional)",
-    guests:"Guests on board",of:"of",avail2:"available",
-    pendingNote:"<strong>Booking pending confirmation.</strong> We'll confirm within 4 hours once we verify yacht availability.",
-    bookBtn:"Book now",reqSent:"Request sent!",
-    confirmSub:(n,c)=>`${n}, your request has been sent to our manager. Expect a reply at ${c} within 4 hours.`,
-    timerLabel:"Confirmation within",
-    summaryYacht:"Yacht",summaryDate:"Date",summaryTime:"Time / duration",summaryGuests:"Guests",summaryExtras:"Add-ons",summaryTotal:"Total",
-    tgLabel:"Message to owner",newBooking:"New booking",
-    specTitle:"Special Request",specSub:"Looking for a superyacht or special event? Describe your request — we'll make it happen.",
-    specUrgLabel:"Urgency",specReqLabel:"Request description",
-    specReqPlaceholder:"E.g. yacht for 15 people, wedding June 20, budget €2000...",
-    specContactPlaceholder:"Telegram / phone",specSend:"Send request",
-    urgLabels:["Today / Tomorrow","This week","Planning ahead","VIP / Superyacht"],
-    cats:["All","Motor","Sailing","Catamarans","Speedboats","Weddings","Weekly","Fishing","VIP"],
-    noDate:"Please select date & time",noName:"Please enter your name",noPhone:"Please enter a contact",choose:"select",
-    durLabel:"Duration",
-    overnight:"overnight",
-    calcTitle:"Calculate price",
-  },
-  me: {
-    catalog:"Katalog",orders:"Rezervacije",vipReq:"VIP",
-    sbanTitle:"Poseban zahtjev / Hitno",sbanSub:"Niste našli jahtu? Opišite — pronaći ćemo",
-    sectionTitle:"Jahte Crne Gore",avail:"Dostupno",byHour:"Po satu",byDay:"Po danu",
-    hours:"Sati",days:"Dana",total:"ukupno",included:"Što je uključeno:",extras:"Dodaci",
-    dateTime:"Datum i vrijeme",startDate:"Datum",startTime:"Vrijeme",contacts:"Vaši kontakti",
-    name:"Vaše ime",phone:"Telegram / telefon",comment:"Komentar (nije obavezno)",
-    guests:"Gostiju na brodu",of:"od",avail2:"dostupnih",
-    pendingNote:"<strong>Rezervacija čeka potvrdu.</strong> Potvrdićemo u roku od 4 sata.",
-    bookBtn:"Rezerviraj",reqSent:"Zahtjev poslan!",
-    confirmSub:(n,c)=>`${n}, vaš zahtjev je proslijeđen menadžeru. Očekujte odgovor na ${c} u roku od 4 sata.`,
-    timerLabel:"Potvrda u roku od",
-    summaryYacht:"Jahta",summaryDate:"Datum",summaryTime:"Vrijeme / trajanje",summaryGuests:"Gostiju",summaryExtras:"Dodaci",summaryTotal:"Ukupno",
-    tgLabel:"Poruka vlasniku",newBooking:"Nova rezervacija",
-    specTitle:"Poseban zahtjev",specSub:"Tražite superjahtu ili poseban događaj? Opišite — mi ćemo to organizovati.",
-    specUrgLabel:"Hitnost",specReqLabel:"Opis zahtjeva",
-    specReqPlaceholder:"Npr. jahta za 15 osoba, vjenčanje 20. juna...",
-    specContactPlaceholder:"Telegram / telefon",specSend:"Pošalji zahtjev",
-    urgLabels:["Danas / Sutra","Ove sedmice","Unaprijed planiram","VIP / Superjahta"],
-    cats:["Sve","Motorni","Jedrilice","Katamarani","Čamci","Vjenčanja","Sedmični","Ribolov","VIP"],
-    noDate:"Odaberite datum i vrijeme",noName:"Unesite ime",noPhone:"Unesite kontakt",choose:"odaberi",
-    durLabel:"Trajanje",
-    overnight:"sa noćenjem",
-    calcTitle:"Izračunajte cijenu",
-  }
+const T={
+  ru:{catalog:"Каталог",orders:"Заказы",vipReq:"VIP запрос",sbanTitle:"Спецзапрос / Срочная аренда",sbanSub:"Не нашли нужную яхту? Опишем и найдём",sectionTitle:"Яхты Черногории",avail:"Доступна",included:"Что включено:",extras:"Дополнительно",dateTime:"Дата и время",startDate:"Дата",contacts:"Ваши контакты",name:"Ваше имя",phone:"Telegram / телефон",comment:"Комментарий (необязательно)",guests:"Гостей на борту",of:"из",avail2:"доступных",pendingNote:"<strong>Бронь под подтверждение.</strong> Мы подтвердим вашу заявку в течение 4 часов.",bookBtn:"Забронировать",reqSent:"Заявка отправлена!",confirmSub:(n,c)=>`${n}, ваша заявка передана менеджеру. Ожидайте ответа на ${c} в течение 4 часов.`,timerLabel:"Подтверждение в течение",summaryYacht:"Яхта",summaryDate:"Дата",summaryDur:"Продолжительность",summaryGuests:"Гостей",summaryExtras:"Допы",summaryTotal:"Итого",newBooking:"Новая заявка",specTitle:"Спецзапрос",specSub:"Не нашли нужную яхту? Опишите — мы найдём суперяхту, организуем корпоратив или срочную аренду.",specUrgLabel:"Срочность",specReqLabel:"Описание запроса",specSend:"Отправить запрос",urgLabels:["Сегодня / Завтра","На эту неделю","Планирую заранее","VIP / Суперяхта"],cats:["Все","Моторные","Парусные","Катамараны","Катера","Свадьбы","Недельные","Рыбалка","VIP"],noDate:"Выберите дату и продолжительность",noName:"Введите имя",noPhone:"Введите контакт",choose:"выбрать",durLabel:"Продолжительность",overnight:"С ночевкой",fuelExtra:"Топливо оплачивается отдельно",calcTitle:"Стоимость аренды"},
+  en:{catalog:"Catalog",orders:"Bookings",vipReq:"VIP",sbanTitle:"Special Request / Urgent Charter",sbanSub:"Can't find your yacht? Describe it — we'll find it",sectionTitle:"Montenegro Yachts",avail:"Available",included:"What's included:",extras:"Add-ons",dateTime:"Date & duration",startDate:"Date",contacts:"Your contacts",name:"Your name",phone:"Telegram / phone",comment:"Comment (optional)",guests:"Guests on board",of:"of",avail2:"available",pendingNote:"<strong>Booking pending confirmation.</strong> We'll confirm within 4 hours.",bookBtn:"Book now",reqSent:"Request sent!",confirmSub:(n,c)=>`${n}, your request has been sent. Expect a reply at ${c} within 4 hours.`,timerLabel:"Confirmation within",summaryYacht:"Yacht",summaryDate:"Date",summaryDur:"Duration",summaryGuests:"Guests",summaryExtras:"Add-ons",summaryTotal:"Total",newBooking:"New booking",specTitle:"Special Request",specSub:"Looking for a superyacht or special event? Describe it — we'll make it happen.",specUrgLabel:"Urgency",specReqLabel:"Request description",specSend:"Send request",urgLabels:["Today / Tomorrow","This week","Planning ahead","VIP / Superyacht"],cats:["All","Motor","Sailing","Catamarans","Speedboats","Weddings","Weekly","Fishing","VIP"],noDate:"Please select date and duration",noName:"Please enter your name",noPhone:"Please enter a contact",choose:"select",durLabel:"Duration",overnight:"Overnight",fuelExtra:"Fuel not included",calcTitle:"Charter price"},
+  me:{catalog:"Katalog",orders:"Rezervacije",vipReq:"VIP",sbanTitle:"Poseban zahtjev / Hitno",sbanSub:"Niste našli jahtu? Opišite — pronaći ćemo",sectionTitle:"Jahte Crne Gore",avail:"Dostupno",included:"Što je uključeno:",extras:"Dodaci",dateTime:"Datum i trajanje",startDate:"Datum",contacts:"Vaši kontakti",name:"Vaše ime",phone:"Telegram / telefon",comment:"Komentar (nije obavezno)",guests:"Gostiju na brodu",of:"od",avail2:"dostupnih",pendingNote:"<strong>Rezervacija čeka potvrdu.</strong> Potvrdićemo u roku od 4 sata.",bookBtn:"Rezerviraj",reqSent:"Zahtjev poslan!",confirmSub:(n,c)=>`${n}, vaš zahtjev je proslijeđen. Očekujte odgovor na ${c} u roku od 4 sata.`,timerLabel:"Potvrda u roku od",summaryYacht:"Jahta",summaryDate:"Datum",summaryDur:"Trajanje",summaryGuests:"Gostiju",summaryExtras:"Dodaci",summaryTotal:"Ukupno",newBooking:"Nova rezervacija",specTitle:"Poseban zahtjev",specSub:"Tražite superjahtu ili poseban događaj? Opišite — mi ćemo to organizovati.",specUrgLabel:"Hitnost",specReqLabel:"Opis zahtjeva",specSend:"Pošalji zahtjev",urgLabels:["Danas / Sutra","Ove sedmice","Unaprijed planiram","VIP / Superjahta"],cats:["Sve","Motorni","Jedrilice","Katamarani","Čamci","Vjenčanja","Sedmični","Ribolov","VIP"],noDate:"Odaberite datum i trajanje",noName:"Unesite ime",noPhone:"Unesite kontakt",choose:"odaberi",durLabel:"Trajanje",overnight:"Sa noćenjem",fuelExtra:"Gorivo se plaća posebno",calcTitle:"Cijena čartera"}
 };
 
-const YACHTS = [
-  {id:0,cat:"motor",
-   photos:{urls:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356835/1a_fkuoki.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356845/2a_m6sfyo.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356842/3a_loufj8.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356857/4a_tcziqt.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356850/5a_d9j7t4.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356833/6a_akhwrz.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356831/7a_gcpjy1.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356855/8a_u24puw.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356852/9a_lll7uh.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356840/10a_rgo1tu.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356838/11a_wud90x.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356847/12a_w8ozk5.jpg"]},
-   color:"#d8e8f0",
-   icon:`<svg viewBox="0 0 64 64" fill="none" stroke="#b5893a" stroke-width="1.4"><path d="M6 44l10-22h32l10 22H6z"/><path d="M16 22V14h24v8"/><path d="M6 44s8 8 26 8 26-8 26-8"/><circle cx="20" cy="36" r="3"/><circle cx="44" cy="36" r="3"/></svg>`,
-   names:{ru:"Abacus 70",en:"Abacus 70",me:"Abacus 70"},
-   types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta"},
-   metas:{ru:"21 м · до 12 чел. · 4 каюты",en:"21 m · up to 12 pax · 4 cabins",me:"21 m · do 12 osoba · 4 kabine"},
-   descs:{
-     ru:"Роскошная итальянская моторная яхта 21 м с агрессивным дизайном и высокой скоростью. 4 каюты, 4 санузла. Капитан и матрос включены. Идеальна для VIP-чартеров и незабываемых дней на Адриатике.",
-     en:"A bold Italian luxury motor yacht — 21m, aggressive design, high performance. 4 cabins & bathrooms, skipper and deckhand included. Perfect for VIP charters and unforgettable days on the Adriatic.",
-     me:"Luksuzna italijanska motorna jahta — 21m, agresivni dizajn, visoke performanse. 4 kabine i kupatila, kapetan i mornar uključeni. Idealna za VIP čarter na Jadranskom moru."
-   },
-   tags:{ru:["VIP","Люкс"],en:["VIP","Luxury"],me:["VIP","Luksuz"]},
-   feats:{
-     ru:[["crown","Капитан & матрос"],["bed","4 каюты · 4 WC"],["wifi","Wi-Fi"],["sun","Лежаки"],["jetski","Гидроцикл +500€"],["chef-hat","Шеф-повар +200€"]],
-     en:[["crown","Skipper & deckhand"],["bed","4 cabins · 4 WC"],["wifi","Wi-Fi"],["sun","Sunbeds"],["jetski","Jet ski +500€"],["chef-hat","Chef +200€"]],
-     me:[["crown","Kapetan & mornar"],["bed","4 kabine · 4 WC"],["wifi","Wi-Fi"],["sun","Ležaljke"],["jetski","Jet ski +500€"],["chef-hat","Šef kuhinje +200€"]]
-   },
-   hourRate:null,dayRate:3900,weekRate:null,capacity:12,
-   extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300},{ru:"Хостесс",en:"Hostess",me:"Hostesa",price:150}]},
+const YACHTS=[
+{id:0,cat:"motor",weekly:false,names:{ru:"Abacus 70",en:"Abacus 70",me:"Abacus 70"},types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta"},metas:{ru:"21 м · до 12 чел. · 4 каюты",en:"21 m · up to 12 pax · 4 cabins",me:"21 m · do 12 osoba · 4 kabine"},descs:{ru:"Роскошная итальянская моторная яхта 21 м. Агрессивный дизайн, высокая скорость. 4 каюты, экипаж включён. Идеальна для VIP-чартеров.",en:"Bold Italian luxury motor yacht — 21m, aggressive design, high performance. 4 cabins, skipper and deckhand included. Perfect for VIP charters.",me:"Luksuzna italijanska motorna jahta — 21m, agresivni dizajn. 4 kabine, kapetan i mornar uključeni."},tags:{ru:["VIP","Люкс"],en:["VIP","Luxury"],me:["VIP","Luksuz"]},feats:{ru:[["Капитан & матрос"],["4 каюты · 4 WC"],["Wi-Fi"],["Лежаки"],["Гидроцикл +500€"],["Шеф-повар +200€"]],en:[["Skipper & deckhand"],["4 cabins · 4 WC"],["Wi-Fi"],["Sunbeds"],["Jet ski +500€"],["Chef +200€"]],me:[["Kapetan & mornar"],["4 kabine · 4 WC"],["Wi-Fi"],["Ležaljke"],["Jet ski +500€"],["Šef kuhinje +200€"]]},dayRate:3900,fuelIncl:false,capacity:12,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356835/1a_fkuoki.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356845/2a_m6sfyo.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356842/3a_loufj8.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356857/4a_tcziqt.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356850/5a_d9j7t4.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356833/6a_akhwrz.jpg"],extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300},{ru:"Хостесс",en:"Hostess",me:"Hostesa",price:150}]},
 
-  {id:1,cat:"vip",
-   photos:{urls:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355537/1a_gzneuo.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355536/2a_y7chwf.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355537/3a_cvtzw1.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355535/4a_il1vcq.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355536/5a_nbs3si.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355535/6a_jrih3r.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355536/7a_dgcxdy.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355534/8a_h2fpru.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355534/9a_fck4bb.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355534/10a_dhfkeq.webp"]},
-   color:"#e8f0e8",
-   icon:`<svg viewBox="0 0 64 64" fill="none" stroke="#b5893a" stroke-width="1.4"><path d="M4 44l12-24h32l12 24H4z"/><path d="M16 20V12h28v8"/><path d="M22 12V8h20v4"/><path d="M4 44s10 8 28 8 28-8 28-8"/></svg>`,
-   names:{ru:"Azimut Grande 26M",en:"Azimut Grande 26M",me:"Azimut Grande 26M"},
-   types:{ru:"Супер-яхта",en:"Superyacht",me:"Superjahta"},
-   metas:{ru:"26 м · до 10 гостей · 5 кают · 2025 г.",en:"26 m · up to 10 guests · 5 cabins · 2025",me:"26 m · do 10 gostiju · 5 kabina · 2025"},
-   descs:{
-     ru:"Новейшая итальянская супер-яхта 2025 года, 26 м. Два двигателя MAN V12 по 1550 л.с. 5 кают, гидроцикл, Seabob, сёрфборд и водные игрушки включены. Для тех кто выбирает лучшее.",
-     en:"Brand-new 2025 Italian superyacht, 26m. Twin MAN V12 engines (1550hp each). 5 cabins, full crew, jet tender, Seabob, electric surfboard and full water toys package included. For those who choose the best.",
-     me:"Nova italijanska superjahta 2025, 26m. Dva MAN V12 motora (1550ks). 5 kabina, kompletan tim, jet tender, Seabob i vodeni sportovi uključeni."
-   },
-   tags:{ru:["Новая 2025","Супер-яхта","VIP"],en:["New 2025","Superyacht","VIP"],me:["Nova 2025","Superjahta","VIP"]},
-   feats:{
-     ru:[["crown","Капитан, матрос, хостесс, шеф"],["bed","5 кают (master + 2 double + twin + convertible)"],["wifi","Wi-Fi"],["jetski","Jet Tender Williams"],["swim","Seabob F5S × 2"],["waves","Гидроцикл Sea-Doo RXP-X"]],
-     en:[["crown","Captain, deckhand, hostess, chef"],["bed","5 cabins (master+2dbl+twin+convertible)"],["wifi","Wi-Fi"],["jetski","Jet Tender Williams"],["swim","Seabob F5S × 2"],["waves","Jet ski Sea-Doo RXP-X"]],
-     me:[["crown","Kapetan, mornar, hostesa, šef"],["bed","5 kabina (master+2dbl+twin+konvertibilna)"],["wifi","Wi-Fi"],["jetski","Jet Tender Williams"],["swim","Seabob F5S × 2"],["waves","Jet ski Sea-Doo RXP-X"]]
-   },
-   hourRate:null,dayRate:null,weekRate:97000,capacity:10,
-   extras:[{ru:"Кейтеринг",en:"Catering",me:"Ketering",price:0},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50}]},
+{id:1,cat:"vip",weekly:true,names:{ru:"Azimut Grande 26M",en:"Azimut Grande 26M",me:"Azimut Grande 26M"},types:{ru:"Супер-яхта",en:"Superyacht",me:"Superjahta"},metas:{ru:"26 м · до 10 гостей · 5 кают · 2025 г.",en:"26 m · up to 10 guests · 5 cabins · 2025",me:"26 m · do 10 gostiju · 5 kabina · 2025"},descs:{ru:"Новейшая итальянская супер-яхта 2025 года. Два двигателя MAN V12 (1550 л.с.). 5 кают, полный экипаж, гидроцикл, Seabob, серфборд включены.",en:"Brand-new 2025 Italian superyacht. Twin MAN V12 engines (1550hp each). 5 cabins, full crew, jet ski, Seabob and electric surfboard included.",me:"Nova italijanska superjahta 2025. Dva MAN V12 motora. 5 kabina, kompletan tim, jet ski i Seabob uključeni."},tags:{ru:["Новая 2025","Супер-яхта","VIP"],en:["New 2025","Superyacht","VIP"],me:["Nova 2025","Superjahta","VIP"]},feats:{ru:[["Капитан, матрос, хостесс, шеф"],["5 кают (master+2dbl+twin+conv)"],["Wi-Fi"],["Jet Tender Williams"],["2 × Seabob F5S"],["Электросёрфборд"]],en:[["Captain, deckhand, hostess, chef"],["5 cabins (master+2dbl+twin+conv)"],["Wi-Fi"],["Jet Tender Williams"],["2 × Seabob F5S"],["Electric surfboard"]],me:[["Kapetan, mornar, hostesa, šef"],["5 kabina (master+2dbl+twin+konv)"],["Wi-Fi"],["Jet Tender Williams"],["2 × Seabob F5S"],["Električni surfboard"]]},dayRate:null,weekRate:97000,fuelIncl:false,capacity:10,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355537/1a_gzneuo.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355536/2a_y7chwf.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355537/3a_cvtzw1.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355535/4a_il1vcq.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355536/5a_nbs3si.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355534/8a_h2fpru.webp"],extras:[{ru:"Кейтеринг",en:"Catering",me:"Ketering",price:0}]},
 
-  {id:2,cat:"vip",
-   photos:{urls:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355543/1a_vnosuj.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355541/2a_n0eafb.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355543/3a_sjj903.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355540/4a_tjg7vb.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355542/5a_ivxgqc.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355540/6a_vhzi95.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355541/7a_nfpp5q.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355540/8a_bvcz4v.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355538/9a_s6yzan.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355539/10a_zfscyj.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355537/11a_pqh3en.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355539/12a_qmeibt.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355538/13a_sdtubj.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355541/15a_f5xnb4.jpg"]},
-   color:"#f0e8d8",
-   icon:`<svg viewBox="0 0 64 64" fill="none" stroke="#b5893a" stroke-width="1.4"><path d="M6 44l10-22h32l10 22H6z"/><path d="M16 22V14h24v8"/><path d="M6 44s8 8 26 8 26-8 26-8"/><circle cx="20" cy="36" r="4"/><circle cx="44" cy="36" r="4"/><path d="M28 36h8"/></svg>`,
-   names:{ru:"Azimut 98",en:"Azimut 98",me:"Azimut 98"},
-   types:{ru:"Люкс моторная",en:"Luxury Motor Yacht",me:"Luksuzna motorna jahta"},
-   metas:{ru:"30 м · до 12 чел. · 4 каюты",en:"30 m · up to 12 pax · 4 cabins",me:"30 m · do 12 osoba · 4 kabine"},
-   descs:{
-     ru:"Azimut 98 Leonardo — 30 м итальянского совершенства. Джакузи, просторный флайбридж, 4 каюты включая мастер-сьют. Полный экипаж. Идеален для VIP-мероприятий и корпоративных чартеров.",
-     en:"Azimut 98 Leonardo — 30m of Italian excellence. Jacuzzi, spacious flybridge, 4 cabins including a full-beam master suite. Full crew. Perfect for VIP events and corporate charters.",
-     me:"Azimut 98 Leonardo — 30m italijanske izvrsnosti. Džakuzi, prostrani flybridge, 4 kabine uključujući master suite. Kompletan tim. Idealan za VIP događaje."
-   },
-   tags:{ru:["VIP","Джакузи","Мероприятия"],en:["VIP","Jacuzzi","Events"],me:["VIP","Džakuzi","Događaji"]},
-   feats:{
-     ru:[["crown","Капитан, матрос, хостесс"],["bed","4 каюты + master suite"],["glass-champagne","Джакузи на борту"],["wifi","Wi-Fi"],["sun","Лежаки & барбекю"],["chef-hat","Шеф-повар +200€"]],
-     en:[["crown","Captain, deckhand, hostess"],["bed","4 cabins + master suite"],["glass-champagne","Jacuzzi on board"],["wifi","Wi-Fi"],["sun","Sunbeds & BBQ"],["chef-hat","Chef +200€"]],
-     me:[["crown","Kapetan, mornar, hostesa"],["bed","4 kabine + master suite"],["glass-champagne","Džakuzi na brodu"],["wifi","Wi-Fi"],["sun","Ležaljke & roštilj"],["chef-hat","Šef kuhinje +200€"]]
-   },
-   hourRate:null,dayRate:9000,weekRate:null,capacity:12,
-   extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
+{id:2,cat:"vip",weekly:false,names:{ru:"Azimut 98",en:"Azimut 98",me:"Azimut 98"},types:{ru:"Люкс моторная",en:"Luxury Motor Yacht",me:"Luksuzna motorna jahta"},metas:{ru:"30 м · до 12 чел. · 4 каюты",en:"30 m · up to 12 pax · 4 cabins",me:"30 m · do 12 osoba · 4 kabine"},descs:{ru:"Azimut 98 Leonardo — 30 м итальянского совершенства. Джакузи, просторный флайбридж, 4 каюты включая мастер-сьют. Полный экипаж.",en:"Azimut 98 Leonardo — 30m of Italian excellence. Jacuzzi, spacious flybridge, 4 cabins including master suite. Full crew included.",me:"Azimut 98 Leonardo — 30m italijanske izvrsnosti. Džakuzi, prostrani flybridge, 4 kabine. Kompletan tim."},tags:{ru:["VIP","Джакузи","Мероприятия"],en:["VIP","Jacuzzi","Events"],me:["VIP","Džakuzi","Događaji"]},feats:{ru:[["Капитан, матрос, хостесс"],["4 каюты + master suite"],["Джакузи на борту"],["Wi-Fi"],["Барбекю & лежаки"],["Шеф-повар +200€"]],en:[["Captain, deckhand, hostess"],["4 cabins + master suite"],["Jacuzzi on board"],["Wi-Fi"],["BBQ & sunbeds"],["Chef +200€"]],me:[["Kapetan, mornar, hostesa"],["4 kabine + master suite"],["Džakuzi na brodu"],["Wi-Fi"],["Roštilj & ležaljke"],["Šef kuhinje +200€"]]},dayRate:9000,fuelIncl:false,capacity:12,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355543/1a_vnosuj.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355541/2a_n0eafb.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355543/3a_sjj903.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355540/4a_tjg7vb.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355542/5a_ivxgqc.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355540/6a_vhzi95.webp"],extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
 
-  {id:3,cat:"motor",
-   photos:{urls:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355544/1a_nn9tme.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355545/2a_iagsfr.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355545/3a_kdse8e.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355547/4a_uyqimu.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355546/5a_ks86iq.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355543/6a_oip2zf.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355543/7a_tflsjm.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355547/8a_rkjggg.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355547/9a_ecbwap.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355544/10a_gtgvpk.jpg"]},
-   color:"#dce8f5",
-   icon:`<svg viewBox="0 0 64 64" fill="none" stroke="#b5893a" stroke-width="1.4"><path d="M8 44l8-20h32l8 20H8z"/><path d="M16 24V18h20v6"/><path d="M8 44s6 6 24 6 24-6 24-6"/></svg>`,
-   names:{ru:"Cranchi 44",en:"Cranchi 44",me:"Cranchi 44"},
-   types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta"},
-   metas:{ru:"12 м · до 6 чел. · 2 каюты · 2018 г.",en:"12 m · up to 6 pax · 2 cabins · 2018",me:"12 m · do 6 osoba · 2 kabine · 2018"},
-   descs:{
-     ru:"Cranchi M44 HT — элегантная итальянская яхта с гидравлической купальной платформой, кондиционером и ледогенератором. Капитан включён. Отлично подходит для дневных чартеров и романтических прогулок.",
-     en:"Cranchi M44 HT — elegant Italian yacht with hydraulic swim platform, A/C and ice maker. Skipper included. Perfect for day charters and romantic cruises.",
-     me:"Cranchi M44 HT — elegantna italijanska jahta sa hidrauličnom platformom za kupanje, klima uređajem i generatorom leda. Kapetan uključen."
-   },
-   tags:{ru:["Элегантная","Купалка","День"],en:["Elegant","Swim platform","Day"],me:["Elegantna","Platforma","Dan"]},
-   feats:{
-     ru:[["anchor","Капитан включён"],["bed","2 каюты · 2 WC"],["air-conditioning","Кондиционер"],["swim","Гидравлическая купалка"],["fridge","Ледогенератор"],["chef-hat","Шеф-повар +200€"]],
-     en:[["anchor","Skipper included"],["bed","2 cabins · 2 WC"],["air-conditioning","Air conditioning"],["swim","Hydraulic swim platform"],["fridge","Ice maker"],["chef-hat","Chef +200€"]],
-     me:[["anchor","Kapetan uključen"],["bed","2 kabine · 2 WC"],["air-conditioning","Klima uređaj"],["swim","Hidraulična platforma"],["fridge","Generator leda"],["chef-hat","Šef kuhinje +200€"]]
-   },
-   hourRate:null,dayRate:2000,weekRate:null,capacity:6,
-   extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
+{id:3,cat:"motor",weekly:false,names:{ru:"Cranchi 44",en:"Cranchi 44",me:"Cranchi 44"},types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta"},metas:{ru:"12 м · до 6 чел. · 2 каюты · 2018 г.",en:"12 m · up to 6 pax · 2 cabins · 2018",me:"12 m · do 6 osoba · 2 kabine · 2018"},descs:{ru:"Cranchi M44 HT — элегантная яхта с гидравлической купальной платформой, кондиционером и ледогенератором. Капитан включён.",en:"Cranchi M44 HT — elegant yacht with hydraulic swim platform, A/C and ice maker. Skipper included. Perfect for day charters.",me:"Cranchi M44 HT — elegantna jahta sa hidrauličnom platformom, klima uređajem. Kapetan uključen."},tags:{ru:["Элегантная","Купалка","День"],en:["Elegant","Swim platform","Day"],me:["Elegantna","Platforma","Dan"]},feats:{ru:[["Капитан включён"],["2 каюты · 2 WC"],["Кондиционер"],["Гидравлическая купалка"],["Ледогенератор"],["Шеф-повар +200€"]],en:[["Skipper included"],["2 cabins · 2 WC"],["Air conditioning"],["Hydraulic swim platform"],["Ice maker"],["Chef +200€"]],me:[["Kapetan uključen"],["2 kabine · 2 WC"],["Klima uređaj"],["Hidraulična platforma"],["Generator leda"],["Šef kuhinje +200€"]]},dayRate:2000,fuelIncl:false,capacity:6,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355544/1a_nn9tme.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355545/2a_iagsfr.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355545/3a_kdse8e.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355547/4a_uyqimu.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355546/5a_ks86iq.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355543/6a_oip2zf.jpg"],extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
 
-  {id:4,cat:"motor",
-   photos:{urls:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355550/1a_hans7t.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355548/2a_uldkf5.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355551/3a_msvltz.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355547/4a_vtlhew.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355550/5a_w44eqq.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355548/6a_vtgk65.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355549/7a_xw62qt.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355547/8a_ogb51p.webp"]},
-   color:"#e0eaf5",
-   icon:`<svg viewBox="0 0 64 64" fill="none" stroke="#b5893a" stroke-width="1.4"><path d="M8 44l8-20h32l8 20H8z"/><path d="M16 24V18h20v6"/><path d="M8 44s6 6 24 6 24-6 24-6"/><circle cx="44" cy="38" r="3"/></svg>`,
-   names:{ru:"Cranchi Z35",en:"Cranchi Z35",me:"Cranchi Z35"},
-   types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta"},
-   metas:{ru:"12 м · до 12 чел. · 2 каюты · 2021 г.",en:"12 m · up to 12 pax · 2 cabins · 2021",me:"12 m · do 12 osoba · 2 kabine · 2021"},
-   descs:{
-     ru:"Cranchi Z35 — стильный спортивный дей-крузер с полностью открытым кокпитом. Просторный, элегантный и быстрый. Wi-Fi, полотенца, фрукты включены. Капитан на борту.",
-     en:"Cranchi Z35 — sporty day cruiser with a fully open cockpit. Spacious, elegant and fast. Wi-Fi, towels and fruit basket included. Skipper on board.",
-     me:"Cranchi Z35 — sportski day cruiser sa potpuno otvorenim kokpitom. Prostran, elegantan i brz. Wi-Fi, peškiri i voće uključeni. Kapetan na brodu."
-   },
-   tags:{ru:["Спорт","Открытый","День"],en:["Sport","Open cockpit","Day"],me:["Sport","Otvoreni","Dan"]},
-   feats:{
-     ru:[["anchor","Капитан включён"],["bed","2 каюты · 2 WC"],["wifi","Wi-Fi"],["sun","Полотенца & вода"],["grill","Тарелка фруктов"],["chef-hat","Шеф-повар +200€"]],
-     en:[["anchor","Skipper included"],["bed","2 cabins · 2 WC"],["wifi","Wi-Fi"],["sun","Towels & water"],["grill","Fruit basket"],["chef-hat","Chef +200€"]],
-     me:[["anchor","Kapetan uključen"],["bed","2 kabine · 2 WC"],["wifi","Wi-Fi"],["sun","Peškiri & voda"],["grill","Tanjir voća"],["chef-hat","Šef kuhinje +200€"]]
-   },
-   hourRate:null,dayRate:2200,weekRate:null,capacity:12,
-   extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
+{id:4,cat:"motor",weekly:false,names:{ru:"Cranchi Z35",en:"Cranchi Z35",me:"Cranchi Z35"},types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta"},metas:{ru:"12 м · до 12 чел. · 2 каюты · 2021 г.",en:"12 m · up to 12 pax · 2 cabins · 2021",me:"12 m · do 12 osoba · 2 kabine · 2021"},descs:{ru:"Cranchi Z35 — стильный спортивный дей-крузер с полностью открытым кокпитом. Wi-Fi, полотенца, фрукты включены.",en:"Cranchi Z35 — sporty day cruiser with fully open cockpit. Wi-Fi, towels and fruit basket included. Skipper on board.",me:"Cranchi Z35 — sportski day cruiser sa otvorenim kokpitom. Wi-Fi, peškiri i voće uključeni."},tags:{ru:["Спорт","Открытый","День"],en:["Sport","Open cockpit","Day"],me:["Sport","Otvoreni","Dan"]},feats:{ru:[["Капитан включён"],["2 каюты · 2 WC"],["Wi-Fi"],["Полотенца & вода"],["Тарелка фруктов"],["Шеф-повар +200€"]],en:[["Skipper included"],["2 cabins · 2 WC"],["Wi-Fi"],["Towels & water"],["Fruit basket"],["Chef +200€"]],me:[["Kapetan uključen"],["2 kabine · 2 WC"],["Wi-Fi"],["Peškiri & voda"],["Tanjir voća"],["Šef kuhinje +200€"]]},dayRate:2200,fuelIncl:false,capacity:12,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355550/1a_hans7t.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355548/2a_uldkf5.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355551/3a_msvltz.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355547/4a_vtlhew.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355550/5a_w44eqq.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355548/6a_vtgk65.webp"],extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
 
-  {id:5,cat:"motor",
-   photos:{urls:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355551/1a_mgawyw.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355562/2a_afygdc.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355556/3a_zbrn6l.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355563/4a_r8snvc.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355563/5a_fzoxtw.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355551/6a_tq1odc.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355551/7a_lxigzw.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355563/8a_ksacir.jpg"]},
-   color:"#e8f0d8",
-   icon:`<svg viewBox="0 0 64 64" fill="none" stroke="#b5893a" stroke-width="1.4"><path d="M6 44l10-22h32l10 22H6z"/><path d="M16 22V14h24v8"/><path d="M6 44s8 8 26 8 26-8 26-8"/><circle cx="20" cy="36" r="3"/><circle cx="44" cy="36" r="3"/></svg>`,
-   names:{ru:"Dominator 68S",en:"Dominator 68S",me:"Dominator 68S"},
-   types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta"},
-   metas:{ru:"21 м · до 15 чел. · 3 каюты · 2008/2022",en:"21 m · up to 15 pax · 3 cabins · 2008/2022",me:"21 m · do 15 osoba · 3 kabine · 2008/2022"},
-   descs:{
-     ru:"Dominator 68S — стильная итальянская яхта дизайна Nuvolari Lenard. Полностью обновлена в 2022 году. Просторный флайбридж, 3 каюты с ванными, до 15 гостей на дневном чартере.",
-     en:"Dominator 68S — stylish Italian yacht designed by Nuvolari Lenard, fully refitted in 2022. Spacious flybridge, 3 en-suite cabins, up to 15 guests for day charters.",
-     me:"Dominator 68S — stilska italijanska jahta dizajna Nuvolari Lenard, potpuno obnovljena 2022. Prostrani flybridge, 3 kabine, do 15 gostiju na dnevnom čarteru."
-   },
-   tags:{ru:["Стиль","Флайбридж","Обновлённая"],en:["Stylish","Flybridge","Refitted 2022"],me:["Stilska","Flybridge","Obnovljena 2022"]},
-   feats:{
-     ru:[["anchor","Капитан & матрос"],["bed","3 каюты · 3 WC"],["sun","Флайбридж & лежаки"],["chef-hat","Шеф-повар +200€"],["jetski","Гидроцикл +500€"],["camera","Фотограф +50€/ч"]],
-     en:[["anchor","Skipper & deckhand"],["bed","3 cabins · 3 WC"],["sun","Flybridge & sunbeds"],["chef-hat","Chef +200€"],["jetski","Jet ski +500€"],["camera","Photographer +50€/h"]],
-     me:[["anchor","Kapetan & mornar"],["bed","3 kabine · 3 WC"],["sun","Flybridge & ležaljke"],["chef-hat","Šef kuhinje +200€"],["jetski","Jet ski +500€"],["camera","Fotograf +50€/h"]]
-   },
-   hourRate:null,dayRate:4000,weekRate:null,capacity:15,
-   extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
+{id:5,cat:"motor",weekly:false,names:{ru:"Dominator 68S",en:"Dominator 68S",me:"Dominator 68S"},types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta"},metas:{ru:"21 м · до 15 чел. · 3 каюты · 2008/2022",en:"21 m · up to 15 pax · 3 cabins · 2008/2022",me:"21 m · do 15 osoba · 3 kabine · 2008/2022"},descs:{ru:"Dominator 68S дизайна Nuvolari Lenard, полностью обновлён в 2022 г. Просторный флайбридж, 3 каюты с ванными, до 15 гостей.",en:"Dominator 68S by Nuvolari Lenard, fully refitted 2022. Spacious flybridge, 3 en-suite cabins, up to 15 guests for day charters.",me:"Dominator 68S dizajna Nuvolari Lenard, potpuno obnovljen 2022. Prostrani flybridge, 3 kabine, do 15 gostiju."},tags:{ru:["Флайбридж","Обновлён 2022","Стиль"],en:["Flybridge","Refitted 2022","Style"],me:["Flybridge","Obnovljen 2022","Stil"]},feats:{ru:[["Капитан & матрос"],["3 каюты · 3 WC"],["Флайбридж & лежаки"],["Шеф-повар +200€"],["Гидроцикл +500€"],["Фотограф +50€/ч"]],en:[["Skipper & deckhand"],["3 cabins · 3 WC"],["Flybridge & sunbeds"],["Chef +200€"],["Jet ski +500€"],["Photographer +50€/h"]],me:[["Kapetan & mornar"],["3 kabine · 3 WC"],["Flybridge & ležaljke"],["Šef kuhinje +200€"],["Jet ski +500€"],["Fotograf +50€/h"]]},dayRate:4000,fuelIncl:false,capacity:15,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355551/1a_mgawyw.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355562/2a_afygdc.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355556/3a_zbrn6l.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355563/4a_r8snvc.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355563/5a_fzoxtw.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355551/6a_tq1odc.jpg"],extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
 
-  {id:6,cat:"motor",
-   photos:{urls:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355565/1a_nzwkcj.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355565/2a_ykqbt3.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355565/3a_esrxiy.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355567/4a_jnyq9m.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355566/5a_uoys64.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355564/6a_guw4os.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355563/7a_lazbv5.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355567/8a_dy9u6c.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355566/9a_omywim.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355565/10a_fyd0s2.jpg"]},
-   color:"#e8ece0",
-   icon:`<svg viewBox="0 0 64 64" fill="none" stroke="#b5893a" stroke-width="1.4"><path d="M8 44l8-20h32l8 20H8z"/><path d="M16 24V18h20v6"/><path d="M8 44s6 6 24 6 24-6 24-6"/><circle cx="20" cy="38" r="3"/></svg>`,
-   names:{ru:"Galeon 445",en:"Galeon 445",me:"Galeon 445"},
-   types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta"},
-   metas:{ru:"14 м · до 8 чел. · 2 каюты · 2016 г.",en:"14 m · up to 8 pax · 2 cabins · 2016",me:"14 m · do 8 osoba · 2 kabine · 2016"},
-   descs:{
-     ru:"Galeon 445 Fly — современная яхта с откидными балконами-«пляжным режимом», просторным флайбриджем и панорамным салоном. Капитан включён. Отличный выбор для групп до 8 человек.",
-     en:"Galeon 445 Fly — modern yacht with fold-out beach balconies, spacious flybridge and panoramic salon. Skipper included. Great choice for groups up to 8.",
-     me:"Galeon 445 Fly — moderna jahta sa sklopivim balkonima-plažnim režimom, prostrani flybridge i panoramski salon. Kapetan uključen."
-   },
-   tags:{ru:["Балконы","Флайбридж","Современная"],en:["Balconies","Flybridge","Modern"],me:["Balkoni","Flybridge","Moderna"]},
-   feats:{
-     ru:[["anchor","Капитан включён"],["bed","2 каюты · 2 WC"],["sun","Откидные балконы"],["waves","Флайбридж"],["chef-hat","Шеф-повар +200€"],["jetski","Гидроцикл +500€"]],
-     en:[["anchor","Skipper included"],["bed","2 cabins · 2 WC"],["sun","Fold-out balconies"],["waves","Flybridge"],["chef-hat","Chef +200€"],["jetski","Jet ski +500€"]],
-     me:[["anchor","Kapetan uključen"],["bed","2 kabine · 2 WC"],["sun","Sklopivi balkoni"],["waves","Flybridge"],["chef-hat","Šef kuhinje +200€"],["jetski","Jet ski +500€"]]
-   },
-   hourRate:null,dayRate:2400,weekRate:null,capacity:8,
-   extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
+{id:6,cat:"motor",weekly:false,names:{ru:"Galeon 445",en:"Galeon 445",me:"Galeon 445"},types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta"},metas:{ru:"14 м · до 8 чел. · 2 каюты · 2016 г.",en:"14 m · up to 8 pax · 2 cabins · 2016",me:"14 m · do 8 osoba · 2 kabine · 2016"},descs:{ru:"Galeon 445 Fly — яхта с откидными балконами «пляжный режим», просторным флайбриджем и панорамным салоном. Капитан включён.",en:"Galeon 445 Fly — yacht with fold-out beach balconies, spacious flybridge and panoramic salon. Skipper included.",me:"Galeon 445 Fly — jahta sa sklopivim balkonima, prostrani flybridge i panoramski salon. Kapetan uključen."},tags:{ru:["Балконы","Флайбридж","Современная"],en:["Balconies","Flybridge","Modern"],me:["Balkoni","Flybridge","Moderna"]},feats:{ru:[["Капитан включён"],["2 каюты · 2 WC"],["Откидные балконы"],["Флайбридж"],["Шеф-повар +200€"],["Гидроцикл +500€"]],en:[["Skipper included"],["2 cabins · 2 WC"],["Fold-out balconies"],["Flybridge"],["Chef +200€"],["Jet ski +500€"]],me:[["Kapetan uključen"],["2 kabine · 2 WC"],["Sklopivi balkoni"],["Flybridge"],["Šef kuhinje +200€"],["Jet ski +500€"]]},dayRate:2400,fuelIncl:false,capacity:8,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355565/1a_nzwkcj.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355565/2a_ykqbt3.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355565/3a_esrxiy.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355567/4a_jnyq9m.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355566/5a_uoys64.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355563/7a_lazbv5.jpg"],extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
 
-  {id:7,cat:"speedboat",
-   photos:{urls:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356859/1a_bvmxls.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356865/2a_kjp1hm.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356870/3a_quinag.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356862/4a_tkcltj.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356867/5a_gtsukl.webp"]},
-   color:"#e0f0e8",
-   icon:`<svg viewBox="0 0 64 64" fill="none" stroke="#b5893a" stroke-width="1.4"><path d="M8 44l8-18h30l8 18H8z"/><path d="M16 26V18h18v8"/><path d="M8 44s6 5 24 5 24-5 24-5"/></svg>`,
-   names:{ru:"KeyLargo 36",en:"KeyLargo 36",me:"KeyLargo 36"},
-   types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta"},
-   metas:{ru:"11 м · до 6 чел. · 1 каюта · 2011 г.",en:"11 m · up to 6 pax · 1 cabin · 2011",me:"11 m · do 6 osoba · 1 kabina · 2011"},
-   descs:{
-     ru:"Sessa Key Largo 36 — универсальная итальянская яхта для дневных прогулок. Просторный кокпит, солярии на носу и корме, удобный салон. Идеально для пар и небольших групп.",
-     en:"Sessa Key Largo 36 — versatile Italian walkaround for day cruises. Spacious cockpit, bow and stern sunbathing areas, cozy cabin. Perfect for couples and small groups.",
-     me:"Sessa Key Largo 36 — svestrana italijanska jahta za dnevne izlete. Prostrani kokpit, solarijumi, udobna kabina. Idealna za parove i male grupe."
-   },
-   tags:{ru:["Круизы","Пары","Острова"],en:["Day trips","Couples","Islands"],me:["Izleti","Parovi","Ostrva"]},
-   feats:{
-     ru:[["anchor","Капитан включён"],["bed","1 каюта · 1 WC"],["sun","Солярий нос & корма"],["swim","Купальная платформа"],["chef-hat","Шеф-повар +200€"],["jetski","Гидроцикл +500€"]],
-     en:[["anchor","Skipper included"],["bed","1 cabin · 1 WC"],["sun","Bow & stern sunbeds"],["swim","Swim platform"],["chef-hat","Chef +200€"],["jetski","Jet ski +500€"]],
-     me:[["anchor","Kapetan uključen"],["bed","1 kabina · 1 WC"],["sun","Solarijumi pramac & krma"],["swim","Platforma za kupanje"],["chef-hat","Šef kuhinje +200€"],["jetski","Jet ski +500€"]]
-   },
-   hourRate:null,dayRate:1600,weekRate:null,capacity:6,
-   extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
+{id:7,cat:"speedboat",weekly:false,names:{ru:"KeyLargo 36",en:"KeyLargo 36",me:"KeyLargo 36"},types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta"},metas:{ru:"11 м · до 6 чел. · 1 каюта · 2011 г.",en:"11 m · up to 6 pax · 1 cabin · 2011",me:"11 m · do 6 osoba · 1 kabina · 2011"},descs:{ru:"Sessa Key Largo 36 — итальянская яхта для дневных прогулок. Солярии на носу и корме, удобный салон. Идеально для пар и небольших групп.",en:"Sessa Key Largo 36 — Italian walkaround for day cruises. Bow and stern sunbeds, cozy cabin. Perfect for couples and small groups.",me:"Sessa Key Largo 36 — italijanska jahta za dnevne izlete. Solarijumi, udobna kabina. Idealna za parove."},tags:{ru:["Круизы","Пары","Острова"],en:["Day trips","Couples","Islands"],me:["Izleti","Parovi","Ostrva"]},feats:{ru:[["Капитан включён"],["1 каюта · 1 WC"],["Солярий нос & корма"],["Купальная платформа"],["Шеф-повар +200€"],["Гидроцикл +500€"]],en:[["Skipper included"],["1 cabin · 1 WC"],["Bow & stern sunbeds"],["Swim platform"],["Chef +200€"],["Jet ski +500€"]],me:[["Kapetan uključen"],["1 kabina · 1 WC"],["Solarijumi"],["Platforma za kupanje"],["Šef kuhinje +200€"],["Jet ski +500€"]]},dayRate:1600,fuelIncl:false,capacity:6,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356859/1a_bvmxls.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356865/2a_kjp1hm.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356870/3a_quinag.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356862/4a_tkcltj.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356867/5a_gtsukl.webp"],extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50}]},
 
-  {id:8,cat:"motor",
-   photos:{urls:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358115/1a_xyaykh.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358126/2a_gbsnj5.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358123/3a_ecnqes.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358139/4a_gz132m.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358132/5a_rfxpva.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358111/7a_xxs3o6.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358136/9a_zhk0vp.png","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358119/11a_e1hxcm.png","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358129/12a_vxk3vh.png"]},
-   color:"#ddeef8",
-   icon:`<svg viewBox="0 0 64 64" fill="none" stroke="#b5893a" stroke-width="1.4"><path d="M6 44l10-20h32l10 20H6z"/><path d="M16 24V16h24v8"/><path d="M6 44s8 7 26 7 26-7 26-7"/><circle cx="20" cy="37" r="3"/><circle cx="44" cy="37" r="3"/></svg>`,
-   names:{ru:"Marea",en:"Marea",me:"Marea"},
-   types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta"},
-   metas:{ru:"18 м · до 16 чел. · 4 каюты · 2009/2026",en:"18 m · up to 16 pax · 4 cabins · 2009/2026",me:"18 m · do 16 osoba · 4 kabine · 2009/2026"},
-   descs:{
-     ru:"Просторная яхта для больших компаний — до 16 гостей. Полностью обновлена в 2026 году. Гриль, SUP, каяк включены. Топливо включено. Идеальна для вечеринок и семейных праздников.",
-     en:"Spacious yacht for large groups — up to 16 guests. Fully refitted in 2026. BBQ, SUP and kayak included. Fuel included. Perfect for parties and family celebrations.",
-     me:"Prostrana jahta za velike grupe — do 16 gostiju. Potpuno obnovljena 2026. Roštilj, SUP i kajak uključeni. Gorivo uključeno. Idealna za proslave."
-   },
-   tags:{ru:["До 16 гостей","Топливо вкл.","2026"],en:["Up to 16","Fuel incl.","2026"],me:["Do 16 gostiju","Gorivo ukl.","2026"]},
-   feats:{
-     ru:[["anchor","Капитан & матрос"],["bed","4 каюты · 4 WC"],["grill","Барбекю включён"],["swim","SUP & каяк"],["sun","Лежаки & полотенца"],["waves","Топливо включено"]],
-     en:[["anchor","Skipper & deckhand"],["bed","4 cabins · 4 WC"],["grill","BBQ included"],["swim","SUP & kayak"],["sun","Sunbeds & towels"],["waves","Fuel included"]],
-     me:[["anchor","Kapetan & mornar"],["bed","4 kabine · 4 WC"],["grill","Roštilj uključen"],["swim","SUP & kajak"],["sun","Ležaljke & peškiri"],["waves","Gorivo uključeno"]]
-   },
-   hourRate:600,dayRate:3000,weekRate:null,capacity:16,
-   extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
+{id:8,cat:"motor",weekly:false,names:{ru:"Marea",en:"Marea",me:"Marea"},types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta"},metas:{ru:"18 м · до 16 чел. · 4 каюты · 2009/2026",en:"18 m · up to 16 pax · 4 cabins · 2009/2026",me:"18 m · do 16 osoba · 4 kabine · 2009/2026"},descs:{ru:"Просторная яхта для больших компаний — до 16 гостей. Полностью обновлена в 2026 г. Барбекю, SUP, каяк включены. Топливо включено.",en:"Spacious yacht for large groups — up to 16 guests. Fully refitted 2026. BBQ, SUP and kayak included. Fuel included.",me:"Prostrana jahta za velike grupe — do 16 gostiju. Potpuno obnovljena 2026. Roštilj, SUP i kajak uključeni."},tags:{ru:["До 16 гостей","Топливо вкл.","2026"],en:["Up to 16","Fuel incl.","2026"],me:["Do 16 gostiju","Gorivo ukl.","2026"]},feats:{ru:[["Капитан & матрос"],["4 каюты · 4 WC"],["Барбекю включён"],["SUP & каяк"],["Лежаки & полотенца"],["Топливо включено"]],en:[["Skipper & deckhand"],["4 cabins · 4 WC"],["BBQ included"],["SUP & kayak"],["Sunbeds & towels"],["Fuel included"]],me:[["Kapetan & mornar"],["4 kabine · 4 WC"],["Roštilj uključen"],["SUP & kajak"],["Ležaljke & peškiri"],["Gorivo uključeno"]]},dayRate:3000,fuelIncl:true,capacity:16,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358115/1a_xyaykh.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358126/2a_gbsnj5.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358123/3a_ecnqes.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358139/4a_gz132m.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358132/5a_rfxpva.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358111/7a_xxs3o6.jpg"],extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
 
-  {id:9,cat:"vip",
-   photos:{urls:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355584/1a_thsx2l.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355580/2a_eg3uke.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355579/3a_qbyirf.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355585/4a_fj80uu.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355582/5a_w7ptmj.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355576/6a_rfgag2.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355574/7a_zdpndy.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355583/8a_uv0bry.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355583/9a_m0g3aa.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355577/10a_q4fcka.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355577/11a_sfl02b.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355581/12a_d3witf.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355579/13a_kxsbnj.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355585/14a_d7c75z.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355581/15a_yr9ij5.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355576/16a_g3b5sj.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355574/17a_uavtat.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355584/18a_ayzv0c.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355582/19a_coaujl.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355575/20a_oliu0t.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355574/21a_ebbdyb.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355584/22a_n2wz5r.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355583/23a_bag4uc.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355581/24a_a6pmkv.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355578/25a_dpcre9.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355577/26a_mt9hak.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355577/27a_dnb8gj.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355581/28a_si9cuw.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355579/29a_wb99nf.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355578/30a_nwmj2n.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355581/31a_oabu2n.jpg"]},
-   color:"#f5f0e8",
-   icon:`<svg viewBox="0 0 64 64" fill="none" stroke="#b5893a" stroke-width="1.4"><path d="M4 44l14-26h28l14 26H4z"/><path d="M18 18V10h28v8"/><path d="M4 44s10 9 28 9 28-9 28-9"/><path d="M22 30h20"/></svg>`,
-   names:{ru:"Mirage IV",en:"Mirage IV",me:"Mirage IV"},
-   types:{ru:"Супер-яхта",en:"Superyacht",me:"Superjahta"},
-   metas:{ru:"40 м · до 12 чел. · 6 кают · 2024 г.",en:"40 m · up to 12 pax · 6 cabins · 2024",me:"40 m · do 12 osoba · 6 kabina · 2024"},
-   descs:{
-     ru:"Princess 40M Mirage — флагманская супер-яхта 2024 года. Водная горка, скалодром, пляж-клуб с морским бассейном, 2 Seabob, гидроцикл, электросёрфборд и полный экипаж. Недельная аренда.",
-     en:"Princess 40M Mirage — flagship 2024 superyacht. Water slide, climbing wall, beach club with sea pool, 2 Seabobs, jet ski, electric surfboard and full crew. Weekly charter.",
-     me:"Princess 40M Mirage — vodeća superjahta 2024. Vodeni tobogan, zid za penjanje, beach club sa morskim bazenom, 2 Seaboba, jet ski i kompletan tim. Sedmični čarter."
-   },
-   tags:{ru:["Флагман 2024","Водные игрушки","Weekly"],en:["Flagship 2024","Water toys","Weekly"],me:["Vodeća 2024","Vodeni sportovi","Sedmično"]},
-   feats:{
-     ru:[["crown","Капитан, матрос, хостесс, шеф"],["bed","6 кают"],["swim","Пляж-клуб & морской бассейн"],["waves","Водная горка & скалодром"],["jetski","Гидроцикл Sea-Doo RXP-X"],["star","2 × Seabob F5S + электросёрфборд"]],
-     en:[["crown","Captain, deckhand, hostess, chef"],["bed","6 cabins"],["swim","Beach club & sea pool"],["waves","Water slide & climbing wall"],["jetski","Jet ski Sea-Doo RXP-X"],["star","2 × Seabob F5S + electric surfboard"]],
-     me:[["crown","Kapetan, mornar, hostesa, šef"],["bed","6 kabina"],["swim","Beach club & morski bazen"],["waves","Vodeni tobogan & zid za penjanje"],["jetski","Jet ski Sea-Doo RXP-X"],["star","2 × Seabob F5S + električni surfboard"]]
-   },
-   hourRate:null,dayRate:null,weekRate:190000,capacity:12,
-   extras:[{ru:"Кейтеринг",en:"Catering",me:"Ketering",price:0},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50}]},
+{id:9,cat:"vip",weekly:true,names:{ru:"Mirage IV",en:"Mirage IV",me:"Mirage IV"},types:{ru:"Супер-яхта",en:"Superyacht",me:"Superjahta"},metas:{ru:"40 м · до 12 чел. · 6 кают · 2024 г.",en:"40 m · up to 12 pax · 6 cabins · 2024",me:"40 m · do 12 osoba · 6 kabina · 2024"},descs:{ru:"Princess 40M Mirage — флагманская супер-яхта 2024 г. Водная горка, скалодром, пляж-клуб с морским бассейном, 2 Seabob, гидроцикл. Недельная аренда.",en:"Princess 40M Mirage — flagship 2024 superyacht. Water slide, climbing wall, beach club with sea pool, 2 Seabobs, jet ski. Weekly charter.",me:"Princess 40M Mirage — vodeća superjahta 2024. Vodeni tobogan, beach club sa bazenom, 2 Seaboba. Sedmični čarter."},tags:{ru:["Флагман 2024","Водные игрушки","Weekly"],en:["Flagship 2024","Water toys","Weekly"],me:["Vodeća 2024","Vodeni sportovi","Sedmično"]},feats:{ru:[["Капитан, матрос, хостесс, шеф"],["6 кают"],["Пляж-клуб & морской бассейн"],["Водная горка & скалодром"],["Гидроцикл Sea-Doo RXP-X"],["2 × Seabob F5S + электросёрфборд"]],en:[["Captain, deckhand, hostess, chef"],["6 cabins"],["Beach club & sea pool"],["Water slide & climbing wall"],["Jet ski Sea-Doo RXP-X"],["2 × Seabob F5S + electric surfboard"]],me:[["Kapetan, mornar, hostesa, šef"],["6 kabina"],["Beach club & morski bazen"],["Vodeni tobogan & zid za penjanje"],["Jet ski Sea-Doo RXP-X"],["2 × Seabob F5S + električni surfboard"]]},dayRate:null,weekRate:190000,fuelIncl:false,capacity:12,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355584/1a_thsx2l.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355580/2a_eg3uke.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355579/3a_qbyirf.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355585/4a_fj80uu.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355582/5a_w7ptmj.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355576/6a_rfgag2.jpg"],extras:[{ru:"Кейтеринг",en:"Catering",me:"Ketering",price:0},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50}]},
 
-  {id:10,cat:"vip",
-   photos:{urls:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355587/1a_fz4eda.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355586/2a_pqf5bq.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355587/3a_cjivsj.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355586/4a_ofckms.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355588/5a_g8m5dm.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355586/6a_prdlyl.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355587/7a_og9ar8.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355590/8a_wwj7ks.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355588/9a_xr97ye.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355590/10a_gvlqqd.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355589/11a_t4nnmn.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355590/12a_tfux7s.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355589/13a_z7qiw1.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355589/14a_bxdk8b.jpg"]},
-   color:"#ece8f5",
-   icon:`<svg viewBox="0 0 64 64" fill="none" stroke="#b5893a" stroke-width="1.4"><path d="M6 44l10-22h32l10 22H6z"/><path d="M16 22V14h24v8"/><path d="M22 14V10h20v4"/><path d="M6 44s8 8 26 8 26-8 26-8"/></svg>`,
-   names:{ru:"Princess 32M",en:"Princess 32M",me:"Princess 32M"},
-   types:{ru:"Люкс моторная",en:"Luxury Motor Yacht",me:"Luksuzna motorna jahta"},
-   metas:{ru:"32 м · до 10 чел. · 4 каюты · 2012 г.",en:"32 m · up to 10 pax · 4 cabins · 2012",me:"32 m · do 10 osoba · 4 kabine · 2012"},
-   descs:{
-     ru:"Princess 32M — британское качество и элегантность. 32 м, просторный флайбридж, 4 каюты с ванными, широкий борт для устойчивости. Полный экипаж. Для семей и VIP-групп.",
-     en:"Princess 32M — British quality and elegance. 32m, spacious flybridge, 4 en-suite cabins, wide beam for stability. Full crew. Perfect for families and VIP groups.",
-     me:"Princess 32M — britanski kvalitet i elegancija. 32m, prostrani flybridge, 4 kabine, široki trup za stabilnost. Kompletan tim. Za porodice i VIP grupe."
-   },
-   tags:{ru:["VIP","Британская","Флайбридж"],en:["VIP","British","Flybridge"],me:["VIP","Britanska","Flybridge"]},
-   feats:{
-     ru:[["crown","Капитан, матрос, хостесс"],["bed","4 каюты · 4 WC"],["waves","Флайбридж"],["wifi","Wi-Fi"],["sun","Лежаки & полотенца"],["chef-hat","Шеф-повар +200€"]],
-     en:[["crown","Skipper, deckhand, hostess"],["bed","4 cabins · 4 WC"],["waves","Flybridge"],["wifi","Wi-Fi"],["sun","Sunbeds & towels"],["chef-hat","Chef +200€"]],
-     me:[["crown","Kapetan, mornar, hostesa"],["bed","4 kabine · 4 WC"],["waves","Flybridge"],["wifi","Wi-Fi"],["sun","Ležaljke & peškiri"],["chef-hat","Šef kuhinje +200€"]]
-   },
-   hourRate:null,dayRate:11000,weekRate:null,capacity:10,
-   extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
-
-  {id:11,cat:"vip",
-   photos:{folder:"sunseeker-95",count:43},
-   color:"#f0ece8",
-   icon:`<svg viewBox="0 0 64 64" fill="none" stroke="#b5893a" stroke-width="1.4"><path d="M4 44l14-26h28l14 26H4z"/><path d="M18 18V10h28v8"/><path d="M4 44s10 9 28 9 28-9 28-9"/><circle cx="20" cy="36" r="4"/><circle cx="44" cy="36" r="4"/></svg>`,
-   names:{ru:"Sunseeker 95",en:"Sunseeker 95",me:"Sunseeker 95"},
-   types:{ru:"Супер-яхта",en:"Superyacht",me:"Superjahta"},
-   metas:{ru:"29 м · до 10 чел. · 4 каюты",en:"29 m · up to 10 pax · 4 cabins",me:"29 m · do 10 osoba · 4 kabine"},
-   descs:{
-     ru:"Sunseeker 95 — британская супер-яхта мирового класса. Роскошный интерьер, мощные двигатели, просторная палуба. Профессиональный экипаж. Для тех кто ценит совершенство.",
-     en:"Sunseeker 95 — world-class British superyacht. Luxurious interior, powerful engines, spacious deck. Professional crew. For those who value perfection.",
-     me:"Sunseeker 95 — britanska superjahta svjetske klase. Luksuzni enterijer, snažni motori, prostrana paluba. Profesionalna posada."
-   },
-   tags:{ru:["VIP","Sunseeker","Люкс"],en:["VIP","Sunseeker","Luxury"],me:["VIP","Sunseeker","Luksuz"]},
-   feats:{
-     ru:[["crown","Профессиональный экипаж"],["bed","4 каюты"],["waves","Мощные двигатели"],["sun","Просторная палуба"],["chef-hat","Шеф-повар +200€"],["jetski","Гидроцикл +500€"]],
-     en:[["crown","Professional crew"],["bed","4 cabins"],["waves","Powerful engines"],["sun","Spacious deck"],["chef-hat","Chef +200€"],["jetski","Jet ski +500€"]],
-     me:[["crown","Profesionalna posada"],["bed","4 kabine"],["waves","Snažni motori"],["sun","Prostrana paluba"],["chef-hat","Šef kuhinje +200€"],["jetski","Jet ski +500€"]]
-   },
-   hourRate:null,dayRate:12500,weekRate:null,capacity:10,
-   extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]}
+{id:10,cat:"vip",weekly:false,names:{ru:"Princess 32M",en:"Princess 32M",me:"Princess 32M"},types:{ru:"Люкс моторная",en:"Luxury Motor Yacht",me:"Luksuzna motorna jahta"},metas:{ru:"32 м · до 10 чел. · 4 каюты · 2012 г.",en:"32 m · up to 10 pax · 4 cabins · 2012",me:"32 m · do 10 osoba · 4 kabine · 2012"},descs:{ru:"Princess 32M — британское качество. 32 м, просторный флайбридж, 4 каюты с ванными. Полный экипаж. Для семей и VIP-групп.",en:"Princess 32M — British quality and elegance. 32m, spacious flybridge, 4 en-suite cabins. Full crew. Perfect for families and VIP groups.",me:"Princess 32M — britanski kvalitet. 32m, prostrani flybridge, 4 kabine. Kompletan tim."},tags:{ru:["VIP","Британская","Флайбридж"],en:["VIP","British","Flybridge"],me:["VIP","Britanska","Flybridge"]},feats:{ru:[["Капитан, матрос, хостесс"],["4 каюты · 4 WC"],["Флайбридж"],["Wi-Fi"],["Лежаки & полотенца"],["Шеф-повар +200€"]],en:[["Skipper, deckhand, hostess"],["4 cabins · 4 WC"],["Flybridge"],["Wi-Fi"],["Sunbeds & towels"],["Chef +200€"]],me:[["Kapetan, mornar, hostesa"],["4 kabine · 4 WC"],["Flybridge"],["Wi-Fi"],["Ležaljke & peškiri"],["Šef kuhinje +200€"]]},dayRate:11000,fuelIncl:false,capacity:10,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355587/1a_fz4eda.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355586/2a_pqf5bq.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355587/3a_cjivsj.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355586/4a_ofckms.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355588/5a_g8m5dm.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355586/6a_prdlyl.jpg"],extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]}
 ];
 
+const BOT_TOKEN='8864246711:AAH1dASsllqCtr6pI7cYDfDrA004hKLaO6o';
+const OWNER_ID=70131641;
 
-
-let lang='ru',activeCat='all',favs=new Set();
-let detailState={mode:'hour',qty:4,extras:new Set(),guests:2,date:'',time:'',yachtId:0};
+let lang='en',activeCat='all',favs=new Set();
+let detailState={extras:new Set(),guests:2,date:'',duration:'',yachtId:0};
 let urgSel=0,timerInterval=null;
 
 function detectLang(){
   try{const tg=window.Telegram?.WebApp?.initDataUnsafe?.user?.language_code;if(tg){if(tg.startsWith('sr')||tg.startsWith('me')||tg.startsWith('hr')||tg.startsWith('bs'))return'me';if(tg.startsWith('ru'))return'ru';return'en';}}catch(e){}
   const n=navigator.language||'';if(n.startsWith('sr')||n.startsWith('me'))return'me';if(n.startsWith('ru'))return'ru';return'en';
 }
+
 function init(){
   lang=detectLang();
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim().toLowerCase()===lang||(lang==='me'&&b.textContent.trim()==='ME')));
-  renderAll();try{window.Telegram?.WebApp?.ready();window.Telegram?.WebApp?.expand();}catch(e){}
+  renderAll();
+  try{window.Telegram?.WebApp?.ready();window.Telegram?.WebApp?.expand();}catch(e){}
 }
+
 function setLang(l){lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim().toLowerCase()===l||(l==='me'&&b.textContent.trim()==='ME')));renderAll();}
+
 function renderAll(){
   const t=T[lang];
-  document.getElementById('sbanTitle').textContent=t.sbanTitle;document.getElementById('sbanSub').textContent=t.sbanSub;
-  document.getElementById('sectionTitle').textContent=t.sectionTitle;document.getElementById('navCatalogLbl').textContent=t.catalog;
-  document.getElementById('navOrdersLbl').textContent=t.orders;document.getElementById('navSpecialLbl').textContent=t.vipReq;
-  document.getElementById('specTitle').textContent=t.specTitle;document.getElementById('specSub').textContent=t.specSub;
-  document.getElementById('specUrgLabel').textContent=t.specUrgLabel;document.getElementById('specReqLabel').textContent=t.specReqLabel;
-  document.getElementById('specRequest').placeholder=t.specReqPlaceholder;document.getElementById('specContact').placeholder=t.specContactPlaceholder;
+  document.getElementById('sbanTitle').textContent=t.sbanTitle;
+  document.getElementById('sbanSub').textContent=t.sbanSub;
+  document.getElementById('sectionTitle').textContent=t.sectionTitle;
+  document.getElementById('navCatalogLbl').textContent=t.catalog;
+  document.getElementById('navOrdersLbl').textContent=t.orders;
+  document.getElementById('navSpecialLbl').textContent=t.vipReq;
+  document.getElementById('specTitle').textContent=t.specTitle;
+  document.getElementById('specSub').textContent=t.specSub;
+  document.getElementById('specUrgLabel').textContent=t.specUrgLabel;
+  document.getElementById('specReqLabel').textContent=t.specReqLabel;
   document.getElementById('specSendBtn').textContent=t.specSend;
   t.urgLabels.forEach((l,i)=>{document.getElementById('urgL'+i).textContent=l;});
   renderCats();renderCards();
 }
+
 function renderCats(){
-  const t=T[lang];const keys=['all','motor','sail','catamaran','speedboat','wedding','weekly','fishing','vip'];
+  const t=T[lang];
+  const keys=['all','motor','sail','catamaran','speedboat','wedding','weekly','fishing','vip'];
   document.getElementById('catsScroll').innerHTML=t.cats.map((n,i)=>`<div class="cat-pill ${activeCat===keys[i]?'active':''}" onclick="setCat('${keys[i]}')">${n}</div>`).join('');
 }
+
 function setCat(c){activeCat=c;renderCats();renderCards();}
-function getPhotoUrl(y,n){
-  if(!y.photos||!y.photos.urls||!y.photos.urls.length)return null;
-  return y.photos.urls[n-1]||y.photos.urls[0];
-}
+
 function getPriceLabel(y){
-  if(y.hourRate) return y.hourRate+'€ <span>/ ч</span>';
-  if(y.dayRate)  return y.dayRate.toLocaleString()+'€ <span>/ день</span>';
-  if(y.weekRate) return y.weekRate.toLocaleString()+'€ <span>/ нед.</span>';
-  return '<span>по запросу</span>';
+  if(y.weekRate)return y.weekRate.toLocaleString()+'€ <span>/ '+T[lang].overnight.toLowerCase()+'</span>';
+  if(y.dayRate)return y.dayRate.toLocaleString()+'€ <span>/ '+T[lang].overnight.toLowerCase().split(' ')[0]+'</span>';
+  return '<span>—</span>';
 }
+
 function renderCards(){
-  const filtered=activeCat==='all'?YACHTS:activeCat==='weekly'?YACHTS.filter(y=>y.weekRate):YACHTS.filter(y=>y.cat===activeCat);
+  const filtered=activeCat==='all'?YACHTS:activeCat==='weekly'?YACHTS.filter(y=>y.weekly):YACHTS.filter(y=>y.cat===activeCat);
   document.getElementById('cardsGrid').innerHTML=filtered.map(y=>{
-    const img=getPhotoUrl(y,1);
-    const imgStyle=img?`background:${y.color};background-image:url(${img});background-size:cover;background-position:center`:`background:${y.color}`;
-    const iconHtml=img?'':y.icon;
+    const img=y.photos&&y.photos.length?y.photos[0]:null;
+    const imgHtml=img?`<img class="card-img" src="${img}" alt="${y.names[lang]}" loading="lazy">`:`<div class="card-img-placeholder"><span style="font-size:36px">⛵</span></div>`;
     return `<div class="card" onclick="openDetail(${y.id})">
-      <div class="card-img" style="${imgStyle}">${iconHtml}</div>
-      <div class="card-badge avail">${T[lang].avail}</div>
-      ${y.weekRate?`<div class="card-badge" style="top:32px;background:rgba(181,137,58,0.12);border:1px solid rgba(181,137,58,0.3);color:var(--gold);font-size:9px">Weekly</div>`:''}
+      ${imgHtml}
+      <div class="card-badge">${T[lang].avail}</div>
+      ${y.weekly?`<div class="weekly-badge">Weekly</div>`:''}
       <div class="card-fav ${favs.has(y.id)?'on':''}" id="fav${y.id}" onclick="event.stopPropagation();toggleFav(${y.id})">
         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </div>
@@ -852,114 +296,64 @@ function renderCards(){
         <div class="card-price">${getPriceLabel(y)}</div>
       </div>
     </div>`;
-  }).join('')||`<div style="grid-column:1/-1;color:var(--text3);text-align:center;padding:30px 0;font-size:13px">—</div>`;
+  }).join('')||`<div style="grid-column:1/-1;color:var(--text3);text-align:center;padding:30px;font-size:13px">—</div>`;
 }
-function toggleFav(id){if(favs.has(id))favs.delete(id);else favs.add(id);renderCards();}
 
-const FSVG={
-  anchor:`<svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="3"/><path d="M12 8v4m-7 6a7 7 0 0014 0"/><path d="M5 18l-2 2m16-2l2 2"/></svg>`,
-  bed:`<svg viewBox="0 0 24 24"><path d="M2 20v-8a2 2 0 012-2h16a2 2 0 012 2v8"/><path d="M2 15h20"/><path d="M6 10V6a2 2 0 012-2h8a2 2 0 012 2v4"/></svg>`,
-  wifi:`<svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0114.08 0"/><path d="M1.42 9a16 16 0 0121.16 0"/><path d="M8.53 16.11a6 6 0 016.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>`,
-  waves:`<svg viewBox="0 0 24 24"><path d="M2 12s2-3 5-3 5 6 10 6 5-3 5-3"/></svg>`,
-  fish:`<svg viewBox="0 0 24 24"><path d="M20 12c0 0-3-5-8-5s-10 5-10 5 5 5 10 5 8-5 8-5z"/><circle cx="17" cy="12" r="1.5" fill="currentColor"/></svg>`,
-  sun:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>`,
-  users:`<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>`,
-  swim:`<svg viewBox="0 0 24 24"><path d="M2 12s2-3 5-3 5 6 10 6 5-3 5-3"/><circle cx="18" cy="7" r="2"/><path d="M14 7l-4 5"/></svg>`,
-  fridge:`<svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 10h14"/><path d="M9 6v2M9 14v4"/></svg>`,
-  crown:`<svg viewBox="0 0 24 24"><path d="M2 19l2-8 4 4 4-8 4 8 4-4 2 8H2z"/></svg>`,
-  "glass-champagne":`<svg viewBox="0 0 24 24"><path d="M8 21h8M12 15v6M7 3l5 12 5-12H7z"/></svg>`,
-  "air-conditioning":`<svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M8 12h8M6 16l2-4M18 16l-2-4"/></svg>`,
-  jetski:`<svg viewBox="0 0 24 24"><path d="M3 17l5-5h8l5 5"/><path d="M7 12V8l5-4 5 4v4"/></svg>`,
-  "chef-hat":`<svg viewBox="0 0 24 24"><path d="M6 13.87A4 4 0 017.41 6a5.11 5.11 0 0114 0A4 4 0 0118 13.87V21H6z"/><path d="M6 17h12"/></svg>`,
-  music:`<svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
-  grill:`<svg viewBox="0 0 24 24"><path d="M4 8h16"/><path d="M12 8v10"/><path d="M8 18l-2 2M16 18l2 2"/><path d="M4 8a8 8 0 0016 0"/></svg>`,
-  camera:`<svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>`,
-  map:`<svg viewBox="0 0 24 24"><path d="M1 6l7-4 8 4 7-4v16l-7 4-8-4-7 4V6z"/><path d="M8 2v18M16 6v14"/></svg>`,
-  flower:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2a4 4 0 000 8 4 4 0 000-8zM12 14a4 4 0 000 8 4 4 0 000-8zM2 12a4 4 0 008 0 4 4 0 00-8 0zM14 12a4 4 0 008 0 4 4 0 00-8 0z"/></svg>`,
-  star:`<svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
-};
+function toggleFav(id){if(favs.has(id))favs.delete(id);else favs.add(id);renderCards();}
 
 function openDetail(id){
   const y=YACHTS[id],t=T[lang];
-  detailState={mode:'hour',qty:4,extras:new Set(),guests:2,date:'',time:'',duration:'',yachtId:id};
-  renderDetail(y,t);
-  document.getElementById('detailModal').classList.add('open');
-  setTimeout(()=>{
-    const dateEl=document.getElementById('dateInpVisible');
-    if(dateEl){
-      const today=new Date();
-      const mm=String(today.getMonth()+1).padStart(2,'0');
-      const dd=String(today.getDate()).padStart(2,'0');
-      dateEl.min=today.getFullYear()+'-'+mm+'-'+dd;
-    }
-  },50);
-}
-function renderDetail(y,t){
-  const dateDisplayLabel=detailState.date?(()=>{const d=new Date(detailState.date+'T12:00:00');const locale=lang==='ru'?'ru-RU':lang==='me'?'sr-ME':'en-GB';return d.toLocaleDateString(locale,{day:'numeric',month:'long',year:'numeric'});})():(lang==='ru'?'Выберите дату':lang==='me'?'Odaberite datum':'Select date');
-  const extTotal=[...detailState.extras].reduce((s,i)=>s+y.extras[i].price,0);
-  const dateDisplay=detailState.date?new Date(detailState.date).toLocaleDateString(lang==='ru'?'ru-RU':lang==='me'?'sr-ME':'en-GB',{day:'numeric',month:'short'}):t.choose;
-  const feats=y.feats[lang].map(([ic,lb])=>`<div class="feat">${FSVG[ic]||FSVG.anchor}<span>${lb}</span></div>`).join('');
-  const extrasHtml=y.extras.map((ex,i)=>`<div class="extra ${detailState.extras.has(i)?'sel':''}" onclick="toggleExtra(${y.id},${i})"><svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg><div class="extra-info"><div class="extra-name">${ex[lang]}</div><div class="extra-p">+${ex.price} €</div></div></div>`).join('');
+  detailState={extras:new Set(),guests:2,date:'',duration:'',yachtId:id};
 
-  // build photo gallery or icon
-  const photos=y.photos;
-  let headerHtml;
-  if(photos&&photos.urls&&photos.urls.length>0){
-    const imgs=photos.urls.map((url,i)=>`<img src="${url}" style="width:100%;height:220px;object-fit:cover;display:block;flex-shrink:0;scroll-snap-align:start" loading="${i===0?'eager':'lazy'}" alt="${y.names['en']} photo ${i+1}">`).join('');
-    headerHtml=`<div style="position:relative"><div id="gallery_${y.id}" style="display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch">${imgs}</div><div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:4px">${photos.urls.slice(0,8).map(()=>`<div style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.6)"></div>`).join('')}</div></div>`;
-  } else {
-    headerHtml=`<div class="modal-img" style="background:${y.color}">${y.icon}</div>`;
-  }
-  // build price display
-  let priceDisplay;
-  if(y.hourRate&&y.dayRate){priceDisplay=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px"><div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:10px;text-align:center"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">за час</div><div style="font-size:18px;font-weight:500;color:var(--navy)">${y.hourRate.toLocaleString()} €</div></div><div style="background:var(--gold-dim);border:1px solid rgba(181,137,58,0.2);border-radius:var(--rs);padding:10px;text-align:center"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">за день</div><div style="font-size:18px;font-weight:500;color:var(--gold)">${y.dayRate.toLocaleString()} €</div></div></div>`;}
-  else if(y.dayRate){priceDisplay=`<div style="background:var(--gold-dim);border:1px solid rgba(181,137,58,0.2);border-radius:var(--rs);padding:12px;text-align:center;margin-bottom:14px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">стоимость за день / price per day</div><div style="font-size:26px;font-weight:500;color:var(--gold)">${y.dayRate.toLocaleString()} €</div><div style="font-size:11px;color:var(--text3);margin-top:2px">топливо оплачивается отдельно</div></div>`;}
-  else if(y.weekRate){priceDisplay=`<div style="background:var(--gold-dim);border:1px solid rgba(181,137,58,0.2);border-radius:var(--rs);padding:12px;text-align:center;margin-bottom:14px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">стоимость за неделю / price per week</div><div style="font-size:26px;font-weight:500;color:var(--gold)">${y.weekRate.toLocaleString()} €</div></div>`;}
-  else{priceDisplay=`<div style="background:var(--bg3);border-radius:var(--rs);padding:12px;text-align:center;margin-bottom:14px;color:var(--text2);font-size:13px">Цена по запросу / Price on request</div>`;}
+  const galHtml=y.photos&&y.photos.length
+    ?`<div class="modal-gallery">${y.photos.map((p,i)=>`<img src="${p}" alt="${y.names[lang]} ${i+1}" loading="${i===0?'eager':'lazy'}">`).join('')}</div>`
+    :`<div class="modal-gallery-placeholder"><span style="font-size:48px">⛵</span></div>`;
+
+  const priceHtml=y.weekRate
+    ?`<div class="price-box"><div class="price-label">${t.calcTitle}</div><div class="price-amount">${y.weekRate.toLocaleString()} €</div><div class="price-note">1 ${t.overnight.toLowerCase()}</div></div>`
+    :y.dayRate
+    ?`<div class="price-box"><div class="price-label">${t.calcTitle}</div><div class="price-amount">${y.dayRate.toLocaleString()} €</div><div class="price-note">${y.fuelIncl?'⛽ '+t.calcTitle:'⛽ '+t.fuelExtra}</div></div>`
+    :`<div class="price-box"><div class="price-label">${t.calcTitle}</div><div class="price-amount" style="font-size:20px">${lang==='ru'?'По запросу':lang==='me'?'Na upit':'On request'}</div></div>`;
+
+  const featsHtml=y.feats[lang].map(f=>`<div class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg><span>${f[0]}</span></div>`).join('');
+  const extrasHtml=y.extras.map((ex,i)=>`<div class="extra ${detailState.extras.has(i)?'sel':''}" onclick="toggleExtra(${y.id},${i})"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg><div><div class="extra-name">${ex[lang]}</div><div class="extra-p">+${ex.price>0?ex.price+'€':t.choose}</div></div></div>`).join('');
+
+  const dateVal=detailState.date||'';
+  const dateLbl=dateVal?(()=>{const d=new Date(dateVal+'T12:00:00');return d.toLocaleDateString(lang==='ru'?'ru-RU':lang==='me'?'sr-ME':'en-GB',{day:'numeric',month:'long',year:'numeric'});})():(lang==='ru'?'Выберите дату':lang==='me'?'Odaberite datum':'Select date');
 
   document.getElementById('detailContent').innerHTML=`
-    ${headerHtml}
+    ${galHtml}
     <div class="modal-body">
       <div class="modal-title">${y.names[lang]}</div>
       <div class="modal-sub">${y.types[lang]} · ${y.metas[lang]}</div>
-      <div class="tag-row">${y.tags[lang].map(tg=>`<span class="tag">${tg}</span>`).join('')}<span class="tag green">${t.avail}</span>${y.weekRate?`<span class="tag gold">Weekly charter</span>`:''}</div>
+      <div class="tag-row">
+        ${y.tags[lang].map(tg=>`<span class="tag">${tg}</span>`).join('')}
+        <span class="tag green">${t.avail}</span>
+        ${y.weekly?`<span class="tag gold">Weekly</span>`:''}
+      </div>
       <div class="desc-text">${y.descs[lang]}</div>
       <div class="section-lbl">${t.included}</div>
-      <div class="features-grid">${feats}</div>
-      ${priceDisplay}
-      <div class="section-lbl" style="margin-top:18px">${t.extras}</div>
+      <div class="features-grid">${featsHtml}</div>
+      <div style="margin-top:16px">${priceHtml}</div>
+      <div class="section-lbl" style="margin-top:16px">${t.extras}</div>
       <div class="extras-grid">${extrasHtml}</div>
       <div class="modal-divider"></div>
       <div class="form-section">
-        <div class="section-lbl">${t.dateTime}</div>
-        <div style="margin-bottom:12px">
-          <div style="font-size:11px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">${t.startDate}</div>
-          <label style="display:block;position:relative;cursor:pointer">
-            <div id="dateLabelDisp" style="width:100%;padding:11px 14px;font-size:14px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg3);color:${detailState.date?'var(--text)':'var(--text3)'};display:flex;align-items:center;justify-content:space-between">
-              <span>${dateDisplayLabel}</span>
-              <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--gold);fill:none;stroke-width:2;flex-shrink:0"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-            </div>
-            <input type="date" id="dateInpVisible" onchange="setDate(this.value)" value="${detailState.date||''}"
-              style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
-          </label>
+        <div class="section-lbl">${t.startDate}</div>
+        <label style="display:block;position:relative;cursor:pointer;margin-bottom:10px">
+          <div style="width:100%;padding:11px 14px;font-size:14px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg3);color:${dateVal?'var(--text)':'var(--text3)'};display:flex;align-items:center;justify-content:space-between">
+            <span id="dateLblSpan">${dateLbl}</span>
+            <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--gold);fill:none;stroke-width:2;flex-shrink:0"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          </div>
+          <input type="date" id="dateInp" onchange="setDate(this.value)" value="${dateVal}" style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
+        </label>
+        <div class="section-lbl">${t.durLabel}</div>
+        <div class="dur-row" id="durHours">
+          ${[2,3,4,5,6,7,8].map(h=>`<div class="dur-btn ${detailState.duration===h+'h'?'sel-h':''}" onclick="setDur(${h},'h')">${h} ${lang==='ru'?'ч':lang==='me'?'h':'h'}</div>`).join('')}
         </div>
-        <div style="margin-bottom:10px">
-          <div style="font-size:11px;color:var(--text3);margin-bottom:5px">${t.durLabel}</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">
-            ${[2,3,4,5,6,7,8].map(h=>{
-              const sel=detailState.duration===h+'h';
-              const lbl=lang==='ru'?h+' ч':lang==='me'?h+' h':h+' h';
-              return '<div onclick="setDuration(\'' + h + 'h\')" style="padding:7px 12px;border-radius:var(--rs);border:1px solid '+(sel?'var(--navy)':'var(--border2)')+';background:'+(sel?'var(--navy)':'var(--bg3)')+';color:'+(sel?'#fff':'var(--text2)')+';cursor:pointer;font-size:13px">'+lbl+'</div>';
-            }).join('')}
-          </div>
-          <div style="font-size:11px;color:var(--text3);margin-bottom:5px;margin-top:8px">${t.overnight}</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            ${[1,2,3,4,5,6,7].map(d=>{
-              const sel=detailState.duration===d+'d';
-              const lbl=lang==='ru'?(d+' '+(d===1?'день':d<5?'дня':'дней')):lang==='me'?(d+' '+(d===1?'dan':'dana')):d+(d===1?' day':' days');
-              return '<div onclick="setDuration(\'' + d + 'd\')" style="padding:7px 12px;border-radius:var(--rs);border:1px solid '+(sel?'var(--gold)':'var(--border2)')+';background:'+(sel?'var(--gold-dim)':'var(--bg3)')+';color:'+(sel?'var(--gold)':'var(--text2)')+';cursor:pointer;font-size:13px">'+lbl+'</div>';
-            }).join('')}
-          </div>
+        <div style="font-size:11px;color:var(--text3);margin:8px 0 5px;text-transform:uppercase;letter-spacing:.05em">${t.overnight}</div>
+        <div class="dur-row" id="durDays">
+          ${[1,2,3,4,5,6,7].map(d=>`<div class="dur-btn ${detailState.duration===d+'d'?'sel-d':''}" onclick="setDur(${d},'d')">${d} ${lang==='ru'?(d===1?'день':d<5?'дня':'дней'):lang==='me'?(d===1?'dan':'dana'):(d===1?'day':'days')}</div>`).join('')}
         </div>
         <div class="err-msg" id="dateErr" style="display:none">${t.noDate}</div>
       </div>
@@ -973,7 +367,7 @@ function renderDetail(y,t){
       </div>
       <div class="form-section">
         <div class="section-lbl">${t.guests}</div>
-        <div class="guests-row" style="margin-bottom:4px">
+        <div class="guests-row">
           <div class="g-btn" onclick="changeGuests(-1)">−</div>
           <div class="g-num" id="guestNum">${detailState.guests}</div>
           <div class="g-btn" onclick="changeGuests(1)">+</div>
@@ -987,96 +381,117 @@ function renderDetail(y,t){
       <button class="book-btn" onclick="submitBooking(${y.id})">${t.bookBtn}</button>
       <div style="height:10px"></div>
     </div>`;
+
+  document.getElementById('detailModal').classList.add('open');
+  setTimeout(()=>{
+    const el=document.getElementById('dateInp');
+    if(el){const td=new Date();const mm=String(td.getMonth()+1).padStart(2,'0');const dd=String(td.getDate()).padStart(2,'0');el.min=td.getFullYear()+'-'+mm+'-'+dd;}
+  },50);
 }
-
-
-function toggleExtra(yid,i){if(detailState.extras.has(i))detailState.extras.delete(i);else detailState.extras.add(i);renderDetail(YACHTS[yid],T[lang]);}
-function changeGuests(d){const y=YACHTS[detailState.yachtId||0];detailState.guests=Math.max(1,Math.min(y.capacity,detailState.guests+d));document.getElementById('guestNum').textContent=detailState.guests;}
 
 function setDate(v){
   detailState.date=v;
-  const el=document.getElementById('dateLabelDisp');
-  if(el&&v){
-    const d=new Date(v+'T12:00:00');
-    const locale=lang==='ru'?'ru-RU':lang==='me'?'sr-ME':'en-GB';
-    el.querySelector('span').textContent=d.toLocaleDateString(locale,{day:'numeric',month:'long',year:'numeric'});
-    el.style.color='var(--text)';
-  }
+  const el=document.getElementById('dateLblSpan');
+  if(el&&v){const d=new Date(v+'T12:00:00');el.textContent=d.toLocaleDateString(lang==='ru'?'ru-RU':lang==='me'?'sr-ME':'en-GB',{day:'numeric',month:'long',year:'numeric'});el.style.color='var(--text)';}
 }
-function setTime(v){detailState.time=v;renderDetail(YACHTS[detailState.yachtId],T[lang]);}
-function setDuration(v){detailState.duration=v;renderDetail(YACHTS[detailState.yachtId],T[lang]);}
+
+function setDur(n,type){
+  detailState.duration=n+type;
+  document.querySelectorAll('.dur-btn').forEach(b=>b.classList.remove('sel-h','sel-d'));
+  event.target.classList.add(type==='h'?'sel-h':'sel-d');
+}
+
+function toggleExtra(yid,i){
+  if(detailState.extras.has(i))detailState.extras.delete(i);else detailState.extras.add(i);
+  document.querySelectorAll('.extras-grid .extra').forEach((el,idx)=>el.classList.toggle('sel',detailState.extras.has(idx)));
+}
+
+function changeGuests(d){
+  const y=YACHTS[detailState.yachtId];
+  detailState.guests=Math.max(1,Math.min(y.capacity,detailState.guests+d));
+  document.getElementById('guestNum').textContent=detailState.guests;
+}
 
 function submitBooking(yid){
   const t=T[lang];let ok=true;
   if(!detailState.date||!detailState.duration){document.getElementById('dateErr').style.display='block';ok=false;}else document.getElementById('dateErr').style.display='none';
-  const nm=document.getElementById('nameInp').value.trim(),ph=document.getElementById('phoneInp').value.trim();
+  const nm=document.getElementById('nameInp').value.trim();
+  const ph=document.getElementById('phoneInp').value.trim();
   if(!nm){document.getElementById('nameErr').style.display='block';ok=false;}else document.getElementById('nameErr').style.display='none';
   if(!ph){document.getElementById('phoneErr').style.display='block';ok=false;}else document.getElementById('phoneErr').style.display='none';
   if(!ok)return;
+
   const y=YACHTS[yid];
   const extTotal=[...detailState.extras].reduce((s,i)=>s+y.extras[i].price,0);
-  const basePrice=y.hourRate||y.dayRate||y.weekRate||0;
+  const basePrice=y.weekRate||y.dayRate||0;
   const total=basePrice+extTotal;
-  const unit=y.hourRate?t.hours:y.weekRate?'нед.':t.days;
-  const dateStr=new Date(detailState.date).toLocaleDateString(lang==='ru'?'ru-RU':lang==='me'?'sr-ME':'en-GB',{day:'numeric',month:'long',year:'numeric'});
+  const dateStr=new Date(detailState.date+'T12:00:00').toLocaleDateString(lang==='ru'?'ru-RU':lang==='me'?'sr-ME':'en-GB',{day:'numeric',month:'long',year:'numeric'});
+  const durStr=detailState.duration;
   const extrasNames=[...detailState.extras].map(i=>y.extras[i][lang]).join(', ');
   const comment=document.getElementById('commentInp').value.trim();
-  const emoji={ru:'🛥 НОВАЯ ЗАЯВКА',en:'🛥 NEW BOOKING',me:'🛥 NOVA REZERVACIJA'}[lang];
-  const durLabel=detailState.duration?(detailState.duration.endsWith('h')?detailState.duration.replace('h',' часов'):detailState.duration.replace('d',' дней')):'';
-  const tgMsg=`${emoji}\nЯхта: ${y.names[lang]}\nКлиент: ${nm}\nКонтакт: ${ph}\nДата: ${dateStr}\nДлительность: ${durLabel}\nГостей: ${detailState.guests}${extrasNames?'\nДопы: '+extrasNames:''}${comment?'\nКоммент: '+comment:''}\nИтого: ${total} €\n---\nПодтвердить в течение 4 ч`;
-  // Send directly to Telegram Bot API
-  const botToken='8864246711:AAH1dASsllqCtr6pI7cYDfDrA004hKLaO6o';
-  const ownerId=70131641;
-  const bookingMsg='🛥 НОВАЯ ЗАЯВКА\n'+'─'.repeat(28)+'\n'+'🚢 Яхта: '+y.names['en']+'\n'+'👤 Клиент: '+nm+'\n'+'📱 Контакт: '+ph+'\n'+'📅 Дата: '+dateStr+'\n'+'⏱ Длит.: '+(detailState.duration||'—')+'\n'+'👥 Гостей: '+detailState.guests+(extrasNames?'\n➕ Допы: '+extrasNames:'')+(comment?'\n💬 Коммент: '+comment:'')+'\n'+'─'.repeat(28)+'\n'+'💰 Итого: '+total+' €\n\n❗ Подтверди в течение 4 часов';
-  fetch('https://api.telegram.org/bot'+botToken+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:ownerId,text:bookingMsg,parse_mode:'HTML'})}).catch(e=>console.log('Send error:',e));
+
+  const msg='🛥 НОВАЯ ЗАЯВКА\n'+'─'.repeat(26)+'\n'
+    +'🚢 Яхта: '+y.names['en']+'\n'
+    +'👤 Клиент: '+nm+'\n'
+    +'📱 Контакт: '+ph+'\n'
+    +'📅 Дата: '+dateStr+'\n'
+    +'⏱ Длит.: '+durStr+'\n'
+    +'👥 Гостей: '+detailState.guests
+    +(extrasNames?'\n➕ Допы: '+extrasNames:'')
+    +(comment?'\n💬 '+comment:'')+'\n'
+    +'─'.repeat(26)+'\n'
+    +'💰 '+total+' €\n\n❗ Подтвердить в течение 4 ч';
+
+  fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msg})}).catch(e=>console.log(e));
+
   clearInterval(timerInterval);
   document.getElementById('detailContent').innerHTML=`
     <div class="confirm-wrap">
       <div class="confirm-icon-ring"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
       <div class="confirm-title-big">${t.reqSent}</div>
       <div class="confirm-sub">${t.confirmSub(nm,ph)}</div>
-      <div class="timer-box"><div class="timer-label">${t.timerLabel}</div><div class="timer-count" id="timerDisplay">04:00:00</div></div>
+      <div class="timer-box"><div class="timer-label">${t.timerLabel}</div><div class="timer-count" id="timerDisp">04:00:00</div></div>
       <div class="summary-card">
         <div class="sline"><span class="sl">${t.summaryYacht}</span><span class="sv">${y.names[lang]}</span></div>
         <div class="sline"><span class="sl">${t.summaryDate}</span><span class="sv">${dateStr}</span></div>
-        <div class="sline"><span class="sl">${t.summaryTime}</span><span class="sv">${detailState.time}</span></div>
+        <div class="sline"><span class="sl">${t.summaryDur}</span><span class="sv">${durStr}</span></div>
         <div class="sline"><span class="sl">${t.summaryGuests}</span><span class="sv">${detailState.guests}</span></div>
         <div class="sline"><span class="sl">${t.summaryExtras}</span><span class="sv">${extrasNames||'—'}</span></div>
         <div class="sline"><span class="sl">${t.summaryTotal}</span><span class="sv gold">${total} €</span></div>
       </div>
-      <div class="tg-preview"><div class="tg-preview-label">${t.tgLabel}</div><div class="tg-preview-msg">${tgMsg}</div></div>
       <button class="new-btn" onclick="resetAndClose()">${t.newBooking}</button>
     </div>`;
   let secs=4*3600;
-  timerInterval=setInterval(()=>{secs--;if(secs<=0){clearInterval(timerInterval);return;}const h=Math.floor(secs/3600).toString().padStart(2,'0'),m=Math.floor((secs%3600)/60).toString().padStart(2,'0'),s=(secs%60).toString().padStart(2,'0');const el=document.getElementById('timerDisplay');if(el)el.textContent=`${h}:${m}:${s}`;},1000);
+  timerInterval=setInterval(()=>{secs--;if(secs<=0){clearInterval(timerInterval);return;}const h=String(Math.floor(secs/3600)).padStart(2,'0'),m=String(Math.floor((secs%3600)/60)).padStart(2,'0'),s=String(secs%60).padStart(2,'0');const el=document.getElementById('timerDisp');if(el)el.textContent=h+':'+m+':'+s;},1000);
 }
+
 function resetAndClose(){clearInterval(timerInterval);closeDetail();}
 function closeDetail(){document.getElementById('detailModal').classList.remove('open');}
 function openSpecial(){document.getElementById('specialModal').classList.add('open');}
 function closeSpecial(){document.getElementById('specialModal').classList.remove('open');}
 function selUrg(i){urgSel=i;for(let j=0;j<4;j++)document.getElementById('urg'+j).classList.toggle('sel',j===i);}
+
 function sendSpecial(){
-  const req=document.getElementById('specRequest').value.trim(),contact=document.getElementById('specContact').value.trim();
+  const req=document.getElementById('specRequest').value.trim();
+  const contact=document.getElementById('specContact').value.trim();
   if(!contact){document.getElementById('specContact').classList.add('err');return;}
   document.getElementById('specContact').classList.remove('err');
-  const t=T[lang],urgLabel=t.urgLabels[urgSel];
-  const botToken2='8864246711:AAH1dASsllqCtr6pI7cYDfDrA004hKLaO6o';
-  const specMsg='⭐ СПЕЦЗАПРОС / VIP\n'+'─'.repeat(28)+'\n'+'⚡ Срочность: '+urgLabel+'\n'+'📝 Запрос: '+(req||'—')+'\n'+'📱 Контакт: '+contact+'\n'+'─'.repeat(28)+'\nОтветь клиенту как можно скорее!';
-  fetch('https://api.telegram.org/bot'+botToken2+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:70131641,text:specMsg})}).catch(e=>console.log(e));
+  const t=T[lang];
+  const msg='⭐ СПЕЦЗАПРОС\n'+'─'.repeat(26)+'\n'+'⚡ '+t.urgLabels[urgSel]+'\n'+'📝 '+(req||'—')+'\n'+'📱 '+contact+'\n'+'─'.repeat(26)+'\nОтветь клиенту как можно скорее!';
+  fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msg})}).catch(e=>console.log(e));
   document.getElementById('specRequest').value='';document.getElementById('specContact').value='';
   closeSpecial();
-  const b=document.getElementById('specialBanner');b.querySelector('.special-title').textContent='✓ '+t.specSend;
+  const b=document.getElementById('specialBanner');
+  b.querySelector('.special-title').textContent='✓ '+t.specSend;
   setTimeout(()=>{b.querySelector('.special-title').textContent=t.sbanTitle;},2500);
 }
+
 function showView(v){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.getElementById('nav'+v.charAt(0).toUpperCase()+v.slice(1))?.classList.add('active');}
 function showOrders(){
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('navOrders').classList.add('active');
-  const msg=lang==='ru'?'Ваши заявки обрабатываются менеджером. Ответ придёт в этот чат в течение 4 часов.':lang==='me'?'Vaše rezervacije se obrađuju. Odgovor će stići u roku od 4 sata.':'Your bookings are being processed. You will receive a reply in this chat within 4 hours.';
+  const msg=lang==='ru'?'Ваши заявки обрабатываются менеджером. Ответ придёт в этот чат в течение 4 часов.':lang==='me'?'Vaše rezervacije se obrađuju. Odgovor stiže u roku od 4 sata.':'Your bookings are being processed. You will receive a reply within 4 hours.';
   alert(msg);
-  document.getElementById('navCatalog').classList.add('active');
-  document.getElementById('navOrders').classList.remove('active');
 }
+
 init();
 </script>
 </body>
