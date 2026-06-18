@@ -303,7 +303,12 @@ function toggleFav(id){if(favs.has(id))favs.delete(id);else favs.add(id);renderC
 
 function openDetail(id){
   const y=YACHTS[id],t=T[lang];
-  detailState={extras:new Set(),guests:2,date:'',duration:'',yachtId:id};
+  // Get Telegram user data
+  const tgUser=window.Telegram?.WebApp?.initDataUnsafe?.user||null;
+  const tgName=tgUser?(tgUser.first_name||'')+(tgUser.last_name?' '+tgUser.last_name:''):'';
+  const tgUsername=tgUser&&tgUser.username?'@'+tgUser.username:'';
+  const tgId=tgUser?tgUser.id:null;
+  detailState={extras:new Set(),guests:2,date:'',duration:'',yachtId:id,tgName,tgUsername,tgId};
 
   const galHtml=y.photos&&y.photos.length
     ?`<div class="modal-gallery">${y.photos.map((p,i)=>`<img src="${p}" alt="${y.names[lang]} ${i+1}" loading="${i===0?'eager':'lazy'}">`).join('')}</div>`
@@ -386,6 +391,9 @@ function openDetail(id){
   setTimeout(()=>{
     const el=document.getElementById('dateInp');
     if(el){const td=new Date();const mm=String(td.getMonth()+1).padStart(2,'0');const dd=String(td.getDate()).padStart(2,'0');el.min=td.getFullYear()+'-'+mm+'-'+dd;}
+    // Auto-fill from Telegram
+    if(detailState.tgName){const ni=document.getElementById('nameInp');if(ni&&!ni.value)ni.value=detailState.tgName;}
+    if(detailState.tgUsername){const pi=document.getElementById('phoneInp');if(pi&&!pi.value)pi.value=detailState.tgUsername;}
   },50);
 }
 
@@ -444,6 +452,8 @@ function submitBooking(yid){
 
   fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msg})}).catch(e=>console.log(e));
 
+  // Save to local orders history
+  saveMyOrder({yacht:y.names[lang],date:dateStr,duration:durStr,guests:detailState.guests,extras:extrasNames,total,ts:Date.now()});
   clearInterval(timerInterval);
   document.getElementById('detailContent').innerHTML=`
     <div class="confirm-wrap">
