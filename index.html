@@ -33,7 +33,7 @@ body{display:flex;flex-direction:column;min-height:100vh}
 .cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:.2s;position:relative;box-shadow:var(--shadow)}
 .card:hover{border-color:rgba(0,0,0,0.18);box-shadow:var(--shadow-hover);transform:translateY(-2px)}
-.card-img{width:100%;height:110px;object-fit:cover;display:block;background:var(--bg3)}
+.card-img{width:100%;height:110px;object-fit:cover;display:block;background:var(--bg3);transition:transform .1s linear;transform-origin:center}
 .card-img-placeholder{width:100%;height:110px;display:flex;align-items:center;justify-content:center;background:var(--bg3)}
 .card-badge{position:absolute;top:7px;left:7px;background:rgba(255,255,255,0.92);border:1px solid rgba(0,0,0,0.08);border-radius:5px;font-size:9px;color:var(--green);font-weight:500;letter-spacing:.04em;padding:2px 7px}
 .card-fav{position:absolute;top:6px;right:6px;background:rgba(255,255,255,0.85);border:1px solid var(--border);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer}
@@ -130,18 +130,74 @@ body{display:flex;flex-direction:column;min-height:100vh}
 .urg-icon{font-size:22px;margin-bottom:5px}
 .urg-label{color:var(--text2);font-size:12px;line-height:1.4}
 .urg-card.sel .urg-label{color:var(--gold);font-weight:500}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes boatSail{0%{transform:translateX(-8px) rotate(-2deg)}25%{transform:translateX(2px) rotate(1deg)}50%{transform:translateX(6px) rotate(-1deg)}75%{transform:translateX(2px) rotate(2deg)}100%{transform:translateX(-8px) rotate(-2deg)}}
+@keyframes wavePulse{0%,100%{opacity:0.6}50%{opacity:1}}
+@keyframes skeletonShimmer{0%{background-position:-200px 0}100%{background-position:200px 0}}
+.skeleton{background:linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%);background-size:400px 100%;animation:skeletonShimmer 1.4s ease-in-out infinite}
+
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes shimmer{0%{opacity:.6}50%{opacity:1}100%{opacity:.6}}
+.card{animation:fadeInUp .32s ease both}
+.review-card{animation:fadeInUp .32s ease both}
+.anim-pulse{animation:pulse 2s ease-in-out infinite}
+.anim-float{animation:floatY 3s ease-in-out infinite}
+.nav-item{transition:color .2s;position:relative;-webkit-tap-highlight-color:transparent}
+.nav-item svg,.nav-item .dice-scene{transition:transform .18s cubic-bezier(.34,1.56,.64,1),filter .18s,color .2s}
+.nav-item:active svg,.nav-item.tap svg{transform:scale(0.85)}
+.nav-item.active svg{filter:drop-shadow(0 0 4px currentColor)}
+@keyframes navPop{0%{transform:scale(1)}40%{transform:scale(1.28) translateY(-3px)}70%{transform:scale(0.92)}100%{transform:scale(1)}}
+@keyframes navGlow{0%{filter:drop-shadow(0 0 0px currentColor)}50%{filter:drop-shadow(0 0 6px currentColor)}100%{filter:drop-shadow(0 0 0px currentColor)}}
+@keyframes diceFlip{0%{transform:rotateY(0deg) scale(1)}30%{transform:rotateY(90deg) scale(1.2)}60%{transform:rotateY(270deg) scale(1.2)}100%{transform:rotateY(360deg) scale(1)}}
+.nav-icon-pop{animation:navPop .35s cubic-bezier(.34,1.56,.64,1) forwards}
+.nav-icon-glow{animation:navGlow .5s ease forwards}
+.dice-flip{animation:diceFlip .5s cubic-bezier(.34,1.56,.64,1) forwards}
+.cat-pill{transition:all .18s}
+.card:hover{transform:translateY(-2px)}
+.star-btn{transition:transform .12s;display:inline-block;cursor:pointer}
+.star-btn:hover{transform:scale(1.3)}
 </style>
 </head>
 <body>
-<div class="app-header">
+<div class="app-header" style="position:relative;overflow:visible">
   <div class="header-top">
-    <div class="logo">ADRIATIC<span>yachts</span></div>
+    <div class="logo" style="display:flex;align-items:center;gap:8px">
+    <span id="boatEl" style="font-size:16px;display:inline-block;animation:boatSail 12s linear infinite;position:relative">⛵</span>
+    ADRIATIC<span>yachts</span>
+  </div>
     <div class="lang-switcher">
       <button class="lang-btn" onclick="setLang('ru')">RU</button>
       <button class="lang-btn active" onclick="setLang('en')">EN</button>
       <button class="lang-btn" onclick="setLang('me')">ME</button>
     </div>
   </div>
+</div>
+<div style="position:relative;height:32px;margin-top:-1px;pointer-events:none;overflow:hidden;z-index:49">
+  <svg viewBox="0 0 360 32" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+    <defs>
+      <linearGradient id="wg1" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(181,137,58,0.18)"/>
+        <stop offset="100%" stop-color="rgba(181,137,58,0)"/>
+      </linearGradient>
+      <linearGradient id="wg2" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(247,245,241,0.7)"/>
+        <stop offset="100%" stop-color="rgba(247,245,241,0)"/>
+      </linearGradient>
+    </defs>
+    <path id="wave1" fill="url(#wg1)" opacity="0.8">
+      <animate attributeName="d" dur="6s" repeatCount="indefinite"
+        values="M0,16 C60,28 120,4 180,16 C240,28 300,4 360,16 L360,0 L0,0 Z;
+                M0,10 C60,22 120,0 180,12 C240,24 300,2 360,14 L360,0 L0,0 Z;
+                M0,16 C60,28 120,4 180,16 C240,28 300,4 360,16 L360,0 L0,0 Z"/>
+    </path>
+    <path id="wave2" fill="url(#wg2)" opacity="0.6">
+      <animate attributeName="d" dur="4s" repeatCount="indefinite"
+        values="M0,20 C80,8 160,26 240,14 C300,6 330,20 360,18 L360,0 L0,0 Z;
+                M0,14 C80,26 160,10 240,22 C300,30 330,12 360,16 L360,0 L0,0 Z;
+                M0,20 C80,8 160,26 240,14 C300,6 330,20 360,18 L360,0 L0,0 Z"/>
+    </path>
+  </svg>
 </div>
 <div class="special-banner" id="specialBanner" onclick="openSpecial()" style="margin-top:0">
   <div class="special-icon">⭐</div>
@@ -165,12 +221,20 @@ body{display:flex;flex-direction:column;min-height:100vh}
     <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
     <span id="navOrdersLbl">Bookings</span>
   </div>
-  <div class="nav-item" id="navSlot" onclick="openSlot()">
-    <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 12h.01M12 12h.01M16 12h.01M8 8h.01M12 8h.01M16 8h.01M8 16h.01M12 16h.01M16 16h.01"/></svg>
-    <span id="navSlotLbl">Удиви</span>
+  <div class="nav-item" id="navSlot" onclick="spinDiceThenOpen()">
+    <svg viewBox="0 0 24 24" id="diceIcon" style="transition:transform .4s cubic-bezier(.34,1.56,.64,1)"><rect x="2" y="2" width="20" height="20" rx="4"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/><circle cx="17" cy="7" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="7" cy="17" r="1.5" fill="currentColor"/><circle cx="17" cy="17" r="1.5" fill="currentColor"/></svg>
+    <span id="navSlotLbl">Фортуна</span>
+  </div>
+  <div class="nav-item" id="navPicker" onclick="openPicker()">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg>
+    <span id="navPickerLbl">Подбор</span>
+  </div>
+  <div class="nav-item" id="navRoutes" onclick="openRoutes()">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/><path d="M8 12h.01"/></svg>
+    <span id="navRoutesLbl">Маршруты</span>
   </div>
   <div class="nav-item" id="navSpecial" onclick="openSpecial()">
-    <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    <svg viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>
     <span id="navSpecialLbl">Менеджер</span>
   </div>
 </div>
@@ -194,7 +258,9 @@ body{display:flex;flex-direction:column;min-height:100vh}
       <textarea class="inp" id="specRequest" style="height:80px;resize:none;margin-bottom:8px" placeholder="E.g. yacht for 15 people, wedding June 20..."></textarea>
       <div class="section-lbl">Contact</div>
       <input class="inp" id="specContact" placeholder="Telegram / phone" type="text">
-      <button class="book-btn" id="specSendBtn" onclick="sendSpecial()" style="margin-bottom:12px">Send request</button>
+      <button class="book-btn" id="specSendBtn" onclick="sendSpecial()" style="margin-bottom:8px">Send request</button>
+      <button onclick="closeSpecial();setTimeout(openReviews,200)" style="background:transparent;border:1px solid var(--border2);border-radius:var(--rs);width:100%;padding:10px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text2);margin-bottom:8px" id="reviewsBtnSpec">⭐ Отзывы гостей</button>
+      <button onclick="closeSpecial();setTimeout(openQuiz,200)" style="background:transparent;border:1px solid var(--border2);border-radius:var(--rs);width:100%;padding:10px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text2);margin-bottom:12px">🎯 Какая я яхта? Узнать</button>
     </div>
   </div>
 </div>
@@ -258,7 +324,9 @@ function renderAll(){
   document.getElementById('navCatalogLbl').textContent=t.catalog;
   document.getElementById('navOrdersLbl').textContent=t.orders;
   document.getElementById('navSpecialLbl').textContent=t.vipReq;
-  const slotLbl=document.getElementById('navSlotLbl');if(slotLbl)slotLbl.textContent=lang==='ru'?'Удиви':lang==='me'?'Iznenadi':'Surprise';
+  const pickerLbl=document.getElementById('navPickerLbl');if(pickerLbl)pickerLbl.textContent=lang==='ru'?'Подбор':lang==='me'?'Izbor':'Match';
+  const routesLbl=document.getElementById('navRoutesLbl');if(routesLbl)routesLbl.textContent=lang==='ru'?'Маршруты':lang==='me'?'Rute':'Routes';
+  const slotLbl=document.getElementById('navSlotLbl');if(slotLbl)slotLbl.textContent=lang==='ru'?'Фортуна':lang==='me'?'Fortuna':'Fortune';
   document.getElementById('specTitle').textContent=t.specTitle;
   document.getElementById('specSub').textContent=t.specSub;
   document.getElementById('specUrgLabel').textContent=t.specUrgLabel;
@@ -284,7 +352,10 @@ function getPriceLabel(y){
 
 function renderCards(){
   const filtered=activeCat==='all'?YACHTS:activeCat==='weekly'?YACHTS.filter(y=>y.weekly):YACHTS.filter(y=>y.cat===activeCat);
-  document.getElementById('cardsGrid').innerHTML=filtered.map(y=>{
+  const grid=document.getElementById('cardsGrid');
+  grid.innerHTML=renderSkeletonCards(Math.min(filtered.length,6));
+  setTimeout(()=>{
+  grid.innerHTML=filtered.map(y=>{
     const img=y.photos&&y.photos.length?y.photos[0]:null;
     const imgHtml=img?`<img class="card-img" src="${img}" alt="${y.names[lang]}" loading="lazy">`:`<div class="card-img-placeholder"><span style="font-size:36px">⛵</span></div>`;
     return `<div class="card" onclick="openDetail(${y.id})">
@@ -294,6 +365,9 @@ function renderCards(){
       <div class="card-fav ${favs.has(y.id)?'on':''}" id="fav${y.id}" onclick="event.stopPropagation();toggleFav(${y.id})">
         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </div>
+      <div style="position:absolute;top:6px;left:7px;background:rgba(255,255,255,0.85);border:1px solid var(--border);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="event.stopPropagation();shareYacht(${y.id})" title="Поделиться">
+        <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:var(--text3);fill:none;stroke-width:2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+      </div>
       <div class="card-divider"></div>
       <div class="card-body">
         <div class="card-name">${y.names[lang]}</div>
@@ -302,8 +376,18 @@ function renderCards(){
       </div>
     </div>`;
   }).join('')||`<div style="grid-column:1/-1;color:var(--text3);text-align:center;padding:30px;font-size:13px">—</div>`;
+  },400);
 }
 
+function shareYacht(id){
+  const y=YACHTS[id];
+  const name=y.names[lang];
+  const price=y.dayRate?y.dayRate.toLocaleString()+'€/день':y.weekRate?y.weekRate.toLocaleString()+'€/неделю':'';
+  const text=`🛥 ${name}\n${y.types[lang]} · ${y.metas[lang]}\n💰 ${price}\n\nАренда яхт в Черногории — Adriatic Yachts`;
+  const url='https://408mne.github.io/adriaticyachts';
+  if(navigator.share){navigator.share({title:name,text,url}).catch(()=>{});}
+  else{const tgUrl='https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text);window.open(tgUrl,'_blank');}
+}
 function toggleFav(id){if(favs.has(id))favs.delete(id);else favs.add(id);renderCards();}
 
 function openDetail(id){
@@ -350,6 +434,17 @@ function openDetail(id){
       <div class="modal-divider"></div>
       <div class="form-section">
         <div class="section-lbl">${t.startDate}</div>
+        <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+          ${[
+            {lbl:lang==='ru'?'Сегодня':lang==='me'?'Danas':'Today', offset:0},
+            {lbl:lang==='ru'?'Завтра':lang==='me'?'Sutra':'Tomorrow', offset:1},
+            {lbl:lang==='ru'?'Выходные':lang==='me'?'Vikend':'Weekend', offset:daysToWeekend()}
+          ].map(q=>{
+            const d=new Date();d.setDate(d.getDate()+q.offset);
+            const v=d.toISOString().split('T')[0];
+            return '<div onclick="setDate(''+v+'')" style="padding:7px 12px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg3);font-size:12px;color:var(--text2);cursor:pointer;transition:.15s" onmouseover="this.style.background='var(--gold-dim)';this.style.borderColor='var(--gold)'" onmouseout="this.style.background='var(--bg3)';this.style.borderColor='var(--border2)'">'+q.lbl+'</div>';
+          }).join('')}
+        </div>
         <label style="display:block;position:relative;cursor:pointer;margin-bottom:10px">
           <div style="width:100%;padding:11px 14px;font-size:14px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg3);color:${dateVal?'var(--text)':'var(--text3)'};display:flex;align-items:center;justify-content:space-between">
             <span id="dateLblSpan">${dateLbl}</span>
@@ -405,6 +500,7 @@ function openDetail(id){
   },50);
 }
 
+function daysToWeekend(){const d=new Date().getDay();return d===6?7:d===0?6:6-d;}
 function setDate(v){
   detailState.date=v;
   const el=document.getElementById('dateLblSpan');
@@ -481,6 +577,7 @@ function submitBooking(yid){
 
   // Save to local orders history
   saveMyOrder({yacht:y.names[lang],date:dateStr,duration:durStr,guests:detailState.guests,extras:extrasNames,total,ts:Date.now()});
+  launchConfetti();
   clearInterval(timerInterval);
   document.getElementById('detailContent').innerHTML=`
     <div class="confirm-wrap">
@@ -545,7 +642,9 @@ function showView(v){
   const mc=document.getElementById('mainCatalog');
   if(mc)mc.style.display='block';
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('nav'+v.charAt(0).toUpperCase()+v.slice(1))?.classList.add('active');
+  const navId='nav'+v.charAt(0).toUpperCase()+v.slice(1);
+  document.getElementById(navId)?.classList.add('active');
+  updateNavGlow(navId);
 }
 // In-memory order storage
 const MY_ORDERS=[];
@@ -641,6 +740,327 @@ function backToCatalog(){
 }
 
 
+
+
+// ── REVIEWS ──
+let reviewStar = 0;
+const REVIEWS_DB = [
+  {name:'Анна К.', yacht:'Abacus 70', date:'июнь 2026', stars:5, text:'Невероятный опыт! Экипаж профессиональный, яхта шикарная. Обязательно вернёмся!', initials:'АК', color:'#1a4a7a'},
+  {name:'Михаил С.', yacht:'Cranchi Z35', date:'май 2026', stars:5, text:'Отличная яхта для большой компании. Всё включено, цена адекватная. Рекомендую всем!', initials:'МС', color:'#2a7a56'},
+  {name:'Елена В.', yacht:'Mirage IV', date:'июль 2026', stars:5, text:'Провели корпоратив на 10 человек. Всё организовано идеально. Менеджер всегда на связи.', initials:'ЕВ', color:'#7a2a6a'},
+];
+
+function openReviews(){
+  renderReviews();
+  document.getElementById('reviewsModal').classList.add('open');
+}
+function renderReviews(){
+  document.getElementById('reviewsList').innerHTML = REVIEWS_DB.map((r,i)=>`
+    <div class="review-card" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:13px;margin-bottom:10px;animation-delay:${i*0.08}s">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px">
+        <div style="width:34px;height:34px;border-radius:50%;background:${r.color}22;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:${r.color};flex-shrink:0">${r.initials}</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:500;color:var(--navy)">${r.name}</div>
+          <div style="font-size:11px;color:var(--text3)">${r.yacht} · ${r.date}</div>
+        </div>
+        <div style="color:#b5893a;font-size:13px;letter-spacing:1px">${'★'.repeat(r.stars)}</div>
+      </div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6">${r.text}</div>
+    </div>`).join('');
+}
+function setStar(n){
+  reviewStar=n;
+  document.querySelectorAll('#starRow .star-btn').forEach((s,i)=>{
+    s.style.opacity = i<n ? '1' : '0.3';
+    s.style.color = i<n ? '#b5893a' : '';
+  });
+}
+function submitReview(){
+  const name=document.getElementById('reviewName').value.trim();
+  const yacht=document.getElementById('reviewYacht').value.trim();
+  const text=document.getElementById('reviewText').value.trim();
+  if(!name||!text||!reviewStar){alert(lang==='ru'?'Заполните имя, текст и оценку':'Please fill name, text and rating');return;}
+  const msg='⭐ НОВЫЙ ОТЗЫВ
+'+'─'.repeat(26)+'
+'
+    +'👤 '+name+(yacht?'
+🛥 '+yacht:'')+'
+'
+    +'★'.repeat(reviewStar)+'
+'
+    +'💬 '+text+'
+
+'+'Одобрить и добавить на сайт?';
+  fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msg})}).catch(e=>console.log(e));
+  document.getElementById('reviewNote').textContent = lang==='ru'?'✅ Отзыв отправлен! Появится после проверки.':'✅ Sent! Will appear after review.';
+  document.getElementById('reviewName').value='';
+  document.getElementById('reviewYacht').value='';
+  document.getElementById('reviewText').value='';
+  reviewStar=0;
+  document.querySelectorAll('#starRow .star-btn').forEach(s=>{s.style.opacity='0.3';s.style.color='';});
+}
+
+// ── ROUTES ──
+const ROUTES_DATA = {
+  4: {
+    km: '~45 км', time: '4 часа',
+    tip: '💡 Идеально для первого знакомства с заливом. Успеете увидеть главные достопримечательности и искупаться.',
+    stops: [
+      {n:'Porto Montenegro', d:'Старт и финиш · Тиват', icon:'⚓', main:true},
+      {n:'Прчань', d:'Старинная барочная церковь', icon:'⛪'},
+      {n:'Kotor', d:'Средневековый город ЮНЕСКО', icon:'🏰'},
+      {n:'Gospa od Škrpjela', d:'Купание у островной церкви', icon:'🏊'},
+      {n:'Perast', d:'Фото у острова Св. Юрия', icon:'📸'},
+    ]
+  },
+  6: {
+    km: '~80 км', time: '6 часов',
+    tip: '💡 Полный тур по всему заливу. Время на обед в Которе и купание у острова.',
+    stops: [
+      {n:'Porto Montenegro', d:'Старт и финиш · Тиват', icon:'⚓', main:true},
+      {n:'Тиват', d:'Марина Lazure', icon:'🛥'},
+      {n:'Herceg Novi', d:'Крепость Канли Кула · купание', icon:'🏰'},
+      {n:'Risan', d:'Самый глубокий уголок залива', icon:'⚓'},
+      {n:'Perast + острова', d:'Gospa od Škrpjela · Св. Юрий', icon:'🏝'},
+      {n:'Kotor', d:'Обед в старом городе', icon:'🍽'},
+    ]
+  },
+  8: {
+    km: '~120 км', time: '8 часов',
+    tip: '💡 Максимальный маршрут — весь залив + Адриатика. Закат на воде гарантирован.',
+    stops: [
+      {n:'Porto Montenegro', d:'Старт и финиш · Тиват', icon:'⚓', main:true},
+      {n:'Herceg Novi', d:'Крепость + утреннее купание', icon:'🏰'},
+      {n:'Risan', d:'Мозаики виллы Riscinium', icon:'🏛'},
+      {n:'Perast', d:'Острова Gospa и Св. Юрий', icon:'🏝'},
+      {n:'Kotor', d:'Средневековый город · обед', icon:'🍽'},
+      {n:'Будва', d:'Пляж Могрен · закат', icon:'🌅'},
+    ]
+  }
+};
+let currentRouteTab = 4;
+function openRoutes(){
+  document.getElementById('routesModal').classList.add('open');
+  setRouteTab(4);
+}
+function setRouteTab(n){
+  currentRouteTab = n;
+  [4,6,8].forEach(x=>{
+    const el = document.getElementById('rtab'+x);
+    if(x===n){el.style.background='var(--navy)';el.style.color='#fff';el.style.fontWeight='500';}
+    else{el.style.background='transparent';el.style.color='var(--text2)';el.style.fontWeight='400';}
+  });
+  const r = ROUTES_DATA[n];
+  document.getElementById('routeTip').textContent = r.tip;
+  document.getElementById('routeStops').innerHTML = r.stops.map((s,i)=>`
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);position:relative">
+      ${i<r.stops.length-1?'<div style="position:absolute;left:17px;top:38px;bottom:0;width:2px;border-left:2px dashed rgba(181,137,58,0.3)"></div>':''}
+      <div style="width:34px;height:34px;border-radius:50%;background:${s.main?'var(--navy)':'var(--gold-dim)'};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;z-index:1;border:1px solid ${s.main?'var(--navy)':'rgba(181,137,58,0.3)'}">${s.icon}</div>
+      <div style="flex:1;padding-top:2px">
+        <div style="font-size:13px;font-weight:500;color:var(--navy)">${s.n}</div>
+        <div style="font-size:11px;color:var(--text3)">${s.d}</div>
+      </div>
+    </div>`).join('');
+}
+
+
+// ── QUIZ ──
+const QUIZ_Q = [
+  {q:{ru:'Идеальный вечер — это...',en:'Perfect evening is...',me:'Savršena večer je...'},
+   opts:[
+    {ru:'Тихий закат с бокалом вина',en:'Quiet sunset with wine',me:'Tih zalazak s vinom', tags:['sail','romantic']},
+    {ru:'Вечеринка с громкой музыкой',en:'Party with loud music',me:'Zabava s glazbom', tags:['motor','party']},
+    {ru:'Ужин при свечах на палубе',en:'Candlelit dinner on deck',me:'Večera na palubi', tags:['vip','romantic']},
+    {ru:'Прыжки с борта до полуночи',en:'Jumping off until midnight',me:'Skakanje s broda', tags:['speedboat','party']},
+  ]},
+  {q:{ru:'Твой напиток на борту?',en:'Your drink on board?',me:'Vaše piće na brodu?'},
+   opts:[
+    {ru:'🥂 Шампанское',en:'🥂 Champagne',me:'🥂 Šampanjac', tags:['vip','romantic']},
+    {ru:'🍺 Холодное пиво',en:'🍺 Cold beer',me:'🍺 Hladno pivo', tags:['speedboat','party']},
+    {ru:'🍹 Коктейль с зонтиком',en:'🍹 Cocktail',me:'🍹 Koktel', tags:['motor','party']},
+    {ru:'☕ Кофе с видом на залив',en:'☕ Coffee with bay view',me:'☕ Kava s pogledom', tags:['sail','romantic']},
+  ]},
+  {q:{ru:'Скорость — это...',en:'Speed is...',me:'Brzina je...'},
+   opts:[
+    {ru:'💨 Чем быстрее тем лучше!',en:'💨 The faster the better!',me:'💨 Što brže, to bolje!', tags:['speedboat','motor']},
+    {ru:'🌊 Плавно скользить по волнам',en:'🌊 Gliding smoothly',me:'🌊 Kliziti po valovima', tags:['sail','romantic']},
+    {ru:'👑 Мне всё равно — главное комфорт',en:'👑 Comfort matters most',me:'👑 Važan je komfor', tags:['vip']},
+    {ru:'🎯 Умеренно, но с характером',en:'🎯 Moderate but stylish',me:'🎯 Umjereno ali s karakterom', tags:['motor','party']},
+  ]},
+  {q:{ru:'Идеальная компания на борту?',en:'Ideal company on board?',me:'Idealno društvo?'},
+   opts:[
+    {ru:'💑 Только вдвоём',en:'💑 Just the two of us',me:'💑 Samo nas dvoje', tags:['sail','romantic']},
+    {ru:'👨‍👩‍👧‍👦 Семья с детьми',en:'👨‍👩‍👧‍👦 Family with kids',me:'👨‍👩‍👧‍👦 Porodica', tags:['motor','catamaran']},
+    {ru:'🥳 Большая компания друзей',en:'🥳 Big group of friends',me:'🥳 Velika ekipa', tags:['motor','party']},
+    {ru:'🤝 Корпоратив / деловые партнёры',en:'🤝 Corporate event',me:'🤝 Korporativni', tags:['vip','motor']},
+  ]},
+  {q:{ru:'Твой стиль путешествий?',en:'Your travel style?',me:'Vaš stil putovanja?'},
+   opts:[
+    {ru:'🗺 Исследовать скрытые места',en:'🗺 Explore hidden gems',me:'🗺 Istraživati skrivena mjesta', tags:['sail','romantic']},
+    {ru:'📸 Красивые фото для Instagram',en:'📸 Beautiful Instagram photos',me:'📸 Lijepe fotografije', tags:['motor','vip']},
+    {ru:'🎉 Незабываемые впечатления',en:'🎉 Unforgettable experiences',me:'🎉 Nezaboravni doživljaji', tags:['vip','party']},
+    {ru:'🏄 Активный отдых и спорт',en:'🏄 Active sports',me:'🏄 Aktivan odmor', tags:['speedboat','motor']},
+  ]},
+];
+
+const QUIZ_RESULTS = {
+  vip: {
+    emoji:'👑',
+    title:{ru:'Ты — Mirage IV',en:'You are Mirage IV',me:'Ti si Mirage IV'},
+    desc:{ru:'Настоящая королева/король! Тебе нужна супер-яхта с пляж-клубом, полным экипажем и шампанским. Только лучшее.',en:'True royalty! You need a superyacht with beach club and champagne. Nothing but the best.',me:'Prava zvijezda! Trebate superjahtu s beach clubom.'},
+    yacht:'Mirage IV (Princess 40M)', yachtId:9, color:'#b5893a'
+  },
+  sail: {
+    emoji:'⛵',
+    title:{ru:'Ты — Sommeliere',en:'You are Sommeliere',me:'Ti si Sommeliere'},
+    desc:{ru:'Романтик и ценитель тишины. Тебе подойдёт парусная яхта — ветер, тишина и закат под звёздами.',en:'A romantic soul. Sailing yacht is perfect — wind, silence and sunsets.',me:'Romantična duša. Jedrilica je savršena za tebe.'},
+    yacht:'Sommeliere (Oceanis 50)', yachtId:25, color:'#2a6a8a'
+  },
+  party: {
+    emoji:'🎉',
+    title:{ru:'Ты — Abacus 70',en:'You are Abacus 70',me:'Ti si Abacus 70'},
+    desc:{ru:'Душа компании! Тебе нужна большая моторная яхта с флайбриджем, громкой музыкой и местом для всей компании.',en:'Life of the party! You need a big motor yacht with flybridge and room for everyone.',me:'Duša zabave! Trebate veliku motornu jahtu za cijelo društvo.'},
+    yacht:'Abacus 70', yachtId:0, color:'#8a2a2a'
+  },
+  motor: {
+    emoji:'⚡',
+    title:{ru:'Ты — Cranchi Z35',en:'You are Cranchi Z35',me:'Ti si Cranchi Z35'},
+    desc:{ru:'Современный и динамичный. Стильная моторная яхта — скорость, комфорт и отличные виды залива.',en:'Modern and dynamic. A stylish motor yacht — speed, comfort and great bay views.',me:'Moderan i dinamičan. Stilizirani motorni brod.'},
+    yacht:'Cranchi Z35', yachtId:4, color:'#1a4a2a'
+  },
+  speedboat: {
+    emoji:'🚤',
+    title:{ru:'Ты — KeyLargo 36',en:'You are KeyLargo 36',me:'Ti si KeyLargo 36'},
+    desc:{ru:'Свободный дух! Тебе нужен быстрый катер — прыгнул в воду, поплыл куда хочешь, никаких правил.',en:'Free spirit! You need a fast speedboat — jump in the water, go anywhere, no rules.',me:'Slobodan duh! Brzi čamac je za tebe.'},
+    yacht:'KeyLargo 36', yachtId:22, color:'#2a4a8a'
+  },
+};
+
+let quizAnswers=[], quizStep=0;
+
+function openQuiz(){
+  quizAnswers=[];quizStep=0;
+  renderQuizStep();
+  document.getElementById('quizModal').classList.add('open');
+}
+
+function renderQuizStep(){
+  const total=QUIZ_Q.length;
+  if(quizStep>=total){showQuizResult();return;}
+  const q=QUIZ_Q[quizStep];
+  const pct=Math.round((quizStep/total)*100);
+  document.getElementById('quizContent').innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <div style="flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden">
+        <div style="height:100%;background:var(--gold);border-radius:2px;width:${pct}%;transition:width .4s ease"></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);flex-shrink:0">${quizStep+1}/${total}</div>
+    </div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--navy);margin-bottom:4px">${lang==='ru'?'Какая ты яхта?':lang==='me'?'Koja si jahta?':'Which yacht are you?'}</div>
+    <div style="font-size:14px;color:var(--text2);margin-bottom:18px;line-height:1.5">${q.q[lang]||q.q.ru}</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${q.opts.map((o,i)=>`
+        <div onclick="quizAnswer(${JSON.stringify(o.tags)})" style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rs);padding:13px 14px;cursor:pointer;font-size:13px;color:var(--text2);transition:.15s;animation:fadeInUp .25s ${i*0.06}s ease both" onmouseover="this.style.background='var(--gold-dim)';this.style.borderColor='var(--gold)'" onmouseout="this.style.background='var(--bg2)';this.style.borderColor='var(--border2)'">${o[lang]||o.ru}</div>
+      `).join('')}
+    </div>`;
+}
+
+function quizAnswer(tags){
+  quizAnswers.push(...tags);
+  quizStep++;
+  renderQuizStep();
+}
+
+function showQuizResult(){
+  const counts={};
+  quizAnswers.forEach(t=>{counts[t]=(counts[t]||0)+1;});
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  const topTag=sorted[0]?.[0]||'motor';
+  const r=QUIZ_RESULTS[topTag]||QUIZ_RESULTS.motor;
+  document.getElementById('quizContent').innerHTML=`
+    <div style="text-align:center;padding:10px 0 20px">
+      <div style="font-size:52px;margin-bottom:12px;animation:pulse 1.5s ease-in-out 3">${r.emoji}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:${r.color};margin-bottom:8px">${r.title[lang]||r.title.ru}</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:20px;padding:0 8px">${r.desc[lang]||r.desc.ru}</div>
+    </div>
+    <div style="background:var(--bg3);border-radius:var(--rs);padding:13px;margin-bottom:14px;display:flex;align-items:center;gap:10px">
+      <div style="font-size:22px">${r.emoji}</div>
+      <div>
+        <div style="font-size:13px;font-weight:500;color:var(--navy)">${r.yacht}</div>
+        <div style="font-size:11px;color:var(--text3)">${lang==='ru'?'Идеальный вариант для тебя':lang==='me'?'Savršena opcija za tebe':'Perfect option for you'}</div>
+      </div>
+    </div>
+    <button onclick="closeModal('quizModal');setTimeout(()=>openDetail(${r.yachtId}),200)" class="book-btn" style="margin-bottom:8px">${lang==='ru'?'Посмотреть эту яхту':lang==='me'?'Pogledaj ovu jahtu':'View this yacht'}</button>
+    <button onclick="shareQuizResult('${r.emoji}','${r.title[lang]||r.title.ru}')" style="background:transparent;border:1px solid var(--border2);border-radius:var(--rs);width:100%;padding:11px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text2)">📲 ${lang==='ru'?'Поделиться результатом':'Share result'}</button>
+    <button onclick="quizAnswers=[];quizStep=0;renderQuizStep()" style="background:transparent;border:none;width:100%;padding:10px;font-size:12px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text3);margin-top:4px">${lang==='ru'?'Пройти заново':'Try again'}</button>`;
+}
+
+function shareQuizResult(emoji, title){
+  const text=`${emoji} ${title}\n\nУзнай какая яхта подходит тебе — Adriatic Yachts 🛥`;
+  const url='https://408mne.github.io/adriaticyachts';
+  if(navigator.share){navigator.share({title:'Моя яхта',text,url}).catch(()=>{});}
+  else{window.open('https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text),'_blank');}
+}
+
+// ── YACHT PICKER ──
+let pickerGuests=0, pickerType='', pickerBudget=0;
+function openPicker(){
+  resetPicker();
+  document.getElementById('pickerModal').classList.add('open');
+}
+function resetPicker(){
+  pickerGuests=0;pickerType='';pickerBudget=0;
+  ['pickerStep1','pickerStep2','pickerStep3','pickerResults'].forEach((id,i)=>{
+    document.getElementById(id).style.display=i===0?'block':'none';
+  });
+  document.querySelectorAll('.picker-opt').forEach(el=>el.classList.remove('sel'));
+}
+function pickGuests(n,lbl){
+  pickerGuests=n;
+  document.querySelectorAll('#pickerStep1 .picker-opt').forEach(el=>el.classList.remove('sel'));
+  event.target.closest('.picker-opt').classList.add('sel');
+  setTimeout(()=>{document.getElementById('pickerStep1').style.display='none';document.getElementById('pickerStep2').style.display='block';},300);
+}
+function pickType(t){
+  pickerType=t;
+  document.querySelectorAll('#pickerStep2 .picker-opt').forEach(el=>el.classList.remove('sel'));
+  event.target.closest('.picker-opt').classList.add('sel');
+  setTimeout(()=>{document.getElementById('pickerStep2').style.display='none';document.getElementById('pickerStep3').style.display='block';},300);
+}
+function pickBudget(b,lbl){
+  pickerBudget=b;
+  document.querySelectorAll('#pickerStep3 .picker-opt').forEach(el=>el.classList.remove('sel'));
+  event.target.closest('.picker-opt').classList.add('sel');
+  setTimeout(()=>showPickerResults(),300);
+}
+function showPickerResults(){
+  document.getElementById('pickerStep3').style.display='none';
+  document.getElementById('pickerResults').style.display='block';
+  const catMap={motor:['motor','vip'],sail:['sail'],catamaran:['catamaran'],any:['motor','sail','catamaran','speedboat','vip']};
+  const cats=catMap[pickerType]||['motor','sail','catamaran','speedboat','vip'];
+  let results=YACHTS.filter(y=>{
+    if(y.capacity<pickerGuests&&pickerGuests<99)return false;
+    if(pickerGuests===99&&y.capacity<12)return false;
+    if(!cats.includes(y.cat))return false;
+    const price=y.dayRate||y.weekRate||0;
+    if(price>pickerBudget)return false;
+    return true;
+  }).sort((a,b)=>(a.dayRate||a.weekRate||0)-(b.dayRate||b.weekRate||0)).slice(0,4);
+  const t=T[lang];
+  const noMatch=lang==='ru'?'Ничего не нашли по этим параметрам. Напишите менеджеру — подберём!':lang==='me'?'Ništa nije pronađeno. Kontaktirajte menadžera!':'Nothing found. Contact manager — we'll find it!';
+  document.getElementById('pickerResultList').innerHTML=results.length?results.map(y=>`
+    <div onclick="closeModal('pickerModal');setTimeout(()=>openDetail(${y.id}),200)" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:11px 13px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:.15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+      ${y.photos&&y.photos.length?`<img src="${y.photos[0]}" style="width:52px;height:52px;object-fit:cover;border-radius:var(--rs);flex-shrink:0">`:`<div style="width:52px;height:52px;border-radius:var(--rs);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">${y.icon||'⛵'}</div>`}
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500;color:var(--navy);margin-bottom:2px">${y.names[lang]}</div>
+        <div style="font-size:11px;color:var(--text3)">${y.metas[lang]}</div>
+        <div style="font-size:13px;color:var(--gold);margin-top:3px;font-weight:500">${y.dayRate?y.dayRate.toLocaleString()+'€/день':y.weekRate?y.weekRate.toLocaleString()+'€/нед.':''}</div>
+      </div>
+      <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>
+    </div>`).join(''):`<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px">${noMatch}<br><button onclick="openSpecial()" style="margin-top:10px;background:var(--navy);color:#fff;border:none;border-radius:var(--rs);padding:8px 16px;font-size:12px;cursor:pointer;font-family:'Jost',sans-serif">${lang==='ru'?'Написать менеджеру':'Contact manager'}</button></div>`;
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
 // ── SLOT MACHINE ──
 const SLOT_YACHTS=YACHTS.filter(y=>y.photos&&y.photos.length>0);
 let slotSpinning=false;
@@ -709,7 +1129,108 @@ function closeSlot(){
   document.getElementById('slotModal').classList.remove('open');
 }
 
+
+// ── CONFETTI ──
+function launchConfetti(){
+  const colors=['#b5893a','#1a2640','#f7f5f1','#5a8f5a','#c04040'];
+  const container=document.createElement('div');
+  container.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;overflow:hidden';
+  document.body.appendChild(container);
+  for(let i=0;i<80;i++){
+    const el=document.createElement('div');
+    const color=colors[Math.floor(Math.random()*colors.length)];
+    const size=Math.random()*8+4;
+    const left=Math.random()*100;
+    const delay=Math.random()*0.8;
+    const duration=Math.random()*1.5+1.2;
+    const rotate=Math.random()*360;
+    el.style.cssText=`position:absolute;top:-10px;left:${left}%;width:${size}px;height:${size}px;background:${color};border-radius:${Math.random()>0.5?'50%':'2px'};animation:confettiFall ${duration}s ${delay}s ease-in forwards;transform:rotate(${rotate}deg)`;
+    container.appendChild(el);
+  }
+  const style=document.createElement('style');
+  style.textContent='@keyframes confettiFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}';
+  document.head.appendChild(style);
+  setTimeout(()=>{container.remove();style.remove();},3000);
+}
+
+// ── SKELETON CARDS ──
+function renderSkeletonCards(count){
+  return Array(count).fill(0).map(()=>`
+    <div class="card" style="pointer-events:none">
+      <div class="skeleton" style="width:100%;height:110px;border-radius:var(--rs) var(--rs) 0 0;margin:-0px 0 10px"></div>
+      <div style="padding:0 2px">
+        <div class="skeleton" style="height:14px;border-radius:4px;margin-bottom:7px;width:70%"></div>
+        <div class="skeleton" style="height:11px;border-radius:4px;margin-bottom:10px;width:90%"></div>
+        <div class="skeleton" style="height:13px;border-radius:4px;width:40%;margin-left:auto"></div>
+      </div>
+    </div>`).join('');
+}
+
+// ── PARALLAX ──
+function initParallax(){
+  const handler=()=>{
+    const scrollY=window.scrollY||document.documentElement.scrollTop;
+    document.querySelectorAll('.card-img').forEach(img=>{
+      const rect=img.closest('.card').getBoundingClientRect();
+      if(rect.top<window.innerHeight&&rect.bottom>0){
+        const offset=(rect.top/window.innerHeight-0.5)*18;
+        img.style.transform=`translateY(${offset}px) scale(1.08)`;
+      }
+    });
+  };
+  window.addEventListener('scroll',handler,{passive:true});
+}
+
+
+// ── NAV MICRO-ANIMATIONS ──
+function addNavTapEffects(){
+  document.querySelectorAll('.nav-item').forEach(item=>{
+    item.addEventListener('touchstart',function(){
+      const svg=this.querySelector('svg');
+      if(svg&&!svg.id==='diceIcon'){
+        svg.classList.remove('nav-icon-pop');
+        void svg.offsetWidth;
+        svg.classList.add('nav-icon-pop');
+        setTimeout(()=>svg.classList.remove('nav-icon-pop'),400);
+      }
+    },{passive:true});
+  });
+}
+
+function spinDiceThenOpen(){
+  const icon=document.getElementById('diceIcon');
+  if(icon){
+    icon.classList.remove('dice-flip');
+    void icon.offsetWidth;
+    icon.classList.add('dice-flip');
+    setTimeout(()=>{
+      icon.classList.remove('dice-flip');
+      openSlot();
+    },480);
+  } else {
+    openSlot();
+  }
+}
+
+// Highlight active nav icon with glow
+function updateNavGlow(activeId){
+  document.querySelectorAll('.nav-item').forEach(item=>{
+    const svg=item.querySelector('svg');
+    if(svg)svg.classList.remove('nav-icon-glow');
+  });
+  const activeItem=document.getElementById(activeId);
+  if(activeItem){
+    const svg=activeItem.querySelector('svg');
+    if(svg){
+      void svg.offsetWidth;
+      svg.classList.add('nav-icon-glow');
+    }
+  }
+}
+
 init();
+initParallax();
+addNavTapEffects();
 </script>
 
 <div class="modal-overlay" id="slotModal" onclick="if(event.target===this)closeSlot()">
@@ -726,7 +1247,7 @@ init();
     </div>
     <div style="padding:14px 16px 0">
       <div id="slotResult" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;margin-bottom:12px;display:none">
-        <div id="slotResultName" style="font-size:16px;font-weight:500;color:var(--navy);margin-bottom:3px"></div>
+        <div id="slotResultName" onclick="slotBook()" style="font-size:16px;font-weight:500;color:var(--navy);margin-bottom:3px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(181,137,58,0.4)"></div>
         <div id="slotResultType" style="font-size:12px;color:var(--text2);margin-bottom:6px"></div>
         <div id="slotResultPrice" style="font-size:14px;font-weight:500;color:var(--gold)"></div>
       </div>
@@ -734,6 +1255,121 @@ init();
       <button id="slotBookBtn" onclick="slotBook()" style="display:none;background:transparent;border:1px solid var(--border2);border-radius:var(--rs);width:100%;padding:12px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text2);margin-bottom:8px">Забронировать эту яхту</button>
       <button onclick="closeSlot()" style="background:transparent;border:none;width:100%;padding:10px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text3)">Закрыть</button>
     </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="pickerModal" onclick="if(event.target===this)closeModal('pickerModal')">
+  <div class="modal-sheet" style="padding-bottom:40px">
+    <div class="modal-handle"></div>
+    <div style="padding:18px 16px">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--navy);margin-bottom:4px" id="pickerTitle">Подбери яхту</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:20px" id="pickerSub">Ответь на 3 вопроса — подберём лучший вариант</div>
+
+      <div id="pickerStep1">
+        <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:10px" id="pickerQ1">Сколько гостей?</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px">
+          <div class="picker-opt" onclick="pickGuests(4,'1–4')">👫 1–4 чел.</div>
+          <div class="picker-opt" onclick="pickGuests(8,'5–8')">👨‍👩‍👧‍👦 5–8 чел.</div>
+          <div class="picker-opt" onclick="pickGuests(12,'9–12')">🎉 9–12 чел.</div>
+          <div class="picker-opt" onclick="pickGuests(99,'12+')">🥳 12+ чел.</div>
+        </div>
+      </div>
+
+      <div id="pickerStep2" style="display:none">
+        <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:10px" id="pickerQ2">Какой тип?</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px">
+          <div class="picker-opt" onclick="pickType('motor')">⚡ Моторная</div>
+          <div class="picker-opt" onclick="pickType('sail')">⛵ Парусная</div>
+          <div class="picker-opt" onclick="pickType('catamaran')">🪸 Катамаран</div>
+          <div class="picker-opt" onclick="pickType('any')">🤷 Неважно</div>
+        </div>
+      </div>
+
+      <div id="pickerStep3" style="display:none">
+        <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:10px" id="pickerQ3">Бюджет на день?</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px">
+          <div class="picker-opt" onclick="pickBudget(1500,'до 1 500€')">💚 до 1 500€</div>
+          <div class="picker-opt" onclick="pickBudget(3000,'до 3 000€')">💛 до 3 000€</div>
+          <div class="picker-opt" onclick="pickBudget(6000,'до 6 000€')">🧡 до 6 000€</div>
+          <div class="picker-opt" onclick="pickBudget(999999,'без лимита')">👑 без лимита</div>
+        </div>
+      </div>
+
+      <div id="pickerResults" style="display:none">
+        <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:12px" id="pickerResultTitle">Подобранные яхты:</div>
+        <div id="pickerResultList"></div>
+        <button onclick="resetPicker()" style="background:transparent;border:1px solid var(--border2);border-radius:var(--rs);width:100%;padding:10px;font-size:12px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text2);margin-top:8px" id="pickerResetBtn">← Начать заново</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEWS MODAL -->
+<div class="modal-overlay" id="reviewsModal" onclick="if(event.target===this)closeModal('reviewsModal')">
+  <div class="modal-sheet" style="padding-bottom:40px">
+    <div class="modal-handle"></div>
+    <div style="padding:18px 16px">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--navy);margin-bottom:4px">Отзывы гостей</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:18px">Реальные истории наших клиентов</div>
+
+      <div id="reviewsList"></div>
+
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+        <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:10px" id="leaveReviewTitle">Оставить отзыв</div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:5px">Оценка</div>
+          <div id="starRow" style="display:flex;gap:6px">
+            <span class="star-btn" onclick="setStar(1)" style="font-size:24px;cursor:pointer;opacity:0.3">★</span>
+            <span class="star-btn" onclick="setStar(2)" style="font-size:24px;cursor:pointer;opacity:0.3">★</span>
+            <span class="star-btn" onclick="setStar(3)" style="font-size:24px;cursor:pointer;opacity:0.3">★</span>
+            <span class="star-btn" onclick="setStar(4)" style="font-size:24px;cursor:pointer;opacity:0.3">★</span>
+            <span class="star-btn" onclick="setStar(5)" style="font-size:24px;cursor:pointer;opacity:0.3">★</span>
+          </div>
+        </div>
+        <input class="inp" id="reviewName" placeholder="Ваше имя" type="text" style="margin-bottom:8px">
+        <input class="inp" id="reviewYacht" placeholder="Яхта (название)" type="text" style="margin-bottom:8px">
+        <textarea class="inp" id="reviewText" placeholder="Ваш отзыв..." style="height:70px;resize:none;margin-bottom:10px"></textarea>
+        <button onclick="submitReview()" class="book-btn">Отправить на проверку</button>
+        <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:8px" id="reviewNote">Отзыв появится после проверки менеджером</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ROUTES MODAL -->
+<div class="modal-overlay" id="routesModal" onclick="if(event.target===this)closeModal('routesModal')">
+  <div class="modal-sheet" style="padding-bottom:40px">
+    <div class="modal-handle"></div>
+    <div style="padding:18px 16px">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--navy);margin-bottom:4px" id="routesTitle">Маршруты по заливу</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:16px">Боко-Которский залив · круговые маршруты</div>
+
+      <div style="display:flex;border:1px solid var(--border2);border-radius:var(--rs);overflow:hidden;margin-bottom:16px">
+        <div class="route-tab active" id="rtab4" onclick="setRouteTab(4)" style="flex:1;padding:9px;text-align:center;font-size:12px;font-weight:500;cursor:pointer;background:var(--navy);color:#fff;transition:.15s">4 часа</div>
+        <div class="route-tab" id="rtab6" onclick="setRouteTab(6)" style="flex:1;padding:9px;text-align:center;font-size:12px;cursor:pointer;color:var(--text2);transition:.15s;border-left:1px solid var(--border2)">6 часов</div>
+        <div class="route-tab" id="rtab8" onclick="setRouteTab(8)" style="flex:1;padding:9px;text-align:center;font-size:12px;cursor:pointer;color:var(--text2);transition:.15s;border-left:1px solid var(--border2)">8 часов</div>
+      </div>
+
+      <!-- MAP PLACEHOLDER -->
+      <div style="background:linear-gradient(135deg,#daeeff,#c8e8fa);border-radius:var(--r);height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;border:1px solid rgba(91,184,232,0.3);position:relative;overflow:hidden">
+        <div style="font-size:32px;margin-bottom:8px" class="anim-pulse">🗺️</div>
+        <div style="font-size:14px;font-weight:500;color:#1a4a7a;margin-bottom:4px">Карта маршрута</div>
+        <div style="font-size:12px;color:#2e7ab8;text-align:center;padding:0 20px">Интерактивная карта будет добавлена в ближайшее время</div>
+        <div style="position:absolute;bottom:10px;right:10px;font-size:10px;color:rgba(26,74,122,0.5)">Боко-Которский залив</div>
+      </div>
+
+      <div id="routeStops" style="display:flex;flex-direction:column;gap:0"></div>
+
+      <div style="background:var(--gold-dim);border:1px solid rgba(181,137,58,0.2);border-radius:var(--rs);padding:10px 13px;margin-top:14px;font-size:12px;color:var(--text2);line-height:1.6" id="routeTip"></div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ MODAL -->
+<div class="modal-overlay" id="quizModal" onclick="if(event.target===this)closeModal('quizModal')">
+  <div class="modal-sheet" style="padding-bottom:40px">
+    <div class="modal-handle"></div>
+    <div style="padding:18px 16px" id="quizContent"></div>
   </div>
 </div>
 </body>
