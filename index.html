@@ -162,27 +162,26 @@ body{display:flex;flex-direction:column;min-height:100vh}
 <body>
 <div class="app-header" style="position:relative;overflow:visible">
   <div class="header-top">
-    <div class="logo" style="display:flex;align-items:center;gap:8px">
-    <span id="boatEl" style="font-size:16px;display:inline-block;animation:boatSail 12s linear infinite;position:relative">⛵</span>
-    ADRIATIC<span>yachts</span>
-  </div>
+    <div class="logo">ADRIATIC<span>yachts</span></div>
     <div class="lang-switcher">
       <button class="lang-btn" onclick="setLang('ru')">RU</button>
       <button class="lang-btn active" onclick="setLang('en')">EN</button>
       <button class="lang-btn" onclick="setLang('me')">ME</button>
+      <button class="lang-btn" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('tr')">TR</button>
     </div>
   </div>
 </div>
-<div style="position:relative;height:32px;margin-top:-1px;pointer-events:none;overflow:hidden;z-index:49">
+<div style="position:relative;height:44px;margin-top:-1px;pointer-events:none;overflow:hidden;z-index:49">
   <svg viewBox="0 0 360 32" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
     <defs>
       <linearGradient id="wg1" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="rgba(181,137,58,0.18)"/>
+        <stop offset="0%" stop-color="rgba(181,137,58,0.35)"/>
         <stop offset="100%" stop-color="rgba(181,137,58,0)"/>
       </linearGradient>
       <linearGradient id="wg2" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="rgba(247,245,241,0.7)"/>
-        <stop offset="100%" stop-color="rgba(247,245,241,0)"/>
+        <stop offset="0%" stop-color="rgba(200,180,140,0.45)"/>
+        <stop offset="100%" stop-color="rgba(200,180,140,0)"/>
       </linearGradient>
     </defs>
     <path id="wave1" fill="url(#wg1)" opacity="0.8">
@@ -209,7 +208,10 @@ body{display:flex;flex-direction:column;min-height:100vh}
 </div>
 <div style="padding-top:4px"><div class="cats-scroll" id="catsScroll"></div></div>
 <div class="main" id="mainCatalog">
-  <div class="section-title" id="sectionTitle">Montenegro Yachts</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0">
+    <div class="section-title" id="sectionTitle">Montenegro Yachts</div>
+    <button onclick="openQuiz()" style="background:var(--gold-dim);border:1px solid rgba(181,137,58,0.3);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--gold);cursor:pointer;font-family:'Jost',sans-serif;white-space:nowrap" id="quizBtnMain">🎯 Какая я яхта?</button>
+  </div>
   <div class="cards-grid" id="cardsGrid"></div>
 </div>
 <div class="bottom-nav">
@@ -268,7 +270,9 @@ body{display:flex;flex-direction:column;min-height:100vh}
 const T={
   ru:{catalog:"Каталог",orders:"Заказы",vipReq:"Менеджер",sbanTitle:"Спецзапрос / Срочная аренда",sbanSub:"Не нашли нужную яхту? Опишем и найдём",sectionTitle:"Яхты Черногории",avail:"Доступна",included:"Что включено:",extras:"Дополнительно",dateTime:"Дата и время",startDate:"Дата",contacts:"Ваши контакты",name:"Ваше имя",phone:"Telegram / телефон",comment:"Комментарий (необязательно)",guests:"Гостей на борту",of:"из",avail2:"доступных",pendingNote:"<strong>Бронь под подтверждение.</strong> Мы подтвердим вашу заявку в течение 4 часов.",bookBtn:"Забронировать",reqSent:"Заявка отправлена!",confirmSub:(n,c)=>`${n}, ваша заявка передана менеджеру. Ожидайте ответа на ${c} в течение 4 часов.`,timerLabel:"Подтверждение в течение",summaryYacht:"Яхта",summaryDate:"Дата",summaryDur:"Продолжительность",summaryGuests:"Гостей",summaryExtras:"Допы",summaryTotal:"Итого",newBooking:"Новая заявка",specTitle:"Спецзапрос",specSub:"Не нашли нужную яхту? Опишите — мы найдём суперяхту, организуем корпоратив или срочную аренду.",specUrgLabel:"Срочность",specReqLabel:"Описание запроса",specSend:"Отправить запрос",urgLabels:["Сегодня / Завтра","На эту неделю","Планирую заранее","VIP / Суперяхта"],cats:["Все","Моторные","Парусные","Катамараны","Катера","Свадьбы","Недельные","Рыбалка","VIP"],noDate:"Выберите дату и продолжительность",noName:"Введите имя",noPhone:"Введите контакт",choose:"выбрать",durLabel:"Продолжительность",overnight:"С ночевкой",fuelExtra:"Топливо оплачивается отдельно",calcTitle:"Стоимость аренды"},
   en:{catalog:"Catalog",orders:"Bookings",vipReq:"Manager",sbanTitle:"Special Request / Urgent Charter",sbanSub:"Can't find your yacht? Describe it — we'll find it",sectionTitle:"Montenegro Yachts",avail:"Available",included:"What's included:",extras:"Add-ons",dateTime:"Date & duration",startDate:"Date",contacts:"Your contacts",name:"Your name",phone:"Telegram / phone",comment:"Comment (optional)",guests:"Guests on board",of:"of",avail2:"available",pendingNote:"<strong>Booking pending confirmation.</strong> We'll confirm within 4 hours.",bookBtn:"Book now",reqSent:"Request sent!",confirmSub:(n,c)=>`${n}, your request has been sent. Expect a reply at ${c} within 4 hours.`,timerLabel:"Confirmation within",summaryYacht:"Yacht",summaryDate:"Date",summaryDur:"Duration",summaryGuests:"Guests",summaryExtras:"Add-ons",summaryTotal:"Total",newBooking:"New booking",specTitle:"Special Request",specSub:"Looking for a superyacht or special event? Describe it — we'll make it happen.",specUrgLabel:"Urgency",specReqLabel:"Request description",specSend:"Send request",urgLabels:["Today / Tomorrow","This week","Planning ahead","VIP / Superyacht"],cats:["All","Motor","Sailing","Catamarans","Speedboats","Weddings","Weekly","Fishing","VIP"],noDate:"Please select date and duration",noName:"Please enter your name",noPhone:"Please enter a contact",choose:"select",durLabel:"Duration",overnight:"Overnight",fuelExtra:"Fuel not included",calcTitle:"Charter price"},
-  me:{catalog:"Katalog",orders:"Rezervacije",vipReq:"Manager",sbanTitle:"Poseban zahtjev / Hitno",sbanSub:"Niste našli jahtu? Opišite — pronaći ćemo",sectionTitle:"Jahte Crne Gore",avail:"Dostupno",included:"Što je uključeno:",extras:"Dodaci",dateTime:"Datum i trajanje",startDate:"Datum",contacts:"Vaši kontakti",name:"Vaše ime",phone:"Telegram / telefon",comment:"Komentar (nije obavezno)",guests:"Gostiju na brodu",of:"od",avail2:"dostupnih",pendingNote:"<strong>Rezervacija čeka potvrdu.</strong> Potvrdićemo u roku od 4 sata.",bookBtn:"Rezerviraj",reqSent:"Zahtjev poslan!",confirmSub:(n,c)=>`${n}, vaš zahtjev je proslijeđen. Očekujte odgovor na ${c} u roku od 4 sata.`,timerLabel:"Potvrda u roku od",summaryYacht:"Jahta",summaryDate:"Datum",summaryDur:"Trajanje",summaryGuests:"Gostiju",summaryExtras:"Dodaci",summaryTotal:"Ukupno",newBooking:"Nova rezervacija",specTitle:"Poseban zahtjev",specSub:"Tražite superjahtu ili poseban događaj? Opišite — mi ćemo to organizovati.",specUrgLabel:"Hitnost",specReqLabel:"Opis zahtjeva",specSend:"Pošalji zahtjev",urgLabels:["Danas / Sutra","Ove sedmice","Unaprijed planiram","VIP / Superjahta"],cats:["Sve","Motorni","Jedrilice","Katamarani","Čamci","Vjenčanja","Sedmični","Ribolov","VIP"],noDate:"Odaberite datum i trajanje",noName:"Unesite ime",noPhone:"Unesite kontakt",choose:"odaberi",durLabel:"Trajanje",overnight:"Sa noćenjem",fuelExtra:"Gorivo se plaća posebno",calcTitle:"Cijena čartera"}
+  me:{catalog:"Katalog",orders:"Rezervacije",vipReq:"Manager",sbanTitle:"Poseban zahtjev / Hitno",sbanSub:"Niste našli jahtu? Opišite — pronaći ćemo",sectionTitle:"Jahte Crne Gore",avail:"Dostupno",included:"Što je uključeno:",extras:"Dodaci",dateTime:"Datum i trajanje",startDate:"Datum",contacts:"Vaši kontakti",name:"Vaše ime",phone:"Telegram / telefon",comment:"Komentar (nije obavezno)",guests:"Gostiju na brodu",of:"od",avail2:"dostupnih",pendingNote:"<strong>Rezervacija čeka potvrdu.</strong> Potvrdićemo u roku od 4 sata.",bookBtn:"Rezerviraj",reqSent:"Zahtjev poslan!",confirmSub:(n,c)=>`${n}, vaš zahtjev je proslijeđen. Očekujte odgovor na ${c} u roku od 4 sata.`,timerLabel:"Potvrda u roku od",summaryYacht:"Jahta",summaryDate:"Datum",summaryDur:"Trajanje",summaryGuests:"Gostiju",summaryExtras:"Dodaci",summaryTotal:"Ukupno",newBooking:"Nova rezervacija",specTitle:"Poseban zahtjev",specSub:"Tražite superjahtu ili poseban događaj? Opišite — mi ćemo to organizovati.",specUrgLabel:"Hitnost",specReqLabel:"Opis zahtjeva",specSend:"Pošalji zahtjev",urgLabels:["Danas / Sutra","Ove sedmice","Unaprijed planiram","VIP / Superjahta"],cats:["Sve","Motorni","Jedrilice","Katamarani","Čamci","Vjenčanja","Sedmični","Ribolov","VIP"],noDate:"Odaberite datum i trajanje",noName:"Unesite ime",noPhone:"Unesite kontakt",choose:"odaberi",durLabel:"Trajanje",overnight:"Sa noćenjem",fuelExtra:"Gorivo se plaća posebno",calcTitle:"Cijena čartera"},
+  de:{catalog:"Katalog",orders:"Buchungen",vipReq:"Manager",sbanTitle:"Sonderanfrage / Schnellcharter",sbanSub:"Ihre Yacht nicht gefunden? Beschreiben Sie sie",sectionTitle:"Yachten in Montenegro",avail:"Verfügbar",included:"Im Preis enthalten:",extras:"Extras",dateTime:"Datum & Dauer",startDate:"Datum",contacts:"Ihre Kontakte",name:"Ihr Name",phone:"Telegram / Telefon",comment:"Kommentar (optional)",guests:"Gäste an Bord",of:"von",avail2:"verfügbar",pendingNote:"<strong>Buchung wartet auf Bestätigung.</strong> Wir bestätigen innerhalb von 4 Stunden.",bookBtn:"Jetzt buchen",reqSent:"Anfrage gesendet!",confirmSub:(n,c)=>`${n}, Ihre Anfrage wurde gesendet. Antwort an ${c} innerhalb von 4 Stunden.`,timerLabel:"Bestätigung innerhalb",summaryYacht:"Yacht",summaryDate:"Datum",summaryDur:"Dauer",summaryGuests:"Gäste",summaryExtras:"Extras",summaryTotal:"Gesamt",newBooking:"Neue Buchung",specTitle:"Sonderanfrage",specSub:"Suchen Sie eine Superyacht? Beschreiben Sie es.",specUrgLabel:"Dringlichkeit",specReqLabel:"Anfragebeschreibung",specSend:"Anfrage senden",urgLabels:["Heute/Morgen","Diese Woche","Im Voraus planen","VIP/Superyacht"],cats:["Alle","Motor","Segel","Katamarane","Boote","Hochzeit","Wöchentlich","Angeln","VIP"],noDate:"Bitte Datum und Dauer wählen",noName:"Bitte Namen eingeben",noPhone:"Bitte Kontakt eingeben",choose:"wählen",durLabel:"Dauer",overnight:"Übernachtung",fuelExtra:"Kraftstoff nicht inbegriffen",calcTitle:"Charterpreis"},
+  tr:{catalog:"Katalog",orders:"Rezervasyonlar",vipReq:"Yönetici",sbanTitle:"Özel İstek / Acil Charter",sbanSub:"Yacht bulamadınız mı? Tarif edin — bulalım",sectionTitle:"Karadağ Yatları",avail:"Müsait",included:"Dahil:",extras:"Ekstralar",dateTime:"Tarih ve Süre",startDate:"Tarih",contacts:"İletişim",name:"Adınız",phone:"Telegram / Telefon",comment:"Yorum (isteğe bağlı)",guests:"Misafir sayısı",of:"/",avail2:"müsait",pendingNote:"<strong>Rezervasyon onay bekliyor.</strong> 4 saat içinde onaylayacağız.",bookBtn:"Rezervasyon yap",reqSent:"Talep gönderildi!",confirmSub:(n,c)=>`${n}, talebiniz gönderildi. ${c} adresine 4 saat içinde yanıt gelecek.`,timerLabel:"Onay süresi",summaryYacht:"Yat",summaryDate:"Tarih",summaryDur:"Süre",summaryGuests:"Misafir",summaryExtras:"Ekstralar",summaryTotal:"Toplam",newBooking:"Yeni rezervasyon",specTitle:"Özel İstek",specSub:"Süper yat mı arıyorsunuz? Açıklayın.",specUrgLabel:"Aciliyet",specReqLabel:"İstek açıklaması",specSend:"Talep gönder",urgLabels:["Bugün/Yarın","Bu hafta","Önceden planlama","VIP/Süper Yat"],cats:["Tümü","Motor","Yelkenli","Katamaran","Tekne","Düğün","Haftalık","Balıkçılık","VIP"],noDate:"Lütfen tarih ve süre seçin",noName:"Lütfen adınızı girin",noPhone:"Lütfen iletişim girin",choose:"seçin",durLabel:"Süre",overnight:"Geceleme",fuelExtra:"Yakıt dahil değil",calcTitle:"Charter fiyatı"}
 };
 
 const YACHTS=[
@@ -314,7 +318,7 @@ function init(){
   try{window.Telegram?.WebApp?.ready();window.Telegram?.WebApp?.expand();}catch(e){}
 }
 
-function setLang(l){lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim().toLowerCase()===l||(l==='me'&&b.textContent.trim()==='ME')));renderAll();}
+function setLang(l){lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim().toUpperCase()===l.toUpperCase()));renderAll();}
 
 function renderAll(){
   const t=T[lang];
@@ -325,7 +329,8 @@ function renderAll(){
   document.getElementById('navOrdersLbl').textContent=t.orders;
   document.getElementById('navSpecialLbl').textContent=t.vipReq;
   const pickerLbl=document.getElementById('navPickerLbl');if(pickerLbl)pickerLbl.textContent=lang==='ru'?'Подбор':lang==='me'?'Izbor':'Match';
-  const routesLbl=document.getElementById('navRoutesLbl');if(routesLbl)routesLbl.textContent=lang==='ru'?'Маршруты':lang==='me'?'Rute':'Routes';
+  const routesLbl=document.getElementById('navRoutesLbl');if(routesLbl)routesLbl.textContent=lang==='ru'?'Маршруты':lang==='me'?'Rute':lang==='de'?'Routen':lang==='tr'?'Rotalar':'Routes';
+  const quizMain=document.getElementById('quizBtnMain');if(quizMain)quizMain.textContent=lang==='ru'?'🎯 Какая я яхта?':lang==='de'?'🎯 Welche Yacht bin ich?':lang==='tr'?'🎯 Hangi yat benim?':'🎯 Which yacht am I?';
   const slotLbl=document.getElementById('navSlotLbl');if(slotLbl)slotLbl.textContent=lang==='ru'?'Фортуна':lang==='me'?'Fortuna':'Fortune';
   document.getElementById('specTitle').textContent=t.specTitle;
   document.getElementById('specSub').textContent=t.specSub;
@@ -365,9 +370,7 @@ function renderCards(){
       <div class="card-fav ${favs.has(y.id)?'on':''}" id="fav${y.id}" onclick="event.stopPropagation();toggleFav(${y.id})">
         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </div>
-      <div style="position:absolute;top:6px;left:7px;background:rgba(255,255,255,0.85);border:1px solid var(--border);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="event.stopPropagation();shareYacht(${y.id})" title="Поделиться">
-        <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:var(--text3);fill:none;stroke-width:2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
-      </div>
+
       <div class="card-divider"></div>
       <div class="card-body">
         <div class="card-name">${y.names[lang]}</div>
@@ -418,7 +421,13 @@ function openDetail(id){
   document.getElementById('detailContent').innerHTML=`
     ${galHtml}
     <div class="modal-body">
-      <div class="modal-title">${y.names[lang]}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div class="modal-title">${y.names[lang]}</div>
+        <button onclick="shareYacht(${y.id})" style="background:var(--bg3);border:1px solid var(--border2);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--text2);cursor:pointer;font-family:'Jost',sans-serif;display:flex;align-items:center;gap:5px;flex-shrink:0">
+          <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+          ${lang==='ru'?'Поделиться':lang==='de'?'Teilen':lang==='tr'?'Paylaş':'Share'}
+        </button>
+      </div>
       <div class="modal-sub">${y.types[lang]} · ${y.metas[lang]}</div>
       <div class="tag-row">
         ${y.tags[lang].map(tg=>`<span class="tag">${tg}</span>`).join('')}
@@ -586,7 +595,12 @@ function submitBooking(yid){
     {text:'✅ Подтвердить',callback_data:'confirm|'+detailState.tgId+'|'+nm+'|'+y.names['en']+'|'+dateStr+'|'+total},
     {text:'❌ Отклонить',callback_data:'reject|'+detailState.tgId+'|'+nm+'|'+y.names['en']}
   ]);
-  fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msg,reply_markup:replyMarkup})}).catch(e=>console.log(e));
+  // Send with alternative yachts suggestion
+  const altYachts=YACHTS.filter(a=>a.cat===y.cat&&a.id!==y.id&&a.capacity>=detailState.guests)
+    .slice(0,3).map(a=>a.names['en']).join(', ');
+  const altLine=altYachts?'\n💡 Альтернативы: '+altYachts:'';
+  const msgFull=msg+altLine;
+  fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msgFull,reply_markup:replyMarkup})}).catch(e=>console.log(e));
 
   // Save to local orders history
   saveMyOrder({yacht:y.names[lang],date:dateStr,duration:durStr,guests:detailState.guests,extras:extrasNames,total,ts:Date.now()});
@@ -641,7 +655,12 @@ function sendSpecial(){
     {text:'✅ Подтвердить',callback_data:'confirm|'+detailState.tgId+'|'+nm+'|'+y.names['en']+'|'+dateStr+'|'+total},
     {text:'❌ Отклонить',callback_data:'reject|'+detailState.tgId+'|'+nm+'|'+y.names['en']}
   ]);
-  fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msg,reply_markup:replyMarkup})}).catch(e=>console.log(e));
+  // Send with alternative yachts suggestion
+  const altYachts=YACHTS.filter(a=>a.cat===y.cat&&a.id!==y.id&&a.capacity>=detailState.guests)
+    .slice(0,3).map(a=>a.names['en']).join(', ');
+  const altLine=altYachts?'\n💡 Альтернативы: '+altYachts:'';
+  const msgFull=msg+altLine;
+  fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msgFull,reply_markup:replyMarkup})}).catch(e=>console.log(e));
   document.getElementById('specRequest').value='';document.getElementById('specContact').value='';
   closeSpecial();
   const b=document.getElementById('specialBanner');
