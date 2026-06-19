@@ -438,10 +438,13 @@ function submitBooking(yid){
   const extrasNames=[...detailState.extras].map(i=>y.extras[i][lang]).join(', ');
   const comment=document.getElementById('commentInp').value.trim();
 
+  const tgInfoLine=(detailState.tgUsername&&detailState.tgUsername!==ph?'\n✈️ TG: '+detailState.tgUsername:'')
+    +(detailState.tgId?'\n🔗 ID: '+detailState.tgId:'');
   const msg='🛥 НОВАЯ ЗАЯВКА\n'+'─'.repeat(26)+'\n'
     +'🚢 Яхта: '+y.names['en']+'\n'
     +'👤 Клиент: '+nm+'\n'
-    +'📱 Контакт: '+ph+'\n'
+    +'📱 Контакт: '+ph
+    +tgInfoLine+'\n'
     +'📅 Дата: '+dateStr+'\n'
     +'⏱ Длит.: '+durStr+'\n'
     +'👥 Гостей: '+detailState.guests
@@ -450,7 +453,23 @@ function submitBooking(yid){
     +'─'.repeat(26)+'\n'
     +'💰 '+total+' €\n\n❗ Подтвердить в течение 4 ч';
 
-  fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msg})}).catch(e=>console.log(e));
+  // Build inline keyboard for owner - write to client button
+  const replyMarkup={inline_keyboard:[]};
+  if(detailState.tgId){
+    replyMarkup.inline_keyboard.push([
+      {text:'💬 Написать клиенту',url:'tg://user?id='+detailState.tgId}
+    ]);
+  }
+  if(detailState.tgUsername&&detailState.tgUsername!==ph){
+    replyMarkup.inline_keyboard.push([
+      {text:'✈️ '+detailState.tgUsername,url:'https://t.me/'+detailState.tgUsername.replace('@','')}
+    ]);
+  }
+  replyMarkup.inline_keyboard.push([
+    {text:'✅ Подтвердить',callback_data:'confirm|'+detailState.tgId+'|'+nm+'|'+y.names['en']+'|'+dateStr+'|'+total},
+    {text:'❌ Отклонить',callback_data:'reject|'+detailState.tgId+'|'+nm+'|'+y.names['en']}
+  ]);
+  fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msg,reply_markup:replyMarkup})}).catch(e=>console.log(e));
 
   // Save to local orders history
   saveMyOrder({yacht:y.names[lang],date:dateStr,duration:durStr,guests:detailState.guests,extras:extrasNames,total,ts:Date.now()});
@@ -488,7 +507,23 @@ function sendSpecial(){
   document.getElementById('specContact').classList.remove('err');
   const t=T[lang];
   const msg='⭐ СПЕЦЗАПРОС\n'+'─'.repeat(26)+'\n'+'⚡ '+t.urgLabels[urgSel]+'\n'+'📝 '+(req||'—')+'\n'+'📱 '+contact+'\n'+'─'.repeat(26)+'\nОтветь клиенту как можно скорее!';
-  fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msg})}).catch(e=>console.log(e));
+  // Build inline keyboard for owner - write to client button
+  const replyMarkup={inline_keyboard:[]};
+  if(detailState.tgId){
+    replyMarkup.inline_keyboard.push([
+      {text:'💬 Написать клиенту',url:'tg://user?id='+detailState.tgId}
+    ]);
+  }
+  if(detailState.tgUsername&&detailState.tgUsername!==ph){
+    replyMarkup.inline_keyboard.push([
+      {text:'✈️ '+detailState.tgUsername,url:'https://t.me/'+detailState.tgUsername.replace('@','')}
+    ]);
+  }
+  replyMarkup.inline_keyboard.push([
+    {text:'✅ Подтвердить',callback_data:'confirm|'+detailState.tgId+'|'+nm+'|'+y.names['en']+'|'+dateStr+'|'+total},
+    {text:'❌ Отклонить',callback_data:'reject|'+detailState.tgId+'|'+nm+'|'+y.names['en']}
+  ]);
+  fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msg,reply_markup:replyMarkup})}).catch(e=>console.log(e));
   document.getElementById('specRequest').value='';document.getElementById('specContact').value='';
   closeSpecial();
   const b=document.getElementById('specialBanner');
@@ -497,14 +532,13 @@ function sendSpecial(){
 }
 
 function showView(v){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.getElementById('nav'+v.charAt(0).toUpperCase()+v.slice(1))?.classList.add('active');}
-// In-memory order storage (Telegram Mini App doesn't support localStorage)
+// In-memory order storage
 const MY_ORDERS=[];
-function saveMyOrder(data){MY_ORDERS.unshift(data);if(MY_ORDERS.length>20)MY_ORDERS.pop();}
+function saveMyOrder(data){MY_ORDERS.unshift({...data,id:Date.now()});if(MY_ORDERS.length>20)MY_ORDERS.pop();}
 
 function showOrders(){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('navOrders').classList.add('active');
-  // Hide catalog, show orders panel
   document.getElementById('mainCatalog').style.display='none';
   let panel=document.getElementById('ordersPanel');
   if(!panel){
@@ -516,40 +550,79 @@ function showOrders(){
   panel.style.display='block';
   const tgUser=window.Telegram?.WebApp?.initDataUnsafe?.user||null;
   const tgName=tgUser?(tgUser.first_name||''):'';
-  const noteText=lang==='ru'
-    ?'💡 Ответ придёт в <b>личные сообщения</b> в Telegram от менеджера в течение 4 часов.'
-    :lang==='me'?'💡 Odgovor stiže u <b>privatne poruke</b> od menadžera u roku od 4 sata.'
-    :'💡 Manager will reply via <b>direct message</b> in Telegram within 4 hours.';
-  const emptyText=lang==='ru'?'Заявок пока нет. Выберите яхту в каталоге!':lang==='me'?'Nema rezervacija!':'No bookings yet!';
-  const backText=lang==='ru'?'← Назад к каталогу':lang==='me'?'← Katalog':'← Catalog';
+  const t=T[lang];
+
   const titleText=lang==='ru'?'Мои заявки':lang==='me'?'Moje rezervacije':'My bookings';
+  const noteText=lang==='ru'
+    ?'Менеджер свяжется с вами в Telegram в течение <strong>4 часов</strong>. Если не получили ответ — напишите в бот.'
+    :lang==='me'?'Menadžer će vas kontaktirati na Telegram u roku od <strong>4 sata</strong>.'
+    :'Manager will contact you on Telegram within <strong>4 hours</strong>. If no reply — message the bot.';
+  const emptyTitle=lang==='ru'?'Заявок пока нет':lang==='me'?'Nema rezervacija':'No bookings yet';
+  const emptyText=lang==='ru'?'Выберите яхту в каталоге и отправьте запрос':lang==='me'?'Odaberite jahtu u katalogu':'Choose a yacht from the catalog';
+  const backText=lang==='ru'?'← Назад к каталогу':lang==='me'?'← Katalog':'← Catalog';
+  const newText=lang==='ru'?'+ Добавить яхту':lang==='me'?'+ Dodaj jahtu':'+ Add yacht';
+  const totalLabel=lang==='ru'?'Итого':lang==='me'?'Ukupno':'Total';
+  const sentLabel=lang==='ru'?'Отправлено':lang==='me'?'Poslano':'Sent';
+  const guestsLabel=lang==='ru'?'гост.':lang==='me'?'gost.':'pax';
+
   panel.innerHTML=`
-    <div style="margin-bottom:14px">
-      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--navy)">${titleText}${tgName?' — '+tgName:''}</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--navy)">${titleText}${MY_ORDERS.length>0?' ('+MY_ORDERS.length+')':''}</div>
+        ${tgName?`<div style="font-size:12px;color:var(--text3)">@${(tgUser&&tgUser.username)||tgName}</div>`:''}
+      </div>
+      ${MY_ORDERS.length>0?`<button onclick="backToCatalog()" style="background:var(--navy);color:#fff;border:none;border-radius:var(--rs);padding:8px 14px;font-size:12px;cursor:pointer;font-family:'Jost',sans-serif">${newText}</button>`:''}
     </div>
-    <div style="background:rgba(181,137,58,0.07);border:1px solid rgba(181,137,58,0.2);border-radius:var(--rs);padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--text2);line-height:1.7">${noteText}</div>
-    ${MY_ORDERS.length===0
-      ?`<div style="text-align:center;padding:40px 20px;color:var(--text3);font-size:13px">${emptyText}</div>`
-      :MY_ORDERS.map(o=>`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:14px;margin-bottom:10px;box-shadow:var(--shadow)">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <div style="font-size:14px;font-weight:500;color:var(--navy)">${o.yacht}</div>
-            <div style="font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(42,122,86,0.08);border:1px solid rgba(42,122,86,0.2);color:#2a7a56">${lang==='ru'?'Отправлено':'Sent'}</div>
+
+    ${MY_ORDERS.length===0?`
+      <div style="text-align:center;padding:48px 20px">
+        <div style="font-size:48px;margin-bottom:16px">⛵</div>
+        <div style="font-size:16px;font-weight:500;color:var(--navy);margin-bottom:8px">${emptyTitle}</div>
+        <div style="font-size:13px;color:var(--text3);margin-bottom:24px">${emptyText}</div>
+        <button onclick="backToCatalog()" style="background:var(--navy);color:#fff;border:none;border-radius:var(--rs);padding:12px 28px;font-size:14px;cursor:pointer;font-family:'Jost',sans-serif">${backText}</button>
+      </div>
+    `:`
+      <div style="background:rgba(181,137,58,0.07);border:1px solid rgba(181,137,58,0.2);border-radius:var(--rs);padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--text2);line-height:1.6">${noteText}</div>
+
+      ${MY_ORDERS.map((o,i)=>`
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;box-shadow:var(--shadow)">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+            <div>
+              <div style="font-size:15px;font-weight:500;color:var(--navy);margin-bottom:2px">${o.yacht}</div>
+              <div style="font-size:11px;color:var(--text3)">${new Date(o.ts).toLocaleString(lang==='ru'?'ru-RU':'en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:16px;font-weight:500;color:var(--gold)">${o.total?o.total.toLocaleString()+' €':''}</div>
+              <div style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(42,122,86,0.08);border:1px solid rgba(42,122,86,0.2);color:#2a7a56;margin-top:3px">${sentLabel}</div>
+            </div>
           </div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:3px">📅 ${o.date} · ⏱ ${o.duration} · 👥 ${o.guests}</div>
-          ${o.extras?`<div style="font-size:11px;color:var(--text3)">➕ ${o.extras}</div>`:''}
-          <div style="font-size:11px;color:var(--text3);margin-top:5px">⏰ ${new Date(o.ts).toLocaleString(lang==='ru'?'ru-RU':'en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
-        </div>`).join('')}
-    <button onclick="backToCatalog()" style="background:var(--navy);color:#fff;border:none;border-radius:var(--rs);width:100%;padding:13px;font-size:14px;cursor:pointer;font-family:'Jost',sans-serif;margin-top:4px">${backText}</button>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <div style="background:var(--bg3);border-radius:var(--rs);padding:7px 10px">
+              <div style="font-size:10px;color:var(--text3);margin-bottom:2px">📅 ${lang==='ru'?'Дата':'Date'}</div>
+              <div style="font-size:13px;color:var(--text)">${o.date}</div>
+            </div>
+            <div style="background:var(--bg3);border-radius:var(--rs);padding:7px 10px">
+              <div style="font-size:10px;color:var(--text3);margin-bottom:2px">⏱ ${lang==='ru'?'Длительность':'Duration'}</div>
+              <div style="font-size:13px;color:var(--text)">${o.duration}</div>
+            </div>
+            <div style="background:var(--bg3);border-radius:var(--rs);padding:7px 10px">
+              <div style="font-size:10px;color:var(--text3);margin-bottom:2px">👥 ${lang==='ru'?'Гостей':'Guests'}</div>
+              <div style="font-size:13px;color:var(--text)">${o.guests} ${guestsLabel}</div>
+            </div>
+            ${o.extras?`<div style="background:var(--bg3);border-radius:var(--rs);padding:7px 10px">
+              <div style="font-size:10px;color:var(--text3);margin-bottom:2px">➕ ${lang==='ru'?'Допы':'Add-ons'}</div>
+              <div style="font-size:12px;color:var(--text)">${o.extras}</div>
+            </div>`:''}
+          </div>
+        </div>
+      `).join('')}
+
+      <button onclick="backToCatalog()" style="background:transparent;border:1px solid var(--border2);border-radius:var(--rs);width:100%;padding:12px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text2);margin-top:4px">${backText}</button>
+    `}
   `;
 }
-
 function backToCatalog(){
-  const panel=document.getElementById('ordersPanel');
-  if(panel)panel.style.display='none';
-  document.getElementById('mainCatalog').style.display='block';
   showView('catalog');
-  document.getElementById('navCatalog').classList.add('active');
-  document.getElementById('navOrders').classList.remove('active');
 }
 
 init();
