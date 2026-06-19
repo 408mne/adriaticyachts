@@ -497,9 +497,59 @@ function sendSpecial(){
 }
 
 function showView(v){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.getElementById('nav'+v.charAt(0).toUpperCase()+v.slice(1))?.classList.add('active');}
+// In-memory order storage (Telegram Mini App doesn't support localStorage)
+const MY_ORDERS=[];
+function saveMyOrder(data){MY_ORDERS.unshift(data);if(MY_ORDERS.length>20)MY_ORDERS.pop();}
+
 function showOrders(){
-  const msg=lang==='ru'?'Ваши заявки обрабатываются менеджером. Ответ придёт в этот чат в течение 4 часов.':lang==='me'?'Vaše rezervacije se obrađuju. Odgovor stiže u roku od 4 sata.':'Your bookings are being processed. You will receive a reply within 4 hours.';
-  alert(msg);
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('navOrders').classList.add('active');
+  // Hide catalog, show orders panel
+  document.getElementById('mainCatalog').style.display='none';
+  let panel=document.getElementById('ordersPanel');
+  if(!panel){
+    panel=document.createElement('div');
+    panel.id='ordersPanel';
+    panel.style.cssText='padding:16px 14px 100px';
+    document.getElementById('mainCatalog').parentElement.appendChild(panel);
+  }
+  panel.style.display='block';
+  const tgUser=window.Telegram?.WebApp?.initDataUnsafe?.user||null;
+  const tgName=tgUser?(tgUser.first_name||''):'';
+  const noteText=lang==='ru'
+    ?'💡 Ответ придёт в <b>личные сообщения</b> в Telegram от менеджера в течение 4 часов.'
+    :lang==='me'?'💡 Odgovor stiže u <b>privatne poruke</b> od menadžera u roku od 4 sata.'
+    :'💡 Manager will reply via <b>direct message</b> in Telegram within 4 hours.';
+  const emptyText=lang==='ru'?'Заявок пока нет. Выберите яхту в каталоге!':lang==='me'?'Nema rezervacija!':'No bookings yet!';
+  const backText=lang==='ru'?'← Назад к каталогу':lang==='me'?'← Katalog':'← Catalog';
+  const titleText=lang==='ru'?'Мои заявки':lang==='me'?'Moje rezervacije':'My bookings';
+  panel.innerHTML=`
+    <div style="margin-bottom:14px">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--navy)">${titleText}${tgName?' — '+tgName:''}</div>
+    </div>
+    <div style="background:rgba(181,137,58,0.07);border:1px solid rgba(181,137,58,0.2);border-radius:var(--rs);padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--text2);line-height:1.7">${noteText}</div>
+    ${MY_ORDERS.length===0
+      ?`<div style="text-align:center;padding:40px 20px;color:var(--text3);font-size:13px">${emptyText}</div>`
+      :MY_ORDERS.map(o=>`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:14px;margin-bottom:10px;box-shadow:var(--shadow)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="font-size:14px;font-weight:500;color:var(--navy)">${o.yacht}</div>
+            <div style="font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(42,122,86,0.08);border:1px solid rgba(42,122,86,0.2);color:#2a7a56">${lang==='ru'?'Отправлено':'Sent'}</div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:3px">📅 ${o.date} · ⏱ ${o.duration} · 👥 ${o.guests}</div>
+          ${o.extras?`<div style="font-size:11px;color:var(--text3)">➕ ${o.extras}</div>`:''}
+          <div style="font-size:11px;color:var(--text3);margin-top:5px">⏰ ${new Date(o.ts).toLocaleString(lang==='ru'?'ru-RU':'en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+        </div>`).join('')}
+    <button onclick="backToCatalog()" style="background:var(--navy);color:#fff;border:none;border-radius:var(--rs);width:100%;padding:13px;font-size:14px;cursor:pointer;font-family:'Jost',sans-serif;margin-top:4px">${backText}</button>
+  `;
+}
+
+function backToCatalog(){
+  const panel=document.getElementById('ordersPanel');
+  if(panel)panel.style.display='none';
+  document.getElementById('mainCatalog').style.display='block';
+  showView('catalog');
+  document.getElementById('navCatalog').classList.add('active');
+  document.getElementById('navOrders').classList.remove('active');
 }
 
 init();
