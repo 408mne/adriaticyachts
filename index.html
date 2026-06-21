@@ -20,11 +20,11 @@ body{display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden}
 .logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;letter-spacing:0.06em;color:var(--navy)}
 .logo span{color:var(--gold);font-style:italic}
 .lang-switcher{display:flex;gap:4px}
-.lang-btn{background:transparent!important;border:none!important;border-radius:6px;color:var(--gold)!important;font-size:11px;padding:4px 9px;cursor:pointer;transition:.15s;font-family:'Jost',sans-serif}
-.lang-btn.active{background:transparent!important;border:none!important;color:var(--gold)!important;font-weight:600}
+.lang-btn{background:#f7f5f1!important;border:1.5px solid #E85420!important;border-radius:6px;color:#E85420!important;font-size:11px;padding:4px 9px;cursor:pointer;transition:.15s;font-family:'Jost',sans-serif}
+.lang-btn.active{background:#f7f5f1!important;border-color:#E85420!important;color:#E85420!important;font-weight:600}
 .lang-opt{padding:8px 14px;font-size:12px;color:var(--text2);cursor:pointer;font-family:'Jost',sans-serif;transition:.12s}
 .lang-opt:hover{background:var(--bg3);color:var(--navy)}
-.lang-btn.active{background:transparent!important;border:none!important;color:var(--gold)!important;font-weight:600}
+.lang-btn.active{background:#f7f5f1!important;border-color:#E85420!important;color:#E85420!important;font-weight:600}
 .special-banner{background:linear-gradient(90deg,rgba(181,137,58,0.1),rgba(181,137,58,0.03));border:1px solid rgba(181,137,58,0.25);border-radius:var(--rs);padding:10px 14px;margin:8px 0 0;display:flex;align-items:center;gap:10px;cursor:pointer;transition:.15s}
 .special-icon{width:34px;height:34px;border-radius:8px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
 .special-text{flex:1}
@@ -244,7 +244,7 @@ to{transform:rotate(360deg)}}50%{opacity:0.9}}
   </div>
   <div style="color:var(--gold);font-size:18px;opacity:.7">›</div>
 </div>
-<div id="catsRow" style="display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:8px 0;background:var(--bg)">
+<div style="display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:8px 0;background:var(--bg)">
   <div onclick="openPicker()" style="background:var(--gold-dim);border:1px solid rgba(181,137,58,0.3);border-radius:20px;color:var(--gold);font-size:12px;padding:6px 12px;white-space:nowrap;cursor:pointer;flex-shrink:0;display:flex;align-items:center;gap:4px;margin-right:8px" id="pickerCatBtn">
     <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
     <span id="pickerCatLbl">Подбор</span>
@@ -258,7 +258,6 @@ to{transform:rotate(360deg)}}50%{opacity:0.9}}
   <div class="section-title" id="sectionTitle">Montenegro Yachts</div>
   <div class="cards-grid" id="cardsGrid"></div>
 </div>
-<div class="main" id="ordersPanel" style="display:none"></div>
 <div class="bottom-nav">
   <div class="nav-item active" id="navCatalog" onclick="showView('catalog')">
     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
@@ -822,30 +821,19 @@ function sendSpecial(){
 }
 
 function showView(v){
-  // Close all modals
-  ['detailModal','specialModal','slotModal','pickerModal','reviewsModal','routesModal','quizModal'].forEach(function(id){
-    var el=document.getElementById(id);
-    if(el)el.classList.remove('open');
-  });
-  // Hide orders panel
-  var panel=document.getElementById('ordersPanel');
+  const panel=document.getElementById('ordersPanel');
   if(panel)panel.style.display='none';
-  // Show/hide catalog
-  var mc=document.getElementById('mainCatalog');
-  if(mc)mc.style.display=(v==='catalog')?'block':'none';
-  // Show/hide cats pills (only in catalog)
-  var catsRow=document.getElementById('catsRow');
-  if(catsRow)catsRow.style.display=(v==='catalog')?'flex':'none';
-  // Show bottom nav always (except slot handled separately)
-  var nav=document.querySelector('.bottom-nav');
-  if(nav)nav.style.display='flex';
-  // Update active nav
-  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
-  var navId='nav'+v.charAt(0).toUpperCase()+v.slice(1);
-  var navEl=document.getElementById(navId);
-  if(navEl)navEl.classList.add('active');
+  const mc=document.getElementById('mainCatalog');
+  if(mc)mc.style.display='block';
+  const pickerBtn=document.getElementById('pickerCatBtn');
+  if(pickerBtn)pickerBtn.style.display='flex';
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const navId='nav'+v.charAt(0).toUpperCase()+v.slice(1);
+  document.getElementById(navId)?.classList.add('active');
   updateNavGlow(navId);
 }
+// Persistent order storage via Telegram CloudStorage
+const MY_ORDERS=[];
 function saveMyOrder(data){
   MY_ORDERS.unshift({...data,id:Date.now()});
   if(MY_ORDERS.length>20)MY_ORDERS.pop();
@@ -880,24 +868,18 @@ function loadSavedOrders(){
 }
 
 function showOrders(){
-  // Close all modals
-  ['detailModal','specialModal','slotModal','pickerModal','reviewsModal','routesModal','quizModal'].forEach(function(id){
-    var el=document.getElementById(id);if(el)el.classList.remove('open');
-  });
-  // Hide catalog
-  var mc=document.getElementById('mainCatalog');
-  if(mc)mc.style.display='none';
-  // Hide cats pills
-  var catsRow=document.getElementById('catsRow');
-  if(catsRow)catsRow.style.display='none';
-  // Show bottom nav
-  var nav=document.querySelector('.bottom-nav');
-  if(nav)nav.style.display='flex';
-  // Active nav
-  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+  const pickerBtn=document.getElementById('pickerCatBtn');
+  if(pickerBtn)pickerBtn.style.display='none';
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('navOrders').classList.add('active');
-  // Build orders panel
-  var panel=document.getElementById('ordersPanel');
+  document.getElementById('mainCatalog').style.display='none';
+  let panel=document.getElementById('ordersPanel');
+  if(!panel){
+    panel=document.createElement('div');
+    panel.id='ordersPanel';
+    panel.style.cssText='padding:16px 14px 100px;flex:1';
+    document.getElementById('mainCatalog').parentElement.appendChild(panel);
+  }
   panel.style.display='block';
   const tgUser=window.Telegram?.WebApp?.initDataUnsafe?.user||null;
   const tgName=tgUser?(tgUser.first_name||''):'';
@@ -971,7 +953,10 @@ function showOrders(){
     `}
   `;
 }
-function backToCatalog(){showView('catalog');}
+
+function backToCatalog(){
+  showView('catalog');
+}
 
 
 
@@ -1067,20 +1052,6 @@ const ROUTES_DATA = {
 };
 let currentRouteTab = 4;
 function openRoutes(){
-  // Close other modals first
-  ['detailModal','specialModal','slotModal','pickerModal','reviewsModal','quizModal'].forEach(function(id){
-    var el=document.getElementById(id);if(el)el.classList.remove('open');
-  });
-  // Hide catalog + orders
-  var mc=document.getElementById('mainCatalog');if(mc)mc.style.display='none';
-  var panel=document.getElementById('ordersPanel');if(panel)panel.style.display='none';
-  var catsRow=document.getElementById('catsRow');if(catsRow)catsRow.style.display='none';
-  // Show bottom nav
-  var nav=document.querySelector('.bottom-nav');if(nav)nav.style.display='flex';
-  // Active nav
-  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
-  document.getElementById('navRoutes').classList.add('active');
-  // Open modal
   document.getElementById('routesModal').classList.add('open');
   setRouteTab(4);
 }
@@ -1357,21 +1328,7 @@ function showPickerResults(){
       <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>
     </div>`).join(''):`<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px">${noMatch}<br><button onclick="openSpecial()" style="margin-top:10px;background:rgba(26,38,64,0.07);color:var(--navy);border:1.5px solid var(--navy);border-radius:var(--rs);padding:8px 16px;font-size:12px;cursor:pointer;font-family:'Jost',sans-serif">${lang==='ru'?'Написать менеджеру':'Contact manager'}</button></div>`;
 }
-function closeModal(id){
-  document.getElementById(id).classList.remove('open');
-  // After closing slot or routes - return to catalog if nothing else is open
-  if(id==='slotModal'||id==='routesModal'){
-    var anyOpen=['detailModal','specialModal','pickerModal','reviewsModal','quizModal']
-      .some(function(mid){var el=document.getElementById(mid);return el&&el.classList.contains('open');});
-    if(!anyOpen){
-      var panel=document.getElementById('ordersPanel');
-      var ordersVisible=panel&&panel.style.display!=='none';
-      if(!ordersVisible){
-        showView('catalog');
-      }
-    }
-  }
-}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
 
 
 // ── EASTER EGG - 5 rapid taps on dice ──
@@ -1379,17 +1336,17 @@ let diceTapCount=0,diceTapTimer=null;
 function handleDiceTap(){
   diceTapCount++;
   clearTimeout(diceTapTimer);
-  diceTapTimer=setTimeout(function(){diceTapCount=0;},600);
+  diceTapTimer=setTimeout(()=>{diceTapCount=0;},600);
   if(diceTapCount>=3){
-    diceTapCount=0;clearTimeout(diceTapTimer);
+    diceTapCount=0;
+    clearTimeout(diceTapTimer);
+    // Close slot if open, show easter egg
     closeModal('slotModal');
     setTimeout(openEasterEgg,300);
     return;
   }
+  // Always open slot on first tap
   if(diceTapCount===1){
-    // Active nav
-    document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
-    document.getElementById('navSlot').classList.add('active');
     spinDiceThenOpen();
   }
 }
