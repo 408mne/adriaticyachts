@@ -13,8 +13,7 @@
 <style>
 :root{--bg:#f7f5f1;--bg2:#ffffff;--bg3:#f0ede7;--bg4:#e8e4dc;--border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);--navy:#1a2640;--navy2:#243352;--gold:#b5893a;--gold2:#c9a24e;--gold-dim:rgba(181,137,58,0.12);--gold-dim2:rgba(181,137,58,0.07);--text:#1a2035;--text2:#5a6070;--text3:#9aa0ad;--green:#2a7a56;--red:#c04040;--radius:16px;--rs:10px;--shadow:0 1px 3px rgba(0,0,0,0.07),0 4px 16px rgba(0,0,0,0.06);--shadow-hover:0 4px 8px rgba(0,0,0,0.1),0 8px 28px rgba(0,0,0,0.09)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,html,body{height:100%;display:flex;flex-direction:column;background:var(--bg);color:var(--text);font-family:'Jost',sans-serif;font-size:14px;overflow-x:hidden}body{background:var(--bg);color:var(--text);font-family:'Jost',sans-serif;font-size:14px;overflow-x:hidden;position:relative}
-body{display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden}
+html{height:100%;background:var(--bg)}body{background:var(--bg);color:var(--text);font-family:'Jost',sans-serif;font-size:14px;overflow-x:hidden;min-height:100%;min-height:100vh;position:relative}
 .app-header{background:rgba(247,245,241,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 14px 0;position:sticky;top:0;z-index:50}
 .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;letter-spacing:0.06em;color:var(--navy)}
@@ -34,7 +33,7 @@ body{display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden}
 .cats-scroll::-webkit-scrollbar{display:none}
 .cat-pill{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;color:var(--text2);font-size:12px;padding:6px 14px;white-space:nowrap;cursor:pointer;transition:.15s;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
 .cat-pill.active{background:var(--navy);border-color:var(--navy);color:#fff}
-.main{flex:1;padding:16px 14px 100px}
+.main{padding:16px 14px 100px;min-height:calc(100vh - 60px)}
 .section-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--navy);margin-bottom:16px;letter-spacing:0.03em}
 .cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:.2s;position:relative;box-shadow:var(--shadow)}
