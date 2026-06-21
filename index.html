@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Montenegro Yacht Charter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://telegram.org/js/telegram-web-app.js">
+
+
+
+</script>
+<style>
+:root{--bg:#f7f5f1;--bg2:#ffffff;--bg3:#f0ede7;--bg4:#e8e4dc;--border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);--navy:#1a2640;--navy2:#243352;--gold:#b5893a;--gold2:#c9a24e;--gold-dim:rgba(181,137,58,0.12);--gold-dim2:rgba(181,137,58,0.07);--text:#1a2035;--text2:#5a6070;--text3:#9aa0ad;--green:#2a7a56;--red:#c04040;--radius:16px;--rs:10px;--shadow:0 1px 3px rgba(0,0,0,0.07),0 4px 16px rgba(0,0,0,0.06);--shadow-hover:0 4px 8px rgba(0,0,0,0.1),0 8px 28px rgba(0,0,0,0.09)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,html,body{height:100%;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:'Jost',sans-serif;font-size:14px;overflow-x:hidden;position:relative}
+body{display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden}
+.app-header{background:rgba(247,245,241,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 14px 0;position:sticky;top:0;z-index:50}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;letter-spacing:0.06em;color:var(--navy)}
+.logo span{color:var(--gold);font-style:italic}
+.lang-switcher{display:flex;gap:4px}
+.lang-btn{background:transparent;border:1px solid var(--border2);border-radius:6px;color:var(--text2);font-size:11px;padding:4px 9px;cursor:pointer;transition:.15s;font-family:'Jost',sans-serif}
+.lang-btn.active{background:var(--navy);border-color:var(--navy);color:#fff}
+.lang-opt{padding:8px 14px;font-size:12px;color:var(--text2);cursor:pointer;font-family:'Jost',sans-serif;transition:.12s}
+.lang-opt:hover{background:var(--bg3);color:var(--navy)}
+.lang-btn.active{background:var(--navy);border-color:var(--navy);color:#fff}
+.special-banner{background:linear-gradient(90deg,rgba(181,137,58,0.1),rgba(181,137,58,0.03));border:1px solid rgba(181,137,58,0.25);border-radius:var(--rs);padding:10px 14px;margin:8px 0 0;display:flex;align-items:center;gap:10px;cursor:pointer;transition:.15s}
+.special-icon{width:34px;height:34px;border-radius:8px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+.special-text{flex:1}
+.special-title{color:var(--gold);font-size:13px;font-weight:500}
+.special-sub{color:var(--text2);font-size:11px;margin-top:1px}
+.cats-scroll{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding:10px 16px 12px}
+.cats-scroll::-webkit-scrollbar{display:none}
+.cat-pill{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;color:var(--text2);font-size:12px;padding:6px 14px;white-space:nowrap;cursor:pointer;transition:.15s;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+.cat-pill.active{background:var(--navy);border-color:var(--navy);color:#fff}
+.main{flex:1;padding:16px 14px 80px}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--navy);margin-bottom:16px;letter-spacing:0.03em}
+.cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:.2s;position:relative;box-shadow:var(--shadow)}
+.card:hover{border-color:rgba(0,0,0,0.18);box-shadow:var(--shadow-hover);transform:translateY(-2px)}
+.card-img{will-change:transform;width:100%;height:110px;object-fit:cover;display:block;background:var(--bg3);transition:transform .1s linear;transform-origin:center}
+.card-img-placeholder{width:100%;height:110px;display:flex;align-items:center;justify-content:center;background:var(--bg3)}
+.card-badge{position:absolute;top:7px;left:7px;background:rgba(255,255,255,0.92);border:1px solid rgba(0,0,0,0.08);border-radius:5px;font-size:9px;color:var(--green);font-weight:500;letter-spacing:.04em;padding:2px 7px}
+.card-fav{position:absolute;top:6px;right:6px;background:rgba(255,255,255,0.85);border:1px solid var(--border);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.card-fav svg{width:13px;height:13px;stroke:var(--text3);fill:none;stroke-width:2;transition:.15s}
+.card-fav.on svg{stroke:var(--red);fill:var(--red)}
+.weekly-badge{position:absolute;top:32px;left:7px;background:rgba(181,137,58,0.12);border:1px solid rgba(181,137,58,0.3);border-radius:5px;font-size:9px;color:var(--gold);padding:2px 7px}
+.card-divider{height:1px;background:var(--border)}
+.card-body{padding:10px 11px 11px}
+.card-name{color:var(--navy);font-size:13px;font-weight:500;margin-bottom:2px;line-height:1.3}
+.card-meta{color:var(--text3);font-size:10px;margin-bottom:7px}
+.card-price{color:var(--gold);font-size:13px;font-weight:500;text-align:right}
+.card-price span{color:var(--text3);font-size:10px;font-weight:400}
+.bottom-nav{position:fixed!important;bottom:0!important;left:0!important;right:0!important;width:100%!important;background:rgba(247,245,241,0.98);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex!important;padding:8px 0 16px;z-index:9000!important;box-shadow:0 -2px 16px rgba(0,0,0,0.07)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:var(--text3);font-size:10px;letter-spacing:.03em;transition:.15s}
+.nav-item.active{color:var(--navy)}
+.nav-item svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.7}
+.modal-overlay{position:fixed;inset:0;background:rgba(20,26,40,0.5);z-index:100;display:none;align-items:flex-end;backdrop-filter:blur(4px);cursor:pointer}.modal-overlay .modal-sheet{cursor:default}
+.modal-overlay.open{display:flex}
+.modal-sheet{background:var(--bg2);border-radius:22px 22px 0 0;width:100%;max-height:88vh;overflow-y:auto;padding:0 0 32px;animation:slideUp .26s cubic-bezier(.32,.72,0,1);border-top:1px solid var(--border);box-shadow:0 -8px 40px rgba(0,0,0,0.14)}
+@keyframes slideUp{from{transform:translateY(48px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:14px auto 0}
+.modal-gallery{width:100%;height:220px;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin-top:12px}
+.modal-gallery::-webkit-scrollbar{display:none}
+.modal-gallery img{width:100%;height:220px;object-fit:cover;display:block;flex-shrink:0;scroll-snap-align:start}
+.modal-gallery-placeholder{width:100%;height:160px;display:flex;align-items:center;justify-content:center;margin-top:12px;background:var(--bg3)}
+.modal-body{padding:18px 16px}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;color:var(--navy);margin-bottom:4px}
+.modal-sub{color:var(--text2);font-size:13px;margin-bottom:12px}
+.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tag{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text2);font-size:11px;padding:3px 9px}
+.tag.gold{background:var(--gold-dim);border-color:rgba(181,137,58,0.3);color:var(--gold)}
+.tag.green{background:rgba(42,122,86,0.08);border-color:rgba(42,122,86,0.25);color:var(--green)}
+.desc-text{color:var(--text2);font-size:13px;line-height:1.7;margin-bottom:16px}
+.section-lbl{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;margin-top:16px}
+.features-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.feat{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:8px 10px;display:flex;align-items:center;gap:7px}
+.feat svg{width:14px;height:14px;stroke:var(--gold);fill:none;stroke-width:2;flex-shrink:0}
+.feat span{color:var(--text2);font-size:12px;line-height:1.3}
+.price-box{background:var(--gold-dim);border:1px solid rgba(181,137,58,0.2);border-radius:var(--rs);padding:14px;margin-top:4px;text-align:center}
+.price-label{font-size:11px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.price-amount{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:500;color:var(--navy);margin-bottom:4px}
+.price-note{font-size:11px;color:var(--text3)}
+.extras-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.extra{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rs);padding:9px 10px;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:7px}
+.extra.sel{background:var(--gold-dim);border-color:var(--gold)}
+.extra svg{width:15px;height:15px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0;transition:.15s}
+.extra.sel svg{stroke:var(--gold)}
+.extra-name{color:var(--text2);font-size:12px;transition:.15s}
+.extra.sel .extra-name{color:var(--gold);font-weight:500}
+.extra-p{color:var(--text3);font-size:11px}
+.modal-divider{height:1px;background:var(--border);margin:16px 0}
+.form-section{margin-top:16px}
+.inp{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 12px;color:var(--text);font-size:13px;width:100%;outline:none;font-family:'Jost',sans-serif;transition:.15s;margin-bottom:8px}
+.inp:focus{border-color:var(--navy);background:var(--bg2)}
+.inp::placeholder{color:var(--text3)}
+.inp.err{border-color:var(--red)}
+.err-msg{color:var(--red);font-size:11px;margin:-4px 0 6px 4px}
+.dur-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.dur-btn{padding:7px 12px;border-radius:var(--rs);border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:13px;transition:.15s;font-family:'Jost',sans-serif}
+.dur-btn.sel-h{background:var(--navy);border-color:var(--navy);color:#fff}
+.dur-btn.sel-d{background:var(--gold-dim);border-color:var(--gold);color:var(--gold)}
+.guests-row{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.g-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);color:var(--navy);width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;transition:.15s}
+.g-btn:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+.g-num{color:var(--navy);font-size:16px;font-weight:500;min-width:28px;text-align:center}
+.g-cap{color:var(--text3);font-size:12px}
+.pending-notice{background:rgba(181,137,58,0.07);border:1px solid rgba(181,137,58,0.2);border-radius:var(--rs);padding:10px 12px;margin-top:14px;display:flex;gap:10px;align-items:flex-start}
+.pending-notice svg{width:15px;height:15px;stroke:var(--gold);fill:none;stroke-width:2;flex-shrink:0;margin-top:2px}
+.pending-text{color:var(--text2);font-size:12px;line-height:1.6}
+.pending-text strong{color:var(--gold)}
+.book-btn{background:var(--navy);color:#fff;border:none;border-radius:var(--rs);width:100%;padding:14px;font-size:14px;font-weight:500;cursor:pointer;font-family:'Jost',sans-serif;transition:.18s;margin-top:14px;letter-spacing:.04em}
+.book-btn:hover{background:var(--navy2)}
+.confirm-wrap{padding:26px 16px}
+.confirm-icon-ring{width:58px;height:58px;border-radius:50%;background:rgba(42,122,86,0.1);border:1px solid rgba(42,122,86,0.25);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.confirm-icon-ring svg{width:26px;height:26px;stroke:var(--green);fill:none;stroke-width:2.5}
+.confirm-title-big{font-family:'Cormorant Garamond',serif;font-size:24px;text-align:center;font-weight:400;color:var(--navy);margin-bottom:6px}
+.confirm-sub{color:var(--text2);font-size:13px;text-align:center;line-height:1.6;margin-bottom:16px}
+.timer-box{background:var(--gold-dim);border:1px solid rgba(181,137,58,0.22);border-radius:var(--rs);padding:12px;margin-bottom:14px;text-align:center}
+.timer-label{color:var(--text2);font-size:12px;margin-bottom:5px}
+.timer-count{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--gold);font-weight:500;letter-spacing:3px}
+.summary-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:12px}
+.sline{display:flex;justify-content:space-between;align-items:flex-start;padding:5px 0;border-bottom:1px solid var(--border)}
+.sline:last-child{border-bottom:none}
+.sl{color:var(--text3);font-size:12px;flex-shrink:0;padding-right:8px}
+.sv{color:var(--navy);font-size:12px;font-weight:500;text-align:right}
+.sv.gold{color:var(--gold);font-size:14px}
+.new-btn{background:transparent;border:1px solid var(--border2);border-radius:var(--rs);color:var(--text2);font-size:13px;width:100%;padding:12px;cursor:pointer;font-family:'Jost',sans-serif;transition:.15s}
+.special-modal{padding:20px 16px 12px}
+.spec-title{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:400;color:var(--navy);margin-bottom:4px}
+.spec-sub{color:var(--text2);font-size:13px;margin-bottom:16px;line-height:1.6}
+.urgency-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.urg-card{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);padding:12px 10px;cursor:pointer;transition:.15s;text-align:center}
+.urg-card.sel{background:var(--gold-dim);border-color:var(--gold)}
+.urg-icon{font-size:22px;margin-bottom:5px}
+.urg-label{color:var(--text2);font-size:12px;line-height:1.4}
+.urg-card.sel .urg-label{color:var(--gold);font-weight:500}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes boatSail{0%{transform:translateX(-8px) rotate(-2deg)}25%{transform:translateX(2px) rotate(1deg)}50%{transform:translateX(6px) rotate(-1deg)}75%{transform:translateX(2px) rotate(2deg)}100%{transform:translateX(-8px) rotate(-2deg)}}
+@keyframes wavePulse{0%,100%{opacity:0.6}50%{opacity:1}}
+
+/* Lighthouse beam CSS animation - more reliable than JS in Telegram WebView */
+@keyframes lhBeamRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}50%{r:9;opacity:0.9}}
+#lhBeamG.spinning{display:block;animation:lhBeamRotate 4s linear infinite}
+#lhGlowC.glowing{animation:lhGlowPulse 4s linear infinite}
+
+@keyframes compassSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes skeletonShimmer{0%{background-position:-600px 0}100%{background-position:600px 0}}
+.skeleton{background:var(--bg3)}
+
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes shimmer{0%{opacity:.6}50%{opacity:1}100%{opacity:.6}}
+.card{animation:fadeInUp .32s ease both}
+.review-card{animation:fadeInUp .32s ease both}
+.anim-pulse{animation:pulse 2s ease-in-out infinite}
+.anim-float{animation:floatY 3s ease-in-out infinite}
+.nav-item{transition:color .2s;position:relative;-webkit-tap-highlight-color:transparent}
+.nav-item svg{transition:transform .15s,color .2s,stroke .15s}
+.nav-item.active svg{filter:none}
+@keyframes navFlash{0%{color:inherit}40%{color:#E85420;transform:scale(1.18)}100%{color:inherit;transform:scale(1)}}
+.nav-item.active{color:#E85420}
+.nav-item.active svg{filter:none}
+.cat-pill.active{background:var(--gold-dim);border-color:rgba(181,137,58,0.35);color:var(--gold);font-weight:500}
+.picker-opt:active{background:#E85420;border-color:#E85420;color:#fff}
+.lang-opt:active,.lang-opt:hover{color:#E85420}
+.nav-item.active span{color:#E85420}
+@keyframes iconFlip{0%{transform:rotateY(0deg) scale(1)}30%{transform:rotateY(90deg) scale(1.18)}60%{transform:rotateY(270deg) scale(1.18)}100%{transform:rotateY(360deg) scale(1)}}
+.nav-flash{animation:navFlash .4s ease forwards}
+.icon-flip{animation:iconFlip .45s cubic-bezier(.34,1.56,.64,1) forwards;transform-style:preserve-3d}
+.nav-arc{display:none}
+.cat-pill{transition:all .18s}
+.card:hover{transform:translateY(-2px)}
+.star-btn{transition:transform .12s;display:inline-block;cursor:pointer}
+.star-btn:hover{transform:scale(1.3)}
+
+@keyframes lhRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes lhGlow{0%,100%{r:5;opacity:0.5}50%{r:9;opacity:0.85}}
+@keyframes birdFly{0%{transform:translateX(0) translateY(0)}100%{transform:translateX(70px) translateY(-8px)}}
+@keyframes cloudFly{0%{transform:translateX(0)}100%{transform:translateX(72px)}}
+to{transform:rotate(360deg)}}50%{opacity:0.9}}
+</style>
+</head>
+<body>
+<div class="app-header">
+  <div class="header-top">
+    <div class="logo">ADRIATIC<span>yachts</span></div>
+    <div class="lang-switcher" style="position:relative">
+      <button class="lang-btn active" id="activeLangBtn" onclick="toggleLangMenu(event)" style="display:flex;align-items:center;gap:4px"><span id="activeLangTxt">EN</span><span style="font-size:9px;opacity:.7">▾</span></button>
+      <div id="langMenu" style="display:none;position:absolute;top:calc(100% + 4px);right:0;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rs);box-shadow:var(--shadow-hover);z-index:100;min-width:56px;overflow:hidden">
+        <div class="lang-opt" onclick="setLang('ru');toggleLangMenu()">RU</div>
+        <div class="lang-opt" onclick="setLang('en');toggleLangMenu()">EN</div>
+        <div class="lang-opt" onclick="setLang('me');toggleLangMenu()">ME</div>
+        <div class="lang-opt" onclick="setLang('de');toggleLangMenu()">DE</div>
+        <div class="lang-opt" onclick="setLang('tr');toggleLangMenu()">TR</div>
+      </div>
+    </div>
+  </div>
+
+<div class="special-banner" id="specialBanner" onclick="openSpecial()" style="cursor:pointer;margin-top:0;position:relative;overflow:visible">
+  <div class="special-icon" style="flex-shrink:0;width:32px;height:44px;cursor:pointer;position:relative;z-index:2" onclick="event.stopPropagation();lhTap()" id="lhIcon">
+    <svg width="32" height="44" viewBox="0 0 56 80" fill="none" style="display:block;overflow:visible">
+      <defs>
+        <radialGradient id="lhbg" cx="0%" cy="50%" r="100%">
+          <stop offset="0%" id="lhStop1" stop-color="#ffe050" stop-opacity="0.95"/>
+          <stop offset="45%" id="lhStop2" stop-color="#ffe050" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#ffe050" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <!-- beam: display:none, JS controls rotation via requestAnimationFrame -->
+      <g id="lhBeamG" style="display:none;transform-origin:26px 17px">
+        <path d="M26 17 L100 0 L105 17 L100 34Z" fill="url(#lhbg)" opacity="0.45"/>
+      </g>
+      <!-- glow circle at lantern center -->
+      <circle id="lhGlowC" cx="26" cy="17" r="0" fill="#ffe050" opacity="0.9"/>
+      <!-- flying things: birds/clouds/waves rendered here via overflow:visible -->
+      <g id="lhFly"></g>
+      <!-- tower -->
+      <ellipse cx="26" cy="76" rx="18" ry="4" fill="#b5893a" opacity="0.2"/>
+      <path d="M10 76 L13 62 L39 62 L42 76Z" fill="#b5893a" opacity="0.88" stroke="#b5893a" stroke-width="0.8"/>
+      <path d="M13 62 L16 50 L36 50 L39 62Z" fill="#f7f5f1" opacity="0.95" stroke="#b5893a" stroke-width="0.8"/>
+      <path d="M16 50 L19 39 L33 39 L36 50Z" fill="#b5893a" opacity="0.88" stroke="#b5893a" stroke-width="0.8"/>
+      <path d="M19 39 L21 30 L31 30 L33 39Z" fill="#f7f5f1" opacity="0.95" stroke="#b5893a" stroke-width="0.8"/>
+      <path d="M21 30 L23 23 L29 23 L31 30Z" fill="#b5893a" opacity="0.88" stroke="#b5893a" stroke-width="0.8"/>
+      <ellipse cx="26" cy="70" rx="3.5" ry="4.5" stroke="#f7f5f1" stroke-width="0.9" fill="none"/>
+      <ellipse cx="26" cy="57" rx="3" ry="4" stroke="#b5893a" stroke-width="0.9" fill="none"/>
+      <ellipse cx="26" cy="45" rx="2.5" ry="3.5" stroke="#f7f5f1" stroke-width="0.9" fill="none"/>
+      <ellipse cx="26" cy="35" rx="2" ry="3" stroke="#b5893a" stroke-width="0.9" fill="none"/>
+      <rect x="18" y="21.5" width="16" height="2.5" rx="0.8" fill="#b5893a" opacity="0.9"/>
+      <path d="M17 20 Q26 18 35 20" stroke="#b5893a" stroke-width="0.8" fill="none"/>
+      <rect id="lhLantern" x="20" y="13" width="12" height="9" rx="1.5" stroke="#b5893a" stroke-width="1" fill="#b5893a" fill-opacity="0.15"/>
+      <line x1="26" y1="13" x2="26" y2="22" stroke="#b5893a" stroke-width="0.6" opacity="0.4"/>
+      <line x1="23" y1="13" x2="23" y2="22" stroke="#b5893a" stroke-width="0.6" opacity="0.4"/>
+      <line x1="29" y1="13" x2="29" y2="22" stroke="#b5893a" stroke-width="0.6" opacity="0.4"/>
+      <path d="M19 13 L26 5 L33 13Z" fill="#b5893a" opacity="0.85"/>
+      <line x1="26" y1="1" x2="26" y2="5" stroke="#b5893a" stroke-width="1.3" stroke-linecap="round"/>
+      <circle cx="26" cy="1" r="1.5" fill="#b5893a"/>
+    </svg>
+  </div>
+  <div class="special-text">
+    <div class="special-title" id="sbanTitle">Спецзапрос / Срочная аренда</div>
+    <div class="special-sub" id="sbanSub">Не нашли яхту? Опишите — найдём за час</div>
+  </div>
+  <div style="color:var(--gold);font-size:18px;opacity:.7">›</div>
+</div>
+<div style="display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:8px 0;background:var(--bg)">
+  <div onclick="openPicker()" style="background:var(--gold-dim);border:1px solid rgba(181,137,58,0.3);border-radius:20px;color:var(--gold);font-size:12px;padding:6px 12px;white-space:nowrap;cursor:pointer;flex-shrink:0;display:flex;align-items:center;gap:4px;margin-right:8px" id="pickerCatBtn">
+    <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
+    <span id="pickerCatLbl">Подбор</span>
+  </div>
+  <div id="catsScroll" style="display:flex;gap:7px;flex-shrink:0;padding-right:14px"></div>
+</div>
+
+
+
+<div class="main" id="mainCatalog">
+  <div class="section-title" id="sectionTitle">Montenegro Yachts</div>
+  <div class="cards-grid" id="cardsGrid"></div>
+</div>
+<div class="bottom-nav">
+  <div class="nav-item active" id="navCatalog" onclick="showView('catalog')">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    <span id="navCatalogLbl">Каталог</span>
+  </div>
+  <div class="nav-item" id="navOrders" onclick="showOrders()">
+    <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+    <span id="navOrdersLbl">Заказы</span>
+  </div>
+  <div class="nav-item" id="navSlot" onclick="handleDiceTap()">
+    <svg viewBox="0 0 24 24" id="diceIcon" style="transition:transform .4s cubic-bezier(.34,1.56,.64,1)"><rect x="2" y="2" width="20" height="20" rx="4"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/><circle cx="17" cy="7" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="7" cy="17" r="1.5" fill="currentColor"/><circle cx="17" cy="17" r="1.5" fill="currentColor"/></svg>
+    <span id="navSlotLbl">Фортуна</span>
+  </div>
+  <div class="nav-item" id="navRoutes" onclick="openRoutes()">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/><path d="M8 12h.01"/></svg>
+    <span id="navRoutesLbl">Маршруты</span>
+  </div>
+</div>
+<div class="modal-overlay" id="detailModal" onclick="if(event.target===this)closeDetail()">
+  <div class="modal-sheet"><div class="modal-handle"></div><div id="detailContent"></div></div>
+</div>
+<div class="modal-overlay" id="specialModal" onclick="if(event.target===this)closeSpecial()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+<div style="position:relative;height:32px;margin-top:0;pointer-events:none;overflow:hidden">
+  <svg viewBox="0 0 360 32" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block">
+    <path fill="rgba(181,137,58,0.18)" opacity="1">
+      <animate attributeName="d" dur="5s" repeatCount="indefinite"
+        values="M0,16 C45,26 90,6 135,16 C180,26 225,6 270,16 C315,26 345,12 360,16 L360,0 L0,0 Z;
+                M0,10 C45,20 90,2 135,12 C180,22 225,4 270,14 C315,22 345,8 360,12 L360,0 L0,0 Z;
+                M0,16 C45,26 90,6 135,16 C180,26 225,6 270,16 C315,26 345,12 360,16 L360,0 L0,0 Z"/>
+    </path>
+  </svg>
+</div>
+    <div class="special-modal">
+      <div class="spec-title" id="specTitle">Special Request</div>
+      <div class="spec-sub" id="specSub">Looking for a superyacht or special event? Describe it — we'll make it happen.</div>
+      <div class="section-lbl" id="specUrgLabel">Urgency</div>
+      <div class="urgency-grid">
+        <div class="urg-card sel" id="urg0" onclick="selUrg(0)"><div class="urg-icon">⚡</div><div class="urg-label" id="urgL0">Today / Tomorrow</div></div>
+        <div class="urg-card" id="urg1" onclick="selUrg(1)"><div class="urg-icon">📅</div><div class="urg-label" id="urgL1">This week</div></div>
+        <div class="urg-card" id="urg2" onclick="selUrg(2)"><div class="urg-icon">🗓</div><div class="urg-label" id="urgL2">Planning ahead</div></div>
+        <div class="urg-card" id="urg3" onclick="selUrg(3)"><div class="urg-icon">👑</div><div class="urg-label" id="urgL3">VIP / Superyacht</div></div>
+      </div>
+      <div class="section-lbl" id="specReqLabel">Request description</div>
+      <textarea class="inp" id="specRequest" style="height:80px;resize:none;margin-bottom:8px" placeholder="E.g. yacht for 15 people, wedding June 20..."></textarea>
+      <div class="section-lbl">Contact</div>
+      <input class="inp" id="specContact" placeholder="Telegram / phone" type="text">
+      <button class="book-btn" id="specSendBtn" onclick="sendSpecial()" style="margin-bottom:8px">Send request</button>
+      
+      
+    </div>
+  </div>
+</div>
+<script>
+const T={
+  ru:{catalog:"Каталог",orders:"Заказы",vipReq:"Менеджер",sbanTitle:"Спецзапрос / Срочная аренда",sbanSub:"Не нашли нужную яхту? Опишем и найдём",sectionTitle:"Яхты Черногории",avail:"Доступна",included:"Что включено:",extras:"Дополнительно",dateTime:"Дата и время",startDate:"Дата",contacts:"Ваши контакты",name:"Ваше имя",phone:"Telegram / телефон",comment:"Комментарий (необязательно)",guests:"Гостей на борту",of:"из",avail2:"доступных",pendingNote:"<strong>Бронь под подтверждение.</strong> Мы подтвердим вашу заявку в течение 4 часов.",bookBtn:"Забронировать",reqSent:"Заявка отправлена!",confirmSub:(n,c)=>`${n}, ваша заявка передана менеджеру. Ожидайте ответа на ${c} в течение 4 часов.`,timerLabel:"Подтверждение в течение",summaryYacht:"Яхта",summaryDate:"Дата",summaryDur:"Продолжительность",summaryGuests:"Гостей",summaryExtras:"Допы",summaryTotal:"Итого",newBooking:"Новая заявка",specTitle:"Спецзапрос",specSub:"Не нашли нужную яхту? Опишите — мы найдём суперяхту, организуем корпоратив или срочную аренду.",specUrgLabel:"Срочность",specReqLabel:"Описание запроса",specSend:"Отправить запрос",urgLabels:["Сегодня / Завтра","На эту неделю","Планирую заранее","VIP / Суперяхта"],cats:["Все","Моторные","Парусные","Катамараны","Катера","Свадьбы","Недельные","Рыбалка","VIP"],noDate:"Выберите дату и продолжительность",noName:"Введите имя",noPhone:"Введите контакт",choose:"выбрать",durLabel:"Продолжительность",overnight:"С ночевкой",fuelExtra:"Топливо не включено",calcTitle:"Стоимость аренды"},
+  en:{catalog:"Catalog",orders:"Bookings",vipReq:"Manager",sbanTitle:"Special Request / Urgent Charter",sbanSub:"Can't find your yacht? Describe it — we'll find it",sectionTitle:"Montenegro Yachts",avail:"Available",included:"What's included:",extras:"Add-ons",dateTime:"Date & duration",startDate:"Date",contacts:"Your contacts",name:"Your name",phone:"Telegram / phone",comment:"Comment (optional)",guests:"Guests on board",of:"of",avail2:"available",pendingNote:"<strong>Booking pending confirmation.</strong> We'll confirm within 4 hours.",bookBtn:"Book now",reqSent:"Request sent!",confirmSub:(n,c)=>`${n}, your request has been sent. Expect a reply at ${c} within 4 hours.`,timerLabel:"Confirmation within",summaryYacht:"Yacht",summaryDate:"Date",summaryDur:"Duration",summaryGuests:"Guests",summaryExtras:"Add-ons",summaryTotal:"Total",newBooking:"New booking",specTitle:"Special Request",specSub:"Looking for a superyacht or special event? Describe it — we'll make it happen.",specUrgLabel:"Urgency",specReqLabel:"Request description",specSend:"Send request",urgLabels:["Today / Tomorrow","This week","Planning ahead","VIP / Superyacht"],cats:["All","Motor","Sailing","Catamarans","Speedboats","Weddings","Weekly","Fishing","VIP"],noDate:"Please select date and duration",noName:"Please enter your name",noPhone:"Please enter a contact",choose:"select",durLabel:"Duration",overnight:"Overnight",fuelExtra:"Fuel not included",calcTitle:"Charter price"},
+  me:{catalog:"Katalog",orders:"Rezervacije",vipReq:"Manager",sbanTitle:"Poseban zahtjev / Hitno",sbanSub:"Niste našli jahtu? Opišite — pronaći ćemo",sectionTitle:"Jahte Crne Gore",avail:"Dostupno",included:"Što je uključeno:",extras:"Dodaci",dateTime:"Datum i trajanje",startDate:"Datum",contacts:"Vaši kontakti",name:"Vaše ime",phone:"Telegram / telefon",comment:"Komentar (nije obavezno)",guests:"Gostiju na brodu",of:"od",avail2:"dostupnih",pendingNote:"<strong>Rezervacija čeka potvrdu.</strong> Potvrdićemo u roku od 4 sata.",bookBtn:"Rezerviraj",reqSent:"Zahtjev poslan!",confirmSub:(n,c)=>`${n}, vaš zahtjev je proslijeđen. Očekujte odgovor na ${c} u roku od 4 sata.`,timerLabel:"Potvrda u roku od",summaryYacht:"Jahta",summaryDate:"Datum",summaryDur:"Trajanje",summaryGuests:"Gostiju",summaryExtras:"Dodaci",summaryTotal:"Ukupno",newBooking:"Nova rezervacija",specTitle:"Poseban zahtjev",specSub:"Tražite superjahtu ili poseban događaj? Opišite — mi ćemo to organizovati.",specUrgLabel:"Hitnost",specReqLabel:"Opis zahtjeva",specSend:"Pošalji zahtjev",urgLabels:["Danas / Sutra","Ove sedmice","Unaprijed planiram","VIP / Superjahta"],cats:["Sve","Motorni","Jedrilice","Katamarani","Čamci","Vjenčanja","Sedmični","Ribolov","VIP"],noDate:"Odaberite datum i trajanje",noName:"Unesite ime",noPhone:"Unesite kontakt",choose:"odaberi",durLabel:"Trajanje",overnight:"Sa noćenjem",fuelExtra:"Gorivo nije uključeno",calcTitle:"Cijena čartera"},
+  de:{catalog:"Katalog",orders:"Buchungen",vipReq:"Manager",sbanTitle:"Sonderanfrage / Schnellcharter",sbanSub:"Ihre Yacht nicht gefunden? Beschreiben Sie sie",sectionTitle:"Yachten in Montenegro",avail:"Verfügbar",included:"Im Preis enthalten:",extras:"Extras",dateTime:"Datum & Dauer",startDate:"Datum",contacts:"Ihre Kontakte",name:"Ihr Name",phone:"Telegram / Telefon",comment:"Kommentar (optional)",guests:"Gäste an Bord",of:"von",avail2:"verfügbar",pendingNote:"<strong>Buchung wartet auf Bestätigung.</strong> Wir bestätigen innerhalb von 4 Stunden.",bookBtn:"Jetzt buchen",reqSent:"Anfrage gesendet!",confirmSub:(n,c)=>`${n}, Ihre Anfrage wurde gesendet. Antwort an ${c} innerhalb von 4 Stunden.`,timerLabel:"Bestätigung innerhalb",summaryYacht:"Yacht",summaryDate:"Datum",summaryDur:"Dauer",summaryGuests:"Gäste",summaryExtras:"Extras",summaryTotal:"Gesamt",newBooking:"Neue Buchung",specTitle:"Sonderanfrage",specSub:"Suchen Sie eine Superyacht? Beschreiben Sie es.",specUrgLabel:"Dringlichkeit",specReqLabel:"Anfragebeschreibung",specSend:"Anfrage senden",urgLabels:["Heute/Morgen","Diese Woche","Im Voraus planen","VIP/Superyacht"],cats:["Alle","Motor","Segel","Katamarane","Boote","Hochzeit","Wöchentlich","Angeln","VIP"],noDate:"Bitte Datum und Dauer wählen",noName:"Bitte Namen eingeben",noPhone:"Bitte Kontakt eingeben",choose:"wählen",durLabel:"Dauer",overnight:"Übernachtung",fuelExtra:"Kraftstoff nicht inbegriffen",calcTitle:"Charterpreis"},
+  tr:{catalog:"Katalog",orders:"Rezervasyonlar",vipReq:"Yönetici",sbanTitle:"Özel İstek / Acil Charter",sbanSub:"Yacht bulamadınız mı? Tarif edin — bulalım",sectionTitle:"Karadağ Yatları",avail:"Müsait",included:"Dahil:",extras:"Ekstralar",dateTime:"Tarih ve Süre",startDate:"Tarih",contacts:"İletişim",name:"Adınız",phone:"Telegram / Telefon",comment:"Yorum (isteğe bağlı)",guests:"Misafir sayısı",of:"/",avail2:"müsait",pendingNote:"<strong>Rezervasyon onay bekliyor.</strong> 4 saat içinde onaylayacağız.",bookBtn:"Rezervasyon yap",reqSent:"Talep gönderildi!",confirmSub:(n,c)=>`${n}, talebiniz gönderildi. ${c} adresine 4 saat içinde yanıt gelecek.`,timerLabel:"Onay süresi",summaryYacht:"Yat",summaryDate:"Tarih",summaryDur:"Süre",summaryGuests:"Misafir",summaryExtras:"Ekstralar",summaryTotal:"Toplam",newBooking:"Yeni rezervasyon",specTitle:"Özel İstek",specSub:"Süper yat mı arıyorsunuz? Açıklayın.",specUrgLabel:"Aciliyet",specReqLabel:"İstek açıklaması",specSend:"Talep gönder",urgLabels:["Bugün/Yarın","Bu hafta","Önceden planlama","VIP/Süper Yat"],cats:["Tümü","Motor","Yelkenli","Katamaran","Tekne","Düğün","Haftalık","Balıkçılık","VIP"],noDate:"Lütfen tarih ve süre seçin",noName:"Lütfen adınızı girin",noPhone:"Lütfen iletişim girin",choose:"seçin",durLabel:"Süre",overnight:"Geceleme",fuelExtra:"Yakıt dahil değil",calcTitle:"Charter fiyatı"}
+};
+
+const YACHTS=[
+{id:0,cat:"motor",weekly:false,names:{ru:"Abacus 70",en:"Abacus 70",me:"Abacus 70",de:"Abacus 70",tr:"Abacus 70"},types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta",de:"Motoryacht",tr:"Motor yatı"},metas:{ru:"21 м · до 12 чел. · 4 каюты",en:"21 m · up to 12 pax · 4 cabins",me:"21 m · do 12 osoba · 4 kabine",de:"21 m · up to 12 pax · 4 cabins",tr:"21 m · up to 12 pax · 4 cabins"},descs:{ru:"Роскошная итальянская моторная яхта 21 м. Агрессивный дизайн, высокая скорость. 4 каюты, экипаж включён. Идеальна для VIP-чартеров.",en:"Bold Italian luxury motor yacht — 21m, aggressive design, high performance. 4 cabins, skipper and deckhand included. Perfect for VIP charters.",me:"Luksuzna italijanska motorna jahta — 21m, agresivni dizajn. 4 kabine, kapetan i mornar uključeni."},tags:{ru:["VIP","Люкс"],en:["VIP","Luxury"],me:["VIP","Luksuz"]},feats:{ru:[["Капитан & матрос"],["4 каюты · 4 WC"],["Wi-Fi"],["Лежаки"],["Гидроцикл +500€"],["Шеф-повар +200€"]],en:[["Skipper & deckhand"],["4 cabins · 4 WC"],["Wi-Fi"],["Sunbeds"],["Jet ski +500€"],["Chef +200€"]],me:[["Kapetan & mornar"],["4 kabine · 4 WC"],["Wi-Fi"],["Ležaljke"],["Jet ski +500€"],["Šef kuhinje +200€"]]},dayRate:3900,fuelIncl:false,capacity:12,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356835/1a_fkuoki.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356845/2a_m6sfyo.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356842/3a_loufj8.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356857/4a_tcziqt.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356850/5a_d9j7t4.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356833/6a_akhwrz.jpg"],extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300},{ru:"Хостесс",en:"Hostess",me:"Hostesa",price:150}]},
+
+{id:1,cat:"vip",weekly:true,names:{ru:"Azimut Grande 26M",en:"Azimut Grande 26M",me:"Azimut Grande 26M",de:"Azimut Grande 26M",tr:"Azimut Grande 26M"},types:{ru:"Супер-яхта",en:"Superyacht",me:"Superjahta",de:"Superjacht",tr:"Süperyat"},metas:{ru:"26 м · до 10 гостей · 5 кают · 2025 г.",en:"26 m · up to 10 guests · 5 cabins · 2025",me:"26 m · do 10 gostiju · 5 kabina · 2025",de:"26 m · up to 10 guests · 5 cabins · 2025",tr:"26 m · up to 10 guests · 5 cabins · 2025"},descs:{ru:"Новейшая итальянская супер-яхта 2025 года. Два двигателя MAN V12 (1550 л.с.). 5 кают, полный экипаж, гидроцикл, Seabob, серфборд включены.",en:"Brand-new 2025 Italian superyacht. Twin MAN V12 engines (1550hp each). 5 cabins, full crew, jet ski, Seabob and electric surfboard included.",me:"Nova italijanska superjahta 2025. Dva MAN V12 motora. 5 kabina, kompletan tim, jet ski i Seabob uključeni."},tags:{ru:["Новая 2025","Супер-яхта","VIP"],en:["New 2025","Superyacht","VIP"],me:["Nova 2025","Superjahta","VIP"]},feats:{ru:[["Капитан, матрос, хостесс, шеф"],["5 кают (master+2dbl+twin+conv)"],["Wi-Fi"],["Jet Tender Williams"],["2 × Seabob F5S"],["Электросёрфборд"]],en:[["Captain, deckhand, hostess, chef"],["5 cabins (master+2dbl+twin+conv)"],["Wi-Fi"],["Jet Tender Williams"],["2 × Seabob F5S"],["Electric surfboard"]],me:[["Kapetan, mornar, hostesa, šef"],["5 kabina (master+2dbl+twin+konv)"],["Wi-Fi"],["Jet Tender Williams"],["2 × Seabob F5S"],["Električni surfboard"]]},dayRate:null,weekRate:97000,fuelIncl:false,capacity:10,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355537/1a_gzneuo.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355536/2a_y7chwf.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355537/3a_cvtzw1.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355535/4a_il1vcq.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355536/5a_nbs3si.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355534/8a_h2fpru.webp"],extras:[{ru:"Кейтеринг",en:"Catering",me:"Ketering",price:0}]},
+
+{id:2,cat:"vip",weekly:false,names:{ru:"Azimut 98",en:"Azimut 98",me:"Azimut 98",de:"Azimut 98",tr:"Azimut 98"},types:{ru:"Люкс моторная",en:"Luxury Motor Yacht",me:"Luksuzna motorna jahta",de:"Luxury Motor Yacht",tr:"Luxury Motor Yacht"},metas:{ru:"30 м · до 12 чел. · 4 каюты",en:"30 m · up to 12 pax · 4 cabins",me:"30 m · do 12 osoba · 4 kabine",de:"30 m · up to 12 pax · 4 cabins",tr:"30 m · up to 12 pax · 4 cabins"},descs:{ru:"Azimut 98 Leonardo — 30 м итальянского совершенства. Джакузи, просторный флайбридж, 4 каюты включая мастер-сьют. Полный экипаж.",en:"Azimut 98 Leonardo — 30m of Italian excellence. Jacuzzi, spacious flybridge, 4 cabins including master suite. Full crew included.",me:"Azimut 98 Leonardo — 30m italijanske izvrsnosti. Džakuzi, prostrani flybridge, 4 kabine. Kompletan tim."},tags:{ru:["VIP","Джакузи","Мероприятия"],en:["VIP","Jacuzzi","Events"],me:["VIP","Džakuzi","Događaji"]},feats:{ru:[["Капитан, матрос, хостесс"],["4 каюты + master suite"],["Джакузи на борту"],["Wi-Fi"],["Барбекю & лежаки"],["Шеф-повар +200€"]],en:[["Captain, deckhand, hostess"],["4 cabins + master suite"],["Jacuzzi on board"],["Wi-Fi"],["BBQ & sunbeds"],["Chef +200€"]],me:[["Kapetan, mornar, hostesa"],["4 kabine + master suite"],["Džakuzi na brodu"],["Wi-Fi"],["Roštilj & ležaljke"],["Šef kuhinje +200€"]]},dayRate:9000,fuelIncl:false,capacity:12,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355543/1a_vnosuj.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355541/2a_n0eafb.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355543/3a_sjj903.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355540/4a_tjg7vb.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355542/5a_ivxgqc.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355540/6a_vhzi95.webp"],extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
+
+{id:3,cat:"motor",weekly:false,names:{ru:"Cranchi 44",en:"Cranchi 44",me:"Cranchi 44",de:"Cranchi 44",tr:"Cranchi 44"},types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta",de:"Motoryacht",tr:"Motor yatı"},metas:{ru:"12 м · до 6 чел. · 2 каюты · 2018 г.",en:"12 m · up to 6 pax · 2 cabins · 2018",me:"12 m · do 6 osoba · 2 kabine · 2018",de:"12 m · up to 6 pax · 2 cabins · 2018",tr:"12 m · up to 6 pax · 2 cabins · 2018"},descs:{ru:"Cranchi M44 HT — элегантная яхта с гидравлической купальной платформой, кондиционером и ледогенератором. Капитан включён.",en:"Cranchi M44 HT — elegant yacht with hydraulic swim platform, A/C and ice maker. Skipper included. Perfect for day charters.",me:"Cranchi M44 HT — elegantna jahta sa hidrauličnom platformom, klima uređajem. Kapetan uključen."},tags:{ru:["Элегантная","Купалка","День"],en:["Elegant","Swim platform","Day"],me:["Elegantna","Platforma","Dan"]},feats:{ru:[["Капитан включён"],["2 каюты · 2 WC"],["Кондиционер"],["Гидравлическая купалка"],["Ледогенератор"],["Шеф-повар +200€"]],en:[["Skipper included"],["2 cabins · 2 WC"],["Air conditioning"],["Hydraulic swim platform"],["Ice maker"],["Chef +200€"]],me:[["Kapetan uključen"],["2 kabine · 2 WC"],["Klima uređaj"],["Hidraulična platforma"],["Generator leda"],["Šef kuhinje +200€"]]},dayRate:2000,fuelIncl:false,capacity:6,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355544/1a_nn9tme.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355545/2a_iagsfr.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355545/3a_kdse8e.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355547/4a_uyqimu.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355546/5a_ks86iq.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355543/6a_oip2zf.jpg"],extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
+
+{id:4,cat:"motor",weekly:false,names:{ru:"Cranchi Z35",en:"Cranchi Z35",me:"Cranchi Z35",de:"Cranchi Z35",tr:"Cranchi Z35"},types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta",de:"Motoryacht",tr:"Motor yatı"},metas:{ru:"12 м · до 12 чел. · 2 каюты · 2021 г.",en:"12 m · up to 12 pax · 2 cabins · 2021",me:"12 m · do 12 osoba · 2 kabine · 2021",de:"12 m · up to 12 pax · 2 cabins · 2021",tr:"12 m · up to 12 pax · 2 cabins · 2021"},descs:{ru:"Cranchi Z35 — стильный спортивный дей-крузер с полностью открытым кокпитом. Wi-Fi, полотенца, фрукты включены.",en:"Cranchi Z35 — sporty day cruiser with fully open cockpit. Wi-Fi, towels and fruit basket included. Skipper on board.",me:"Cranchi Z35 — sportski day cruiser sa otvorenim kokpitom. Wi-Fi, peškiri i voće uključeni."},tags:{ru:["Спорт","Открытый","День"],en:["Sport","Open cockpit","Day"],me:["Sport","Otvoreni","Dan"]},feats:{ru:[["Капитан включён"],["2 каюты · 2 WC"],["Wi-Fi"],["Полотенца & вода"],["Тарелка фруктов"],["Шеф-повар +200€"]],en:[["Skipper included"],["2 cabins · 2 WC"],["Wi-Fi"],["Towels & water"],["Fruit basket"],["Chef +200€"]],me:[["Kapetan uključen"],["2 kabine · 2 WC"],["Wi-Fi"],["Peškiri & voda"],["Tanjir voća"],["Šef kuhinje +200€"]]},dayRate:2200,fuelIncl:false,capacity:12,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355550/1a_hans7t.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355548/2a_uldkf5.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355551/3a_msvltz.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355547/4a_vtlhew.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355550/5a_w44eqq.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355548/6a_vtgk65.webp"],extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
+
+{id:5,cat:"motor",weekly:false,names:{ru:"Dominator 68S",en:"Dominator 68S",me:"Dominator 68S",de:"Dominator 68S",tr:"Dominator 68S"},types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta",de:"Motoryacht",tr:"Motor yatı"},metas:{ru:"21 м · до 15 чел. · 3 каюты · 2008/2022",en:"21 m · up to 15 pax · 3 cabins · 2008/2022",me:"21 m · do 15 osoba · 3 kabine · 2008/2022",de:"21 m · up to 15 pax · 3 cabins · 2008/2022",tr:"21 m · up to 15 pax · 3 cabins · 2008/2022"},descs:{ru:"Dominator 68S дизайна Nuvolari Lenard, полностью обновлён в 2022 г. Просторный флайбридж, 3 каюты с ванными, до 15 гостей.",en:"Dominator 68S by Nuvolari Lenard, fully refitted 2022. Spacious flybridge, 3 en-suite cabins, up to 15 guests for day charters.",me:"Dominator 68S dizajna Nuvolari Lenard, potpuno obnovljen 2022. Prostrani flybridge, 3 kabine, do 15 gostiju."},tags:{ru:["Флайбридж","Обновлён 2022","Стиль"],en:["Flybridge","Refitted 2022","Style"],me:["Flybridge","Obnovljen 2022","Stil"]},feats:{ru:[["Капитан & матрос"],["3 каюты · 3 WC"],["Флайбридж & лежаки"],["Шеф-повар +200€"],["Гидроцикл +500€"],["Фотограф +50€/ч"]],en:[["Skipper & deckhand"],["3 cabins · 3 WC"],["Flybridge & sunbeds"],["Chef +200€"],["Jet ski +500€"],["Photographer +50€/h"]],me:[["Kapetan & mornar"],["3 kabine · 3 WC"],["Flybridge & ležaljke"],["Šef kuhinje +200€"],["Jet ski +500€"],["Fotograf +50€/h"]]},dayRate:4000,fuelIncl:false,capacity:15,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355551/1a_mgawyw.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355562/2a_afygdc.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355556/3a_zbrn6l.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355563/4a_r8snvc.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355563/5a_fzoxtw.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355551/6a_tq1odc.jpg"],extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
+
+{id:6,cat:"motor",weekly:false,names:{ru:"Galeon 445",en:"Galeon 445",me:"Galeon 445",de:"Galeon 445",tr:"Galeon 445"},types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta",de:"Motoryacht",tr:"Motor yatı"},metas:{ru:"14 м · до 8 чел. · 2 каюты · 2016 г.",en:"14 m · up to 8 pax · 2 cabins · 2016",me:"14 m · do 8 osoba · 2 kabine · 2016",de:"14 m · up to 8 pax · 2 cabins · 2016",tr:"14 m · up to 8 pax · 2 cabins · 2016"},descs:{ru:"Galeon 445 Fly — яхта с откидными балконами «пляжный режим», просторным флайбриджем и панорамным салоном. Капитан включён.",en:"Galeon 445 Fly — yacht with fold-out beach balconies, spacious flybridge and panoramic salon. Skipper included.",me:"Galeon 445 Fly — jahta sa sklopivim balkonima, prostrani flybridge i panoramski salon. Kapetan uključen."},tags:{ru:["Балконы","Флайбридж","Современная"],en:["Balconies","Flybridge","Modern"],me:["Balkoni","Flybridge","Moderna"]},feats:{ru:[["Капитан включён"],["2 каюты · 2 WC"],["Откидные балконы"],["Флайбридж"],["Шеф-повар +200€"],["Гидроцикл +500€"]],en:[["Skipper included"],["2 cabins · 2 WC"],["Fold-out balconies"],["Flybridge"],["Chef +200€"],["Jet ski +500€"]],me:[["Kapetan uključen"],["2 kabine · 2 WC"],["Sklopivi balkoni"],["Flybridge"],["Šef kuhinje +200€"],["Jet ski +500€"]]},dayRate:2400,fuelIncl:false,capacity:8,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355565/1a_nzwkcj.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355565/2a_ykqbt3.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355565/3a_esrxiy.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355567/4a_jnyq9m.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355566/5a_uoys64.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355563/7a_lazbv5.jpg"],extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
+
+{id:7,cat:"speedboat",weekly:false,names:{ru:"KeyLargo 36",en:"KeyLargo 36",me:"KeyLargo 36",de:"KeyLargo 36",tr:"KeyLargo 36"},types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta",de:"Motoryacht",tr:"Motor yatı"},metas:{ru:"11 м · до 6 чел. · 1 каюта · 2011 г.",en:"11 m · up to 6 pax · 1 cabin · 2011",me:"11 m · do 6 osoba · 1 kabina · 2011",de:"11 m · up to 6 pax · 1 cabin · 2011",tr:"11 m · up to 6 pax · 1 cabin · 2011"},descs:{ru:"Sessa Key Largo 36 — итальянская яхта для дневных прогулок. Солярии на носу и корме, удобный салон. Идеально для пар и небольших групп.",en:"Sessa Key Largo 36 — Italian walkaround for day cruises. Bow and stern sunbeds, cozy cabin. Perfect for couples and small groups.",me:"Sessa Key Largo 36 — italijanska jahta za dnevne izlete. Solarijumi, udobna kabina. Idealna za parove."},tags:{ru:["Круизы","Пары","Острова"],en:["Day trips","Couples","Islands"],me:["Izleti","Parovi","Ostrva"]},feats:{ru:[["Капитан включён"],["1 каюта · 1 WC"],["Солярий нос & корма"],["Купальная платформа"],["Шеф-повар +200€"],["Гидроцикл +500€"]],en:[["Skipper included"],["1 cabin · 1 WC"],["Bow & stern sunbeds"],["Swim platform"],["Chef +200€"],["Jet ski +500€"]],me:[["Kapetan uključen"],["1 kabina · 1 WC"],["Solarijumi"],["Platforma za kupanje"],["Šef kuhinje +200€"],["Jet ski +500€"]]},dayRate:1600,fuelIncl:false,capacity:6,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356859/1a_bvmxls.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356865/2a_kjp1hm.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356870/3a_quinag.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356862/4a_tkcltj.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781356867/5a_gtsukl.webp"],extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50}]},
+
+{id:8,cat:"motor",weekly:false,names:{ru:"Marea",en:"Marea",me:"Marea",de:"Marea",tr:"Marea"},types:{ru:"Моторная яхта",en:"Motor Yacht",me:"Motorna jahta",de:"Motoryacht",tr:"Motor yatı"},metas:{ru:"18 м · до 16 чел. · 4 каюты · 2009/2026",en:"18 m · up to 16 pax · 4 cabins · 2009/2026",me:"18 m · do 16 osoba · 4 kabine · 2009/2026",de:"18 m · up to 16 pax · 4 cabins · 2009/2026",tr:"18 m · up to 16 pax · 4 cabins · 2009/2026"},descs:{ru:"Просторная яхта для больших компаний — до 16 гостей. Полностью обновлена в 2026 г. Барбекю, SUP, каяк включены. Топливо включено.",en:"Spacious yacht for large groups — up to 16 guests. Fully refitted 2026. BBQ, SUP and kayak included. Fuel included.",me:"Prostrana jahta za velike grupe — do 16 gostiju. Potpuno obnovljena 2026. Roštilj, SUP i kajak uključeni."},tags:{ru:["До 16 гостей","Топливо вкл.","2026"],en:["Up to 16","Fuel incl.","2026"],me:["Do 16 gostiju","Gorivo ukl.","2026"]},feats:{ru:[["Капитан & матрос"],["4 каюты · 4 WC"],["Барбекю включён"],["SUP & каяк"],["Лежаки & полотенца"],["Топливо включено"]],en:[["Skipper & deckhand"],["4 cabins · 4 WC"],["BBQ included"],["SUP & kayak"],["Sunbeds & towels"],["Fuel included"]],me:[["Kapetan & mornar"],["4 kabine · 4 WC"],["Roštilj uključen"],["SUP & kajak"],["Ležaljke & peškiri"],["Gorivo uključeno"]]},dayRate:3000,fuelIncl:true,capacity:16,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358115/1a_xyaykh.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358126/2a_gbsnj5.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358123/3a_ecnqes.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358139/4a_gz132m.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358132/5a_rfxpva.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781358111/7a_xxs3o6.jpg"],extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]},
+
+{id:9,cat:"vip",weekly:true,names:{ru:"Mirage IV",en:"Mirage IV",me:"Mirage IV",de:"Mirage IV",tr:"Mirage IV"},types:{ru:"Супер-яхта",en:"Superyacht",me:"Superjahta",de:"Superjacht",tr:"Süperyat"},metas:{ru:"40 м · до 12 чел. · 6 кают · 2024 г.",en:"40 m · up to 12 pax · 6 cabins · 2024",me:"40 m · do 12 osoba · 6 kabina · 2024",de:"40 m · up to 12 pax · 6 cabins · 2024",tr:"40 m · up to 12 pax · 6 cabins · 2024"},descs:{ru:"Princess 40M Mirage — флагманская супер-яхта 2024 г. Водная горка, скалодром, пляж-клуб с морским бассейном, 2 Seabob, гидроцикл. Недельная аренда.",en:"Princess 40M Mirage — flagship 2024 superyacht. Water slide, climbing wall, beach club with sea pool, 2 Seabobs, jet ski. Weekly charter.",me:"Princess 40M Mirage — vodeća superjahta 2024. Vodeni tobogan, beach club sa bazenom, 2 Seaboba. Sedmični čarter."},tags:{ru:["Флагман 2024","Водные игрушки","Weekly"],en:["Flagship 2024","Water toys","Weekly"],me:["Vodeća 2024","Vodeni sportovi","Sedmično"]},feats:{ru:[["Капитан, матрос, хостесс, шеф"],["6 кают"],["Пляж-клуб & морской бассейн"],["Водная горка & скалодром"],["Гидроцикл Sea-Doo RXP-X"],["2 × Seabob F5S + электросёрфборд"]],en:[["Captain, deckhand, hostess, chef"],["6 cabins"],["Beach club & sea pool"],["Water slide & climbing wall"],["Jet ski Sea-Doo RXP-X"],["2 × Seabob F5S + electric surfboard"]],me:[["Kapetan, mornar, hostesa, šef"],["6 kabina"],["Beach club & morski bazen"],["Vodeni tobogan & zid za penjanje"],["Jet ski Sea-Doo RXP-X"],["2 × Seabob F5S + električni surfboard"]]},dayRate:null,weekRate:190000,fuelIncl:false,capacity:12,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355584/1a_thsx2l.webp","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355580/2a_eg3uke.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355579/3a_qbyirf.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355585/4a_fj80uu.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355582/5a_w7ptmj.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355576/6a_rfgag2.jpg"],extras:[{ru:"Кейтеринг",en:"Catering",me:"Ketering",price:0},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50}]},
+
+{id:10,cat:"vip",weekly:false,names:{ru:"Princess 32M",en:"Princess 32M",me:"Princess 32M",de:"Princess 32M",tr:"Princess 32M"},types:{ru:"Люкс моторная",en:"Luxury Motor Yacht",me:"Luksuzna motorna jahta",de:"Luxury Motor Yacht",tr:"Luxury Motor Yacht"},metas:{ru:"32 м · до 10 чел. · 4 каюты · 2012 г.",en:"32 m · up to 10 pax · 4 cabins · 2012",me:"32 m · do 10 osoba · 4 kabine · 2012",de:"32 m · up to 10 pax · 4 cabins · 2012",tr:"32 m · up to 10 pax · 4 cabins · 2012"},descs:{ru:"Princess 32M — британское качество. 32 м, просторный флайбридж, 4 каюты с ванными. Полный экипаж. Для семей и VIP-групп.",en:"Princess 32M — British quality and elegance. 32m, spacious flybridge, 4 en-suite cabins. Full crew. Perfect for families and VIP groups.",me:"Princess 32M — britanski kvalitet. 32m, prostrani flybridge, 4 kabine. Kompletan tim."},tags:{ru:["VIP","Британская","Флайбридж"],en:["VIP","British","Flybridge"],me:["VIP","Britanska","Flybridge"]},feats:{ru:[["Капитан, матрос, хостесс"],["4 каюты · 4 WC"],["Флайбридж"],["Wi-Fi"],["Лежаки & полотенца"],["Шеф-повар +200€"]],en:[["Skipper, deckhand, hostess"],["4 cabins · 4 WC"],["Flybridge"],["Wi-Fi"],["Sunbeds & towels"],["Chef +200€"]],me:[["Kapetan, mornar, hostesa"],["4 kabine · 4 WC"],["Flybridge"],["Wi-Fi"],["Ležaljke & peškiri"],["Šef kuhinje +200€"]]},dayRate:11000,fuelIncl:false,capacity:10,photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355587/1a_fz4eda.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355586/2a_pqf5bq.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355587/3a_cjivsj.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355586/4a_ofckms.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355588/5a_g8m5dm.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1781355586/6a_prdlyl.jpg"],extras:[{ru:"Гидроцикл",en:"Jet ski",me:"Jet ski",price:500},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",price:200},{ru:"Фотограф",en:"Photographer",me:"Fotograf",price:50},{ru:"Seabob",en:"Seabob",me:"Seabob",price:300}]}
+];
+
+const BOT_TOKEN='8864246711:AAH1dASsllqCtr6pI7cYDfDrA004hKLaO6o';
+const OWNER_ID=70131641;
+
+let lang='en',activeCat='all',favs=new Set();
+let detailState={extras:new Set(),guests:2,date:'',duration:'',yachtId:0};
+let urgSel=0,timerInterval=null;
+
+function detectLang(){
+  try{const tg=window.Telegram?.WebApp?.initDataUnsafe?.user?.language_code;if(tg){if(tg.startsWith('sr')||tg.startsWith('me')||tg.startsWith('hr')||tg.startsWith('bs'))return'me';if(tg.startsWith('ru'))return'ru';return'en';}}catch(e){}
+  const n=navigator.language||'';if(n.startsWith('sr')||n.startsWith('me'))return'me';if(n.startsWith('ru'))return'ru';return'en';
+}
+
+function init(){
+  lang=detectLang();
+  const activeTxt=document.getElementById('activeLangTxt');if(activeTxt)activeTxt.textContent=lang.toUpperCase();
+  renderAll();
+  try{window.Telegram?.WebApp?.ready();window.Telegram?.WebApp?.expand();}catch(e){}
+}
+
+
+function toggleLangMenu(e){
+  if(e)e.stopPropagation();
+  const menu=document.getElementById('langMenu');
+  menu.style.display=menu.style.display==='none'?'block':'none';
+}
+document.addEventListener('click',function(){
+  const menu=document.getElementById('langMenu');
+  if(menu)menu.style.display='none';
+});
+
+function setLang(l){
+  lang=l;
+  const btn=document.getElementById('activeLangBtn');
+  const txt=document.getElementById('activeLangTxt');
+  if(txt)txt.textContent=l.toUpperCase();
+  renderAll();
+}
+
+function renderAll(){
+  const t=T[lang];
+  document.getElementById('sbanTitle').textContent=lang==='ru'?'Спецзапрос / Срочная аренда':lang==='de'?'Sonderanfrage / Dringende Charter':lang==='tr'?'Özel İstek / Acil Charter':lang==='me'?'Poseban zahtjev / Hitno':'Special Request / Urgent Charter';
+  document.getElementById('sbanSub').textContent=lang==='ru'?'Не нашли яхту? Опишите — найдём за час':lang==='de'?'Keine Yacht? Beschreiben Sie — wir finden in einer Stunde':lang==='tr'?'Yat yok? Anlatın — bir saatte buluruz':lang==='me'?'Nema jahte? Opišite — nalazimo za sat':'No yacht? Describe it — we\'ll find one within an hour';
+  document.getElementById('sectionTitle').textContent=t.sectionTitle;
+  document.getElementById('navCatalogLbl').textContent=t.catalog;
+  document.getElementById('navOrdersLbl').textContent=t.orders;
+  const nsl=document.getElementById('navSpecialLbl');if(nsl)nsl.textContent=t.vipReq;
+  const pickerLbl=document.getElementById('navPickerLbl');if(pickerLbl)pickerLbl.textContent=lang==='ru'?'Подбор':lang==='me'?'Izbor':lang==='de'?'Auswahl':lang==='tr'?'Seçim':'Match';
+  const pickerCatLbl=document.getElementById('pickerCatLbl');if(pickerCatLbl)pickerCatLbl.textContent=lang==='ru'?'Подбор':lang==='me'?'Izbor':lang==='de'?'Auswahl':lang==='tr'?'Seçim':'Match';
+  const routesLbl=document.getElementById('navRoutesLbl');if(routesLbl)routesLbl.textContent=lang==='ru'?'Маршруты':lang==='me'?'Rute':lang==='de'?'Routen':lang==='tr'?'Rotalar':'Routes';
+  const slotLbl=document.getElementById('navSlotLbl');if(slotLbl)slotLbl.textContent=lang==='ru'?'Фортуна':lang==='me'?'Fortuna':'Fortune';
+  document.getElementById('specTitle').textContent=t.specTitle;
+  document.getElementById('specSub').textContent=t.specSub;
+  document.getElementById('specUrgLabel').textContent=t.specUrgLabel;
+  document.getElementById('specReqLabel').textContent=t.specReqLabel;
+  document.getElementById('specSendBtn').textContent=t.specSend;
+  t.urgLabels.forEach((l,i)=>{document.getElementById('urgL'+i).textContent=l;});
+  renderCats();renderCards();
+}
+
+function renderCats(){
+  const t=T[lang];
+  const keys=['all','motor','sail','catamaran','speedboat','wedding','weekly','fishing','vip'];
+  // Picker button: matches cat-pill style, active only when a filter is set
+  const pickerBtn=document.getElementById('pickerCatBtn');
+  if(pickerBtn){
+    const isPickerActive=activeCat!=='all'&&!keys.slice(1).includes(activeCat)===false&&activeCat!=='all';
+    // Picker is "active" only if no standard cat is active (shouldn't happen, but just in case)
+    // Actually: picker should look like a normal inactive pill when 'all' is selected
+    if(activeCat==='all'){
+      pickerBtn.style.background='var(--bg2)';
+      pickerBtn.style.border='1px solid var(--border2)';
+      pickerBtn.style.color='var(--text2)';
+      pickerBtn.style.fontWeight='normal';
+    } else {
+      pickerBtn.style.background='var(--bg2)';
+      pickerBtn.style.border='1px solid var(--border2)';
+      pickerBtn.style.color='var(--text2)';
+      pickerBtn.style.fontWeight='normal';
+    }
+  }
+  document.getElementById('catsScroll').innerHTML=t.cats.map((n,i)=>`<div class="cat-pill ${activeCat===keys[i]?'active':''}" onclick="setCat('${keys[i]}')">${n}</div>`).join('');
+}
+function setCat(c){activeCat=c;renderCats();renderCards();}
+
+function getPriceLabel(y){
+  if(y.weekRate)return y.weekRate.toLocaleString()+'€ <span>/ '+T[lang].overnight.toLowerCase()+'</span>';
+  if(y.dayRate)return y.dayRate.toLocaleString()+'€ <span>/ '+T[lang].overnight.toLowerCase().split(' ')[0]+'</span>';
+  return '<span>—</span>';
+}
+
+
+function renderSkeletonCards(count){
+  const id='sk'+Date.now();
+  const compassHtml=`
+    <div style="display:flex;align-items:center;justify-content:center;width:100%;height:110px;background:var(--bg3);border-radius:var(--rs) var(--rs) 0 0">
+      <svg viewBox="0 0 60 60" style="width:52px;height:52px">
+        <!-- outer ring -->
+        <circle cx="30" cy="30" r="27" stroke="var(--gold)" stroke-width="1" fill="none" opacity="0.25"/>
+        <circle cx="30" cy="30" r="23" stroke="var(--gold)" stroke-width="0.5" fill="none" opacity="0.15"/>
+        <!-- tick marks -->
+        <line x1="30" y1="3" x2="30" y2="8" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+        <line x1="30" y1="52" x2="30" y2="57" stroke="var(--gold)" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
+        <line x1="3" y1="30" x2="8" y2="30" stroke="var(--gold)" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
+        <line x1="52" y1="30" x2="57" y2="30" stroke="var(--gold)" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
+        <!-- NE SW ticks -->
+        <line x1="49.1" y1="10.9" x2="45.6" y2="14.4" stroke="var(--gold)" stroke-width="0.8" opacity="0.2"/>
+        <line x1="10.9" y1="49.1" x2="14.4" y2="45.6" stroke="var(--gold)" stroke-width="0.8" opacity="0.2"/>
+        <line x1="10.9" y1="10.9" x2="14.4" y2="14.4" stroke="var(--gold)" stroke-width="0.8" opacity="0.2"/>
+        <line x1="49.1" y1="49.1" x2="45.6" y2="45.6" stroke="var(--gold)" stroke-width="0.8" opacity="0.2"/>
+        <!-- N S E W labels -->
+        <text x="30" y="15" text-anchor="middle" fill="var(--gold)" font-size="6" font-weight="700" font-family="sans-serif" opacity="0.6">N</text>
+        <text x="30" y="50" text-anchor="middle" fill="var(--gold)" font-size="5" font-family="sans-serif" opacity="0.3">S</text>
+        <text x="10" y="32" text-anchor="middle" fill="var(--gold)" font-size="5" font-family="sans-serif" opacity="0.3">W</text>
+        <text x="50" y="32" text-anchor="middle" fill="var(--gold)" font-size="5" font-family="sans-serif" opacity="0.3">E</text>
+        <!-- SPINNING needle -->
+        <g id="skNeedle" style="transform-origin:30px 30px;animation:compassSpin 3s linear infinite">
+          <!-- north needle - gold -->
+          <path d="M30 30 L28 32 L30 8 L32 32 Z" fill="var(--gold)" opacity="0.8"/>
+          <!-- south needle - lighter -->
+          <path d="M30 30 L32 28 L30 52 L28 28 Z" fill="var(--gold)" opacity="0.25"/>
+          <!-- center dot -->
+          <circle cx="30" cy="30" r="2.5" fill="var(--gold)" opacity="0.7"/>
+          <circle cx="30" cy="30" r="1" fill="var(--bg)" opacity="0.9"/>
+        </g>
+      </svg>
+    </div>`;
+  return Array(count).fill(0).map(function(){return '<div class="card" style="pointer-events:none">'+compassHtml+'<div style="padding:10px 10px 12px"><div class="skeleton" style="height:14px;border-radius:4px;margin-bottom:7px;width:70%"></div><div class="skeleton" style="height:11px;border-radius:4px;margin-bottom:10px;width:90%"></div><div class="skeleton" style="height:13px;border-radius:4px;width:40%;margin-left:auto"></div></div></div>';}).join('');
+}
+
+function renderCards(){
+  const filtered=activeCat==='all'?YACHTS:activeCat==='weekly'?YACHTS.filter(y=>y.weekly):YACHTS.filter(y=>y.cat===activeCat);
+  const grid=document.getElementById('cardsGrid');
+  grid.innerHTML=renderSkeletonCards(Math.min(filtered.length,6));
+  setTimeout(()=>{
+  grid.innerHTML=filtered.map(y=>{
+    const img=y.photos&&y.photos.length?y.photos[0]:null;
+    const imgHtml=img?`<img class="card-img" src="${img}" alt="${(y.names[lang]||y.names['en']||'')}" loading="lazy">`:`<div class="card-img-placeholder"><span style="font-size:36px">⛵</span></div>`;
+    return `<div class="card" onclick="openDetail(${y.id})">
+      ${imgHtml}
+      
+      ${y.weekly?`<div class="weekly-badge">Weekly</div>`:''}
+      <div class="card-fav ${favs.has(y.id)?'on':''}" id="fav${y.id}" onclick="event.stopPropagation();toggleFav(${y.id})">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </div>
+
+      <div class="card-divider"></div>
+      <div class="card-body">
+        <div class="card-name">${(y.names[lang]||y.names['en']||'')}</div>
+        <div class="card-meta">${(y.metas[lang]||y.metas['en']||'')}</div>
+        <div class="card-price">${getPriceLabel(y)}</div>
+      </div>
+    </div>`;
+  }).join('')||`<div style="grid-column:1/-1;color:var(--text3);text-align:center;padding:30px;font-size:13px">—</div>`;
+  },400);
+}
+
+function shareYacht(id){
+  const y=YACHTS[id];
+  const name=(y.names[lang]||y.names['en']||'');
+  const price=y.dayRate?y.dayRate.toLocaleString()+'€/день':y.weekRate?y.weekRate.toLocaleString()+'€/неделю':'';
+  const text=`🛥 ${name}\n${(y.types[lang]||y.types['en']||'')} · ${(y.metas[lang]||y.metas['en']||'')}\n💰 ${price}\n\nАренда яхт в Черногории — Adriatic Yachts`;
+  const url='https://408mne.github.io/adriaticyachts';
+  if(navigator.share){navigator.share({title:name,text,url}).catch(()=>{});}
+  else{const tgUrl='https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text);window.open(tgUrl,'_blank');}
+}
+function toggleFav(id){if(favs.has(id))favs.delete(id);else favs.add(id);renderCards();}
+
+function openDetail(id){
+  const y=YACHTS[id],t=T[lang];
+  // Get Telegram user data
+  const tgUser=window.Telegram?.WebApp?.initDataUnsafe?.user||null;
+  const tgName=tgUser?(tgUser.first_name||'')+(tgUser.last_name?' '+tgUser.last_name:''):'';
+  const tgUsername=tgUser&&tgUser.username?'@'+tgUser.username:'';
+  const tgId=tgUser?tgUser.id:null;
+  detailState={extras:new Set(),guests:2,date:'',duration:'',yachtId:id,tgName,tgUsername,tgId};
+
+  const galHtml=y.photos&&y.photos.length
+    ?`<div class="modal-gallery-wrap">
+      <div class="modal-gallery">${y.photos.map((p,i)=>`<img src="${p}" alt="${(y.names[lang]||y.names['en']||'')} ${i+1}" loading="${i===0?'eager':'lazy'}" class="modal-gallery-img">`).join('')}</div>
+      ${y.photos.length>1?('<div style="display:flex;justify-content:center;gap:5px;padding:6px 0 2px">'+y.photos.map((_,i)=>'<div class="gal-dot'+(i===0?' gal-dot-active':'')+'">'+'</div>').join('')+'</div>'):''}
+    </div>`
+    :`<div class="modal-gallery-placeholder"><span style="font-size:48px">⛵</span></div>`
+  const priceHtml=y.weekRate
+    ?`<div class="price-box"><div class="price-label">${t.calcTitle}</div><div class="price-amount">${y.weekRate.toLocaleString()} €</div><div class="price-note">1 ${t.overnight.toLowerCase()}</div></div>`
+    :y.dayRate
+    ?`<div class="price-box"><div class="price-label">${t.calcTitle}</div><div class="price-amount">${y.dayRate.toLocaleString()} €</div><div class="price-note">${y.fuelIncl?t.calcTitle:'⛽ '+t.fuelExtra}</div></div>`
+    :`<div class="price-box"><div class="price-label">${t.calcTitle}</div><div class="price-amount" style="font-size:20px">${lang==='ru'?'По запросу':lang==='me'?'Na upit':'On request'}</div></div>`;
+
+  const featsHtml=(y.feats[lang]||y.feats['en']||[]).map(f=>`<div class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg><span>${f[0]}</span></div>`).join('');
+  const extrasHtml=y.extras.map((ex,i)=>`<div class="extra ${detailState.extras.has(i)?'sel':''}" onclick="toggleExtra(${y.id},${i})"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg><div><div class="extra-name">${ex[lang]}</div><div class="extra-p">+${ex.price>0?ex.price+'€':t.choose}</div></div></div>`).join('');
+
+  const dateVal=detailState.date||'';
+  const dateLbl=dateVal?(()=>{const d=new Date(dateVal+'T12:00:00');return d.toLocaleDateString(lang==='ru'?'ru-RU':lang==='me'?'sr-ME':'en-GB',{day:'numeric',month:'long',year:'numeric'});})():(lang==='ru'?'Выберите дату':lang==='me'?'Odaberite datum':'Select date');
+
+  document.getElementById('detailContent').innerHTML=`
+    ${galHtml}
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div class="modal-title">${(y.names[lang]||y.names['en']||'')}</div>
+        <button onclick="shareYacht(${y.id})" style="background:var(--bg3);border:1px solid var(--border2);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--text2);cursor:pointer;font-family:'Jost',sans-serif;display:flex;align-items:center;gap:5px;flex-shrink:0">
+          <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+          ${lang==='ru'?'Поделиться':lang==='de'?'Teilen':lang==='tr'?'Paylaş':'Share'}
+        </button>
+      </div>
+      <div class="modal-sub">${(y.types[lang]||y.types['en']||'')} · ${(y.metas[lang]||y.metas['en']||'')}</div>
+      <div class="tag-row">
+        ${(y.tags[lang]||y.tags['en']||[]).map(tg=>`<span class="tag">${tg}</span>`).join('')}
+        <span class="tag green">${t.avail}</span>
+        ${y.weekly?`<span class="tag gold">Weekly</span>`:''}
+      </div>
+      <div class="desc-text">${(y.descs[lang]||y.descs['en']||'')}</div>
+      <div class="section-lbl">${t.included}</div>
+      <div class="features-grid">${featsHtml}</div>
+      <div style="margin-top:16px">${priceHtml}</div>
+      <div class="section-lbl" style="margin-top:16px">${t.extras}</div>
+      <div class="extras-grid">${extrasHtml}</div>
+      <div class="modal-divider"></div>
+      <div class="form-section">
+        <div class="section-lbl">${t.startDate}</div>
+        <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap" id="quickDatesRow"></div>
+        <label style="display:block;position:relative;cursor:pointer;margin-bottom:10px">
+          <div style="width:100%;padding:11px 14px;font-size:14px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg3);color:${dateVal?'var(--text)':'var(--text3)'};display:flex;align-items:center;justify-content:space-between">
+            <span id="dateLblSpan">${dateLbl}</span>
+            <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--gold);fill:none;stroke-width:2;flex-shrink:0"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          </div>
+          <input type="date" id="dateInp" onchange="setDate(this.value)" value="${dateVal}" style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px">
+        </label>
+        <div class="section-lbl">${t.durLabel}</div>
+        <div class="dur-row" id="durHours">
+          ${[2,3,4,5,6,7,8].map(h=>`<div class="dur-btn ${detailState.duration===h+'h'?'sel-h':''}" onclick="setDur(${h},'h')">${h} ${lang==='ru'?'ч':lang==='me'?'h':'h'}</div>`).join('')}
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin:8px 0 5px;text-transform:uppercase;letter-spacing:.05em">${t.overnight}</div>
+        <div class="dur-row" id="durDays">
+          ${[1,2,3,4,5,6,7].map(d=>`<div class="dur-btn ${detailState.duration===d+'d'?'sel-d':''}" onclick="setDur(${d},'d')">${d} ${lang==='ru'?(d===1?'день':d<5?'дня':'дней'):lang==='me'?(d===1?'dan':'dana'):(d===1?'day':'days')}</div>`).join('')}
+        </div>
+        <div class="err-msg" id="dateErr" style="display:none">${t.noDate}</div>
+      </div>
+      <div class="form-section">
+        <div class="section-lbl">${t.contacts}</div>
+        <input class="inp" id="nameInp" placeholder="${t.name}" type="text">
+        <div class="err-msg" id="nameErr" style="display:none">${t.noName}</div>
+        <div style="position:relative">
+          <input class="inp" id="phoneInp" placeholder="${t.phone}" type="text" style="margin-bottom:4px">
+          <div style="font-size:11px;color:var(--text3);padding:0 2px 8px">${lang==='ru'?'Telegram уже передан автоматически. Телефон / email — по желанию.':lang==='me'?'Telegram je proslijeđen automatski. Telefon / email — po želji.':'Your Telegram is shared automatically. Phone / email — optional.'}</div>
+        </div>
+        <div class="err-msg" id="phoneErr" style="display:none">${t.noPhone}</div>
+        <input class="inp" id="commentInp" placeholder="${t.comment}" type="text">
+      </div>
+      <div class="form-section">
+        <div class="section-lbl">${t.guests}</div>
+        <div class="guests-row">
+          <div class="g-btn" onclick="changeGuests(-1)">−</div>
+          <div class="g-num" id="guestNum">${detailState.guests}</div>
+          <div class="g-btn" onclick="changeGuests(1)">+</div>
+          <span class="g-cap">${t.of} ${y.capacity} ${t.avail2}</span>
+        </div>
+      </div>
+      <div class="pending-notice">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        <div class="pending-text">${t.pendingNote}</div>
+      </div>
+      <button class="book-btn" onclick="submitBooking(${y.id})">${t.bookBtn}</button>
+      <div style="height:10px"></div>
+    </div>`;
+
+  document.getElementById('detailModal').classList.add('open');
+  setTimeout(()=>{
+    const el=document.getElementById('dateInp');
+    if(el){const td=new Date();const mm=String(td.getMonth()+1).padStart(2,'0');const dd=String(td.getDate()).padStart(2,'0');el.min=td.getFullYear()+'-'+mm+'-'+dd;}
+    if(detailState.tgName){const ni=document.getElementById('nameInp');if(ni&&!ni.value)ni.value=detailState.tgName;}
+    if(detailState.tgUsername){const pi=document.getElementById('phoneInp');if(pi&&!pi.value)pi.value=detailState.tgUsername;}
+  },50);
+}
+
+
+function buildQuickDates_disabled(){
+  const row=document.getElementById('quickDatesRow');
+  if(!row)return;
+  const labels=[
+    {lbl:lang==='ru'?'Сегодня':lang==='me'?'Danas':'Today',offset:0},
+    {lbl:lang==='ru'?'Завтра':lang==='me'?'Sutra':'Tomorrow',offset:1},
+    {lbl:lang==='ru'?'Выходные':lang==='me'?'Vikend':'Weekend',offset:daysToWeekend()}
+  ];
+  row.innerHTML='';
+  labels.forEach(function(q){
+    var d=new Date();d.setDate(d.getDate()+q.offset);
+    var v=d.toISOString().split('T')[0];
+    var el=document.createElement('div');
+    el.textContent=q.lbl;
+    el.style.cssText='padding:7px 12px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg3);font-size:12px;color:var(--text2);cursor:pointer;transition:.15s';
+    el.onmouseover=function(){this.style.background='var(--gold-dim)';this.style.borderColor='var(--gold)';};
+    el.onmouseout=function(){this.style.background='var(--bg3)';this.style.borderColor='var(--border2)';};
+    el.onclick=function(){setDate(v);};
+    row.appendChild(el);
+  });
+}
+
+function daysToWeekend(){const d=new Date().getDay();return d===6?7:d===0?6:6-d;}
+function setDate(v){
+  detailState.date=v;
+  const el=document.getElementById('dateLblSpan');
+  if(el&&v){const d=new Date(v+'T12:00:00');el.textContent=d.toLocaleDateString(lang==='ru'?'ru-RU':lang==='me'?'sr-ME':'en-GB',{day:'numeric',month:'long',year:'numeric'});el.style.color='var(--text)';}
+}
+
+function setDur(n,type){
+  detailState.duration=n+type;
+  document.querySelectorAll('.dur-btn').forEach(b=>b.classList.remove('sel-h','sel-d'));
+  event.target.classList.add(type==='h'?'sel-h':'sel-d');
+}
+
+function toggleExtra(yid,i){
+  if(detailState.extras.has(i))detailState.extras.delete(i);else detailState.extras.add(i);
+  document.querySelectorAll('.extras-grid .extra').forEach((el,idx)=>el.classList.toggle('sel',detailState.extras.has(idx)));
+}
+
+function changeGuests(d){
+  const y=YACHTS[detailState.yachtId];
+  detailState.guests=Math.max(1,Math.min(y.capacity,detailState.guests+d));
+  document.getElementById('guestNum').textContent=detailState.guests;
+}
+
+function submitBooking(yid){
+  const t=T[lang];let ok=true;
+  if(!detailState.date||!detailState.duration){document.getElementById('dateErr').style.display='block';ok=false;}else document.getElementById('dateErr').style.display='none';
+  const nm=document.getElementById('nameInp').value.trim();
+  const ph=document.getElementById('phoneInp').value.trim()||detailState.tgUsername||('tg:'+detailState.tgId)||'—';
+  if(!nm){document.getElementById('nameErr').style.display='block';ok=false;}else document.getElementById('nameErr').style.display='none';
+  document.getElementById('phoneErr').style.display='none';
+  if(!ok)return;
+
+  const y=YACHTS[yid];
+  const extTotal=[...detailState.extras].reduce((s,i)=>s+y.extras[i].price,0);
+  const basePrice=y.weekRate||y.dayRate||0;
+  const total=basePrice+extTotal;
+  const dateStr=new Date(detailState.date+'T12:00:00').toLocaleDateString(lang==='ru'?'ru-RU':lang==='me'?'sr-ME':'en-GB',{day:'numeric',month:'long',year:'numeric'});
+  const durStr=detailState.duration;
+  const extrasNames=[...detailState.extras].map(i=>y.extras[i][lang]).join(', ');
+  const comment=document.getElementById('commentInp').value.trim();
+
+  const tgUser2=window.Telegram?.WebApp?.initDataUnsafe?.user||null;
+  const clientLang=tgUser2?.language_code||'unknown';
+  const countryFlag={ru:'🇷🇺',en:'🇬🇧',de:'🇩🇪',tr:'🇹🇷',me:'🇲🇪',uk:'🇺🇦',fr:'🇫🇷',it:'🇮🇹',es:'🇪🇸',sr:'🇷🇸',hr:'🇭🇷'}[clientLang.split('-')[0]]||'🌍';
+  const tgInfoLine=(detailState.tgUsername&&detailState.tgUsername!==ph?'\n✈️ TG: '+detailState.tgUsername:'')
+    +(detailState.tgId?'\n🔗 ID: '+detailState.tgId:'')
+    +'\n'+countryFlag+' Язык: '+clientLang.toUpperCase()+' · Смотрел на: '+lang.toUpperCase();
+  const msg='🛥 НОВАЯ ЗАЯВКА\n'+'─'.repeat(26)+'\n'
+    +'🚢 Яхта: '+y.names['en']+'\n'
+    +'👤 Клиент: '+nm+'\n'
+    +'📱 Контакт: '+ph
+    +tgInfoLine+'\n'
+    +'📅 Дата: '+dateStr+'\n'
+    +'⏱ Длит.: '+durStr+'\n'
+    +'👥 Гостей: '+detailState.guests
+    +(extrasNames?'\n➕ Допы: '+extrasNames:'')
+    +(comment?'\n💬 '+comment:'')+'\n'
+    +'─'.repeat(26)+'\n'
+    +'💰 '+total+' €\n\n❗ Подтвердить в течение 4 ч';
+
+  // Build inline keyboard for owner - write to client button
+  const replyMarkup={inline_keyboard:[]};
+  if(detailState.tgId){
+    replyMarkup.inline_keyboard.push([
+      {text:'💬 Написать клиенту',url:'tg://user?id='+detailState.tgId}
+    ]);
+  }
+  if(detailState.tgUsername&&detailState.tgUsername!==ph){
+    replyMarkup.inline_keyboard.push([
+      {text:'✈️ '+detailState.tgUsername,url:'https://t.me/'+detailState.tgUsername.replace('@','')}
+    ]);
+  }
+  replyMarkup.inline_keyboard.push([
+    {text:'✅ Подтвердить',callback_data:'confirm|'+detailState.tgId+'|'+nm+'|'+y.names['en']+'|'+dateStr+'|'+total},
+    {text:'❌ Отклонить',callback_data:'reject|'+detailState.tgId+'|'+nm+'|'+y.names['en']}
+  ]);
+  // Send with alternative yachts suggestion
+  const altYachts=YACHTS.filter(a=>a.cat===y.cat&&a.id!==y.id&&a.capacity>=detailState.guests)
+    .slice(0,3).map(a=>a.names['en']).join(', ');
+  const altLine=altYachts?'\n💡 Альтернативы: '+altYachts:'';
+  const msgFull=msg+altLine;
+  fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msgFull,reply_markup:replyMarkup})}).catch(e=>console.log(e));
+
+  // Save to local orders history
+  saveMyOrder({yacht:(y.names[lang]||y.names['en']||''),date:dateStr,duration:durStr,guests:detailState.guests,extras:extrasNames,total,ts:Date.now()});
+  launchConfetti();
+  clearInterval(timerInterval);
+  document.getElementById('detailContent').innerHTML=`
+    <div class="confirm-wrap">
+      <div class="confirm-icon-ring"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <div class="confirm-title-big">${t.reqSent}</div>
+      <div class="confirm-sub">${t.confirmSub(nm,ph)}</div>
+      <div class="timer-box"><div class="timer-label">${t.timerLabel}</div><div class="timer-count" id="timerDisp">04:00:00</div></div>
+      <div class="summary-card">
+        <div class="sline"><span class="sl">${t.summaryYacht}</span><span class="sv">${(y.names[lang]||y.names['en']||'')}</span></div>
+        <div class="sline"><span class="sl">${t.summaryDate}</span><span class="sv">${dateStr}</span></div>
+        <div class="sline"><span class="sl">${t.summaryDur}</span><span class="sv">${durStr}</span></div>
+        <div class="sline"><span class="sl">${t.summaryGuests}</span><span class="sv">${detailState.guests}</span></div>
+        <div class="sline"><span class="sl">${t.summaryExtras}</span><span class="sv">${extrasNames||'—'}</span></div>
+        <div class="sline"><span class="sl">${t.summaryTotal}</span><span class="sv gold">${total} €</span></div>
+      </div>
+      <button class="new-btn" onclick="resetAndClose()">${t.newBooking}</button>
+    </div>`;
+  let secs=4*3600;
+  timerInterval=setInterval(()=>{secs--;if(secs<=0){clearInterval(timerInterval);return;}const h=String(Math.floor(secs/3600)).padStart(2,'0'),m=String(Math.floor((secs%3600)/60)).padStart(2,'0'),s=String(secs%60).padStart(2,'0');const el=document.getElementById('timerDisp');if(el)el.textContent=h+':'+m+':'+s;},1000);
+}
+
+function resetAndClose(){clearInterval(timerInterval);closeDetail();}
+function closeDetail(){document.getElementById('detailModal').classList.remove('open');}
+function openSpecial(){
+  // Autofill from Telegram
+  setTimeout(()=>{
+    const tgUser=window.Telegram?.WebApp?.initDataUnsafe?.user||null;
+    if(tgUser){
+      const nameEl=document.getElementById('specName');
+      const contactEl=document.getElementById('specContact');
+      const phoneEl=document.getElementById('specPhone');
+      if(nameEl&&!nameEl.value) nameEl.value=(tgUser.first_name||'')+(tgUser.last_name?' '+tgUser.last_name:'');
+      if(contactEl&&!contactEl.value) contactEl.value=tgUser.username?'@'+tgUser.username:'tg:'+tgUser.id;
+    }
+  },100);document.getElementById('specialModal').classList.add('open');}
+function closeSpecial(){document.getElementById('specialModal').classList.remove('open');}
+function selUrg(i){urgSel=i;for(let j=0;j<4;j++)document.getElementById('urg'+j).classList.toggle('sel',j===i);}
+
+function sendSpecial(){
+  const req=document.getElementById('specRequest').value.trim();
+  const specNameVal=(document.getElementById('specName')?.value||'').trim();
+  const contact=document.getElementById('specContact').value.trim();
+  const tgUser=window.Telegram?.WebApp?.initDataUnsafe?.user||null;
+  const tgId=tgUser?tgUser.id:null;
+  const tgUsername=tgUser&&tgUser.username?'@'+tgUser.username:'';
+  if(!contact&&!tgUsername){document.getElementById('specContact').classList.add('err');return;}
+  document.getElementById('specContact').classList.remove('err');
+  const t=T[lang];
+  const specPhoneVal=(document.getElementById('specPhone')?.value||'').trim();
+  const contactStr=contact||tgUsername||('tg:'+tgId);
+  const msg='⭐ СПЕЦЗАПРОС\n'+'─'.repeat(26)+'\n'+(specNameVal?'👤 '+specNameVal+'\n':'')+(specPhoneVal?'📞 '+specPhoneVal+'\n':'')+'📱 '+contactStr+(tgId?'\n🔗 tg://user?id='+tgId:'')+(tgUsername&&tgUsername!==contactStr?'\n✈️ '+tgUsername:'')+'\n'+'⚡ '+t.urgLabels[urgSel]+'\n'+'📝 '+(req||'—')+'\n'+'📱 '+contact+'\n'+'─'.repeat(26)+'\nОтветь клиенту как можно скорее!';
+  // Build inline keyboard for owner - write to client button
+  const replyMarkup={inline_keyboard:[]};
+  if(detailState.tgId){
+    replyMarkup.inline_keyboard.push([
+      {text:'💬 Написать клиенту',url:'tg://user?id='+detailState.tgId}
+    ]);
+  }
+  if(detailState.tgUsername&&detailState.tgUsername!==ph){
+    replyMarkup.inline_keyboard.push([
+      {text:'✈️ '+detailState.tgUsername,url:'https://t.me/'+detailState.tgUsername.replace('@','')}
+    ]);
+  }
+  replyMarkup.inline_keyboard.push([
+    {text:'✅ Подтвердить',callback_data:'confirm|'+detailState.tgId+'|'+nm+'|'+y.names['en']+'|'+dateStr+'|'+total},
+    {text:'❌ Отклонить',callback_data:'reject|'+detailState.tgId+'|'+nm+'|'+y.names['en']}
+  ]);
+  // Send with alternative yachts suggestion
+  const altYachts=YACHTS.filter(a=>a.cat===y.cat&&a.id!==y.id&&a.capacity>=detailState.guests)
+    .slice(0,3).map(a=>a.names['en']).join(', ');
+  const altLine=altYachts?'\n💡 Альтернативы: '+altYachts:'';
+  const msgFull=msg+altLine;
+  fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msgFull,reply_markup:replyMarkup})}).catch(e=>console.log(e));
+  document.getElementById('specRequest').value='';document.getElementById('specContact').value='';
+  closeSpecial();
+  const b=document.getElementById('specialBanner');
+  b.querySelector('.special-title').textContent='✓ '+t.specSend;
+  setTimeout(()=>{b.querySelector('.special-title').textContent=t.sbanTitle;},2500);
+}
+
+function showView(v){
+  const panel=document.getElementById('ordersPanel');
+  if(panel)panel.style.display='none';
+  const mc=document.getElementById('mainCatalog');
+  if(mc)mc.style.display='block';
+  const pickerBtn=document.getElementById('pickerCatBtn');
+  if(pickerBtn)pickerBtn.style.display='flex';
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const navId='nav'+v.charAt(0).toUpperCase()+v.slice(1);
+  document.getElementById(navId)?.classList.add('active');
+  updateNavGlow(navId);
+}
+// Persistent order storage via Telegram CloudStorage
+const MY_ORDERS=[];
+function saveMyOrder(data){
+  MY_ORDERS.unshift({...data,id:Date.now()});
+  if(MY_ORDERS.length>20)MY_ORDERS.pop();
+  // Try Telegram CloudStorage first
+  try{
+    if(window.Telegram?.WebApp?.CloudStorage){
+      window.Telegram.WebApp.CloudStorage.setItem('orders',JSON.stringify(MY_ORDERS),()=>{});
+    }
+  }catch(e){}
+  // Also try sessionStorage as fallback
+  try{sessionStorage.setItem('ay_orders',JSON.stringify(MY_ORDERS));}catch(e){}
+}
+function loadSavedOrders(){
+  // Try Telegram CloudStorage
+  try{
+    if(window.Telegram?.WebApp?.CloudStorage){
+      window.Telegram.WebApp.CloudStorage.getItem('orders',(err,val)=>{
+        if(!err&&val){
+          const saved=JSON.parse(val);
+          saved.forEach(o=>{if(!MY_ORDERS.find(x=>x.id===o.id))MY_ORDERS.push(o);});
+          MY_ORDERS.sort((a,b)=>b.id-a.id);
+        }
+      });
+      return;
+    }
+  }catch(e){}
+  // Fallback: sessionStorage
+  try{
+    const s=sessionStorage.getItem('ay_orders');
+    if(s){const saved=JSON.parse(s);saved.forEach(o=>MY_ORDERS.push(o));}
+  }catch(e){}
+}
+
+function showOrders(){
+  const pickerBtn=document.getElementById('pickerCatBtn');
+  if(pickerBtn)pickerBtn.style.display='none';
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('navOrders').classList.add('active');
+  document.getElementById('mainCatalog').style.display='none';
+  let panel=document.getElementById('ordersPanel');
+  if(!panel){
+    panel=document.createElement('div');
+    panel.id='ordersPanel';
+    panel.style.cssText='padding:16px 14px 100px';
+    document.getElementById('mainCatalog').parentElement.appendChild(panel);
+  }
+  panel.style.display='block';
+  const tgUser=window.Telegram?.WebApp?.initDataUnsafe?.user||null;
+  const tgName=tgUser?(tgUser.first_name||''):'';
+  const noteText=lang==='ru'
+    ?'Менеджер свяжется с вами в Telegram в течение <strong>4 часов</strong>.'
+    :lang==='de'?'Manager wird sich innerhalb von <strong>4 Stunden</strong> melden.'
+    :lang==='tr'?'Yönetici <strong>4 saat</strong> içinde Telegram\'dan iletişime geçecek.'
+    :'Manager will contact you on Telegram within <strong>4 hours</strong>.';
+  const emptyTitle=lang==='ru'?'Заявок пока нет':lang==='de'?'Noch keine Buchungen':lang==='tr'?'Henüz rezervasyon yok':'No bookings yet';
+  const emptyText=lang==='ru'?'Выберите яхту в каталоге и отправьте запрос':lang==='de'?'Wählen Sie eine Yacht und senden Sie eine Anfrage':lang==='tr'?'Kataloğdan bir yat seçin':'Choose a yacht from the catalog';
+  const backText=lang==='ru'?'← Назад к каталогу':lang==='de'?'← Katalog':lang==='tr'?'← Katalog':'← Catalog';
+  const reviewBtn=`<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+    <div style="font-size:12px;color:var(--text3);margin-bottom:10px;text-align:center">${lang==='ru'?'Уже отдыхали с нами?':lang==='de'?'Schon mit uns gesegelt?':lang==='tr'?'Bizimle seyahat ettiniz mi?':'Already sailed with us?'}</div>
+    <button onclick="openReviews()" style="background:var(--gold-dim);border:1px solid rgba(181,137,58,0.3);border-radius:var(--rs);width:100%;padding:12px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--gold);display:flex;align-items:center;justify-content:center;gap:7px">
+      <span style="font-size:16px">⭐</span>
+      <span>${lang==='ru'?'Отзывы гостей и оставить отзыв':lang==='de'?'Bewertungen & eigene Bewertung':lang==='tr'?'Yorumlar ve yorum yaz':'Guest reviews & leave a review'}</span>
+    </button>
+  </div>`;
+  panel.innerHTML=`
+    <div style="position:relative;height:48px;margin-top:-2px;pointer-events:none;z-index:49;overflow:hidden">
+      <svg viewBox="0 0 360 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block">
+        <path fill="rgba(181,137,58,0.22)" opacity="1">
+          <animate attributeName="d" dur="5s" repeatCount="indefinite"
+            values="M0,24 C45,38 90,10 135,24 C180,38 225,10 270,24 C315,38 345,18 360,24 L360,0 L0,0 Z;
+                    M0,16 C45,30 90,4 135,18 C180,32 225,6 270,20 C315,34 345,12 360,18 L360,0 L0,0 Z;
+                    M0,24 C45,38 90,10 135,24 C180,38 225,10 270,24 C315,38 345,18 360,24 L360,0 L0,0 Z"/>
+        </path>
+        <path fill="rgba(181,137,58,0.12)" opacity="1">
+          <animate attributeName="d" dur="3.5s" repeatCount="indefinite"
+            values="M0,32 C60,18 120,40 180,28 C240,16 300,36 360,30 L360,0 L0,0 Z;
+                    M0,22 C60,36 120,14 180,26 C240,38 300,18 360,24 L360,0 L0,0 Z;
+                    M0,32 C60,18 120,40 180,28 C240,16 300,36 360,30 L360,0 L0,0 Z"/>
+        </path>
+      </svg>
+    </div>
+    <div style="margin-bottom:14px">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--navy)">${lang==='ru'?'Мои заявки':lang==='de'?'Meine Buchungen':lang==='tr'?'Rezervasyonlarım':'My bookings'}${MY_ORDERS.length>0?' ('+MY_ORDERS.length+')':''}</div>
+      ${tgName?`<div style="font-size:12px;color:var(--text3)">${tgName}</div>`:''}
+    </div>
+    ${MY_ORDERS.length===0?`
+      <div style="text-align:center;padding:32px 20px 16px">
+        <div style="margin-bottom:12px;display:flex;justify-content:center"><img src="data:image/jpeg;base64,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" width="80" height="80" style="border-radius:50%;mix-blend-mode:multiply;object-fit:cover;border:2px solid rgba(181,137,58,0.2)"/></div>
+        <div style="font-size:15px;font-weight:500;color:var(--navy);margin-bottom:6px">${emptyTitle}</div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:20px">${emptyText}</div>
+        <button onclick="backToCatalog()" style="background:var(--navy);color:#fff;border:none;border-radius:var(--rs);padding:11px 24px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif">${backText}</button>
+      </div>
+      ${reviewBtn}
+    `:`
+      <div style="background:rgba(181,137,58,0.07);border:1px solid rgba(181,137,58,0.2);border-radius:var(--rs);padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--text2);line-height:1.6">${noteText}</div>
+      ${MY_ORDERS.map((o,i)=>`
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:14px;margin-bottom:10px;animation:fadeInUp .3s ${i*0.06}s ease both">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="font-size:14px;font-weight:500;color:var(--navy)">${o.yacht}</div>
+            <div style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(42,122,86,0.08);border:1px solid rgba(42,122,86,0.2);color:#2a7a56">${lang==='ru'?'Отправлено':'Sent'}</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
+            <div style="background:var(--bg3);border-radius:var(--rs);padding:7px 10px">
+              <div style="font-size:10px;color:var(--text3);margin-bottom:2px">📅 ${lang==='ru'?'Дата':'Date'}</div>
+              <div style="font-size:12px;color:var(--text)">${o.date}</div>
+            </div>
+            <div style="background:var(--bg3);border-radius:var(--rs);padding:7px 10px">
+              <div style="font-size:10px;color:var(--text3);margin-bottom:2px">⏱ ${lang==='ru'?'Длит.':'Duration'}</div>
+              <div style="font-size:12px;color:var(--text)">${o.duration}</div>
+            </div>
+          </div>
+          ${o.total?`<div style="font-size:13px;font-weight:500;color:var(--gold)">💰 ${o.total.toLocaleString()} €</div>`:''}
+          <div style="font-size:11px;color:var(--text3);margin-top:5px">⏰ ${new Date(o.ts).toLocaleString(lang==='ru'?'ru-RU':'en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+        </div>`).join('')}
+      <button onclick="backToCatalog()" style="background:transparent;border:1px solid var(--border2);border-radius:var(--rs);width:100%;padding:11px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text2);margin-top:4px">${backText}</button>
+      ${reviewBtn}
+    `}
+  `;
+}
+
+function backToCatalog(){
+  showView('catalog');
+}
+
+
+
+
+// ── REVIEWS ──
+let reviewStar = 0;
+const REVIEWS_DB = [
+  {name:'Анна К.', yacht:'Abacus 70', date:'июнь 2026', stars:5, text:'Невероятный опыт! Экипаж профессиональный, яхта шикарная. Обязательно вернёмся!', initials:'АК', color:'#1a4a7a'},
+  {name:'Михаил С.', yacht:'Cranchi Z35', date:'май 2026', stars:5, text:'Отличная яхта для большой компании. Всё включено, цена адекватная. Рекомендую всем!', initials:'МС', color:'#2a7a56'},
+  {name:'Елена В.', yacht:'Mirage IV', date:'июль 2026', stars:5, text:'Провели корпоратив на 10 человек. Всё организовано идеально. Менеджер всегда на связи.', initials:'ЕВ', color:'#7a2a6a'},
+];
+
+function openReviews(){
+  renderReviews();
+  document.getElementById('reviewsModal').classList.add('open');
+}
+function renderReviews(){
+  document.getElementById('reviewsList').innerHTML = REVIEWS_DB.map((r,i)=>`
+    <div class="review-card" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:13px;margin-bottom:10px;animation-delay:${i*0.08}s">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px">
+        <div style="width:34px;height:34px;border-radius:50%;background:${r.color}22;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:${r.color};flex-shrink:0">${r.initials}</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:500;color:var(--navy)">${r.name}</div>
+          <div style="font-size:11px;color:var(--text3)">${r.yacht} · ${r.date}</div>
+        </div>
+        <div style="color:#b5893a;font-size:13px;letter-spacing:1px">${'★'.repeat(r.stars)}</div>
+      </div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6">${r.text}</div>
+    </div>`).join('');
+}
+function setStar(n){
+  reviewStar=n;
+  document.querySelectorAll('#starRow .star-btn').forEach((s,i)=>{
+    s.style.opacity = i<n ? '1' : '0.3';
+    s.style.color = i<n ? '#b5893a' : '';
+  });
+}
+function submitReview(){
+  const name=document.getElementById('reviewName').value.trim();
+  const yacht=document.getElementById('reviewYacht').value.trim();
+  const text=document.getElementById('reviewText').value.trim();
+  if(!name||!text||!reviewStar){alert(lang==='ru'?'Заполните имя, текст и оценку':'Please fill name, text and rating');return;}
+  const msg='⭐ НОВЫЙ ОТЗЫВ\n'+'─'.repeat(26)+'\n'
+    +'👤 '+name+(yacht?'\n🛥 '+yacht:'')+'\n'
+    +'★'.repeat(reviewStar)+'\n'
+    +'💬 '+text+'\n\n'+'Одобрить и добавить на сайт?';
+  fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msg})}).catch(e=>console.log(e));
+  document.getElementById('reviewNote').textContent = lang==='ru'?'✅ Отзыв отправлен! Появится после проверки.':'✅ Sent! Will appear after review.';
+  document.getElementById('reviewName').value='';
+  document.getElementById('reviewYacht').value='';
+  document.getElementById('reviewText').value='';
+  reviewStar=0;
+  document.querySelectorAll('#starRow .star-btn').forEach(s=>{s.style.opacity='0.3';s.style.color='';});
+}
+
+// ── ROUTES ──
+const ROUTES_DATA = {
+  4: {
+    km: '~45 км', time: '4 часа',
+    tip: '💡 Идеально для первого знакомства с заливом. Успеете увидеть главные достопримечательности и искупаться.',
+    stops: [
+      {n:'Porto Montenegro', d:'Старт и финиш · Тиват', icon:'⚓', main:true},
+      {n:'Прчань', d:'Старинная барочная церковь', icon:'⛪'},
+      {n:'Kotor', d:'Средневековый город ЮНЕСКО', icon:'🏰'},
+      {n:'Gospa od Škrpjela', d:'Купание у островной церкви', icon:'🏊'},
+      {n:'Perast', d:'Фото у острова Св. Юрия', icon:'📸'},
+    ]
+  },
+  6: {
+    km: '~80 км', time: '6 часов',
+    tip: '💡 Полный тур по всему заливу. Время на обед в Которе и купание у острова.',
+    stops: [
+      {n:'Porto Montenegro', d:'Старт и финиш · Тиват', icon:'⚓', main:true},
+      {n:'Тиват', d:'Марина Lazure', icon:'🛥'},
+      {n:'Herceg Novi', d:'Крепость Канли Кула · купание', icon:'🏰'},
+      {n:'Risan', d:'Самый глубокий уголок залива', icon:'⚓'},
+      {n:'Perast + острова', d:'Gospa od Škrpjela · Св. Юрий', icon:'🏝'},
+      {n:'Kotor', d:'Обед в старом городе', icon:'🍽'},
+    ]
+  },
+  8: {
+    km: '~120 км', time: '8 часов',
+    tip: '💡 Максимальный маршрут — весь залив + Адриатика. Закат на воде гарантирован.',
+    stops: [
+      {n:'Porto Montenegro', d:'Старт и финиш · Тиват', icon:'⚓', main:true},
+      {n:'Herceg Novi', d:'Крепость + утреннее купание', icon:'🏰'},
+      {n:'Risan', d:'Мозаики виллы Riscinium', icon:'🏛'},
+      {n:'Perast', d:'Острова Gospa и Св. Юрий', icon:'🏝'},
+      {n:'Kotor', d:'Средневековый город · обед', icon:'🍽'},
+      {n:'Будва', d:'Пляж Могрен · закат', icon:'🌅'},
+    ]
+  }
+};
+let currentRouteTab = 4;
+function openRoutes(){
+  document.getElementById('routesModal').classList.add('open');
+  setRouteTab(4);
+}
+function setRouteTab(n){
+  currentRouteTab = n;
+  [4,6,8].forEach(x=>{
+    const el = document.getElementById('rtab'+x);
+    if(x===n){el.style.background='var(--navy)';el.style.color='#fff';el.style.fontWeight='500';}
+    else{el.style.background='transparent';el.style.color='var(--text2)';el.style.fontWeight='400';}
+  });
+  const r = ROUTES_DATA[n];
+  document.getElementById('routeTip').textContent = r.tip;
+  document.getElementById('routeStops').innerHTML = r.stops.map((s,i)=>`
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);position:relative">
+      ${i<r.stops.length-1?'<div style="position:absolute;left:17px;top:38px;bottom:0;width:2px;border-left:2px dashed rgba(181,137,58,0.3)"></div>':''}
+      <div style="width:34px;height:34px;border-radius:50%;background:${s.main?'var(--navy)':'var(--gold-dim)'};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;z-index:1;border:1px solid ${s.main?'var(--navy)':'rgba(181,137,58,0.3)'}">${s.icon}</div>
+      <div style="flex:1;padding-top:2px">
+        <div style="font-size:13px;font-weight:500;color:var(--navy)">${s.n}</div>
+        <div style="font-size:11px;color:var(--text3)">${s.d}</div>
+      </div>
+    </div>`).join('');
+}
+
+
+// ── QUIZ ──
+const QUIZ_POOL=[
+  {q:{ru:'Идеальный вечер — это...',en:'Perfect evening is...',de:'Perfekter Abend ist...',tr:'Mükemmel akşam...'},opts:[
+    {ru:'Тихий закат с бокалом вина',en:'Quiet sunset with wine',de:'Ruhiger Sonnenuntergang',tr:'Sessiz gün batımı',tags:['sail','romantic']},
+    {ru:'Вечеринка с громкой музыкой',en:'Party with loud music',de:'Party mit lauter Musik',tr:'Yüksek sesli parti',tags:['motor','party']},
+    {ru:'Ужин при свечах на палубе',en:'Candlelit dinner on deck',de:'Kerzenlicht-Dinner',tr:'Mumlu akşam yemeği',tags:['vip','romantic']},
+    {ru:'Прыжки с борта до полуночи',en:'Jumping off until midnight',de:'Ins Wasser springen',tr:'Gece yarısı atlama',tags:['speedboat','party']},
+  ]},
+  {q:{ru:'Твой напиток на борту?',en:'Your drink on board?',de:'Ihr Getränk an Bord?',tr:'Teknede içeceğiniz?'},opts:[
+    {ru:'🥂 Шампанское',en:'🥂 Champagne',de:'🥂 Champagner',tr:'🥂 Şampanya',tags:['vip','romantic']},
+    {ru:'🍺 Холодное пиво',en:'🍺 Cold beer',de:'🍺 Kaltes Bier',tr:'🍺 Soğuk bira',tags:['speedboat','party']},
+    {ru:'🍹 Коктейль с зонтиком',en:'🍹 Cocktail',de:'🍹 Cocktail',tr:'🍹 Kokteyl',tags:['motor','party']},
+    {ru:'☕ Кофе с видом на залив',en:'☕ Coffee with bay view',de:'☕ Kaffee mit Meerblick',tr:'☕ Körfez manzaralı kahve',tags:['sail','romantic']},
+  ]},
+  {q:{ru:'Скорость — это...',en:'Speed is...',de:'Geschwindigkeit ist...',tr:'Hız...'},opts:[
+    {ru:'💨 Чем быстрее тем лучше!',en:'💨 The faster the better!',de:'💨 Je schneller desto besser!',tr:'💨 Ne kadar hızlı o kadar iyi!',tags:['speedboat','motor']},
+    {ru:'🌊 Плавно скользить по волнам',en:'🌊 Gliding smoothly',de:'🌊 Sanft über Wellen gleiten',tr:'🌊 Dalgalar üzerinde süzülmek',tags:['sail','romantic']},
+    {ru:'👑 Мне всё равно — главное комфорт',en:'👑 Comfort matters most',de:'👑 Hauptsache Komfort',tr:'👑 Konfor önemli',tags:['vip']},
+    {ru:'🎯 Умеренно, но с характером',en:'🎯 Moderate but stylish',de:'🎯 Gemäßigt aber stilvoll',tr:'🎯 Ölçülü ama şık',tags:['motor','party']},
+  ]},
+  {q:{ru:'Идеальная компания на борту?',en:'Ideal company on board?',de:'Ideale Gesellschaft?',tr:'İdeal arkadaşlık?'},opts:[
+    {ru:'💑 Только вдвоём',en:'💑 Just the two of us',de:'💑 Nur zu zweit',tr:'💑 Sadece ikimiz',tags:['sail','romantic']},
+    {ru:'👨‍👩‍👧‍👦 Семья с детьми',en:'👨‍👩‍👧‍👦 Family with kids',de:'👨‍👩‍👧‍👦 Familie mit Kindern',tr:'👨‍👩‍👧‍👦 Çocuklu aile',tags:['motor','catamaran']},
+    {ru:'🥳 Большая компания друзей',en:'🥳 Big group of friends',de:'🥳 Große Freundesgruppe',tr:'🥳 Büyük arkadaş grubu',tags:['motor','party']},
+    {ru:'🤝 Корпоратив / деловые партнёры',en:'🤝 Corporate event',de:'🤝 Firmenveranstaltung',tr:'🤝 Kurumsal etkinlik',tags:['vip','motor']},
+  ]},
+  {q:{ru:'Твой стиль путешествий?',en:'Your travel style?',de:'Ihr Reisestil?',tr:'Seyahat tarzınız?'},opts:[
+    {ru:'🗺 Исследовать скрытые места',en:'🗺 Explore hidden gems',de:'🗺 Verborgene Orte entdecken',tr:'🗺 Gizli yerleri keşfet',tags:['sail','romantic']},
+    {ru:'📸 Красивые фото для Instagram',en:'📸 Beautiful Instagram photos',de:'📸 Schöne Instagram-Fotos',tr:'📸 Instagram için güzel fotoğraflar',tags:['motor','vip']},
+    {ru:'🎉 Незабываемые впечатления',en:'🎉 Unforgettable experiences',de:'🎉 Unvergessliche Erlebnisse',tr:'🎉 Unutulmaz deneyimler',tags:['vip','party']},
+    {ru:'🏄 Активный отдых и спорт',en:'🏄 Active sports',de:'🏄 Aktiver Urlaub',tr:'🏄 Aktif tatil',tags:['speedboat','motor']},
+  ]},
+  {q:{ru:'Первое что ты делаешь на яхте?',en:'First thing you do on a yacht?',de:'Erstes auf der Yacht?',tr:'Teknede ilk yapacağınız?'},opts:[
+    {ru:'🍾 Открываю шампанское',en:'🍾 Pop the champagne',de:'🍾 Champagner aufmachen',tr:'🍾 Şampanya açmak',tags:['vip','romantic']},
+    {ru:'🤿 Прыгаю за борт',en:'🤿 Jump overboard',de:'🤿 Ins Wasser springen',tr:'🤿 Bordan atlamak',tags:['speedboat','party']},
+    {ru:'📱 Фотографирую вид',en:'📱 Take photos of the view',de:'📱 Aussicht fotografieren',tr:'📱 Manzara fotoğrafı',tags:['motor','sail']},
+    {ru:'😴 Ложусь загорать',en:'😴 Sunbathe',de:'😴 Sonnenbaden',tr:'😴 Güneşlenmek',tags:['sail','romantic']},
+  ]},
+  {q:{ru:'Какая погода идеальна для выхода?',en:'Perfect weather for sailing?',de:'Perfektes Wetter?',tr:'İdeal hava?'},opts:[
+    {ru:'☀️ Жара и штиль',en:'☀️ Hot and calm',de:'☀️ Heiß und ruhig',tr:'☀️ Sıcak ve sakin',tags:['motor','vip']},
+    {ru:'💨 Ветер для парусов',en:'💨 Windy for sailing',de:'💨 Wind für Segel',tr:'💨 Yelken için rüzgar',tags:['sail','romantic']},
+    {ru:'🌤 Облачно и прохладно',en:'🌤 Cloudy and cool',de:'🌤 Bewölkt und kühl',tr:'🌤 Bulutlu ve serin',tags:['motor','party']},
+    {ru:'🌊 Волны — адреналин!',en:'🌊 Waves — adrenaline!',de:'🌊 Wellen — Adrenalin!',tr:'🌊 Dalgalar — adrenalin!',tags:['speedboat','party']},
+  ]},
+  {q:{ru:'Если яхта — это характер, ты...',en:'If a yacht is a personality, you are...',de:'Wenn Yacht Charakter ist, bist du...',tr:'Eğer yat bir karakter olsaydı...'},opts:[
+    {ru:'🦁 Смелый и уверенный',en:'🦁 Bold and confident',de:'🦁 Mutig und selbstsicher',tr:'🦁 Cesur ve kendinden emin',tags:['motor','vip']},
+    {ru:'🦋 Лёгкий и свободный',en:'🦋 Light and free',de:'🦋 Leicht und frei',tr:'🦋 Hafif ve özgür',tags:['sail','romantic']},
+    {ru:'🐬 Игривый и энергичный',en:'🐬 Playful and energetic',de:'🐬 Verspielt und energisch',tr:'🐬 Oyuncu ve enerjik',tags:['speedboat','party']},
+    {ru:'🦅 Величественный и спокойный',en:'🦅 Majestic and calm',de:'🦅 Majestätisch und ruhig',tr:'🦅 Görkemli ve sakin',tags:['vip','romantic']},
+  ]},
+  {q:{ru:'Идеальный маршрут на день?',en:'Perfect route for the day?',de:'Ideale Route für den Tag?',tr:'Günlük ideal rota?'},opts:[
+    {ru:'⚓ Тихая бухта — никого нет',en:'⚓ Quiet cove — nobody around',de:'⚓ Ruhige Bucht — niemand da',tr:'⚓ Sessiz koy — kimse yok',tags:['sail','romantic']},
+    {ru:'🏰 Исторические города залива',en:'🏰 Historic bay towns',de:'🏰 Historische Städte der Bucht',tr:'🏰 Tarihi körfez kasabaları',tags:['sail','motor']},
+    {ru:'🏖 Пляж за пляжем',en:'🏖 Beach after beach',de:'🏖 Strand nach Strand',tr:'🏖 Plajdan plaja',tags:['motor','speedboat']},
+    {ru:'🌅 Дальний выход в открытое море',en:'🌅 Open sea adventure',de:'🌅 Offene See Abenteuer',tr:'🌅 Açık deniz macerası',tags:['vip','sail']},
+  ]},
+  {q:{ru:'Музыка на борту — это...',en:'Music on board is...',de:'Musik an Bord ist...',tr:'Teknede müzik...'},opts:[
+    {ru:'🎸 Рок или хаус — громко!',en:'🎸 Rock or house — loud!',de:'🎸 Rock oder House — laut!',tr:'🎸 Rock ya da house — yüksek sesle!',tags:['party','speedboat']},
+    {ru:'🎷 Джаз или лаунж',en:'🎷 Jazz or lounge',de:'🎷 Jazz oder Lounge',tr:'🎷 Caz veya lounge',tags:['vip','romantic']},
+    {ru:'🎵 Фоном — неважно что',en:'🎵 Background — anything',de:'🎵 Hintergrund — egal was',tr:'🎵 Arka plan — önemli değil',tags:['motor','sail']},
+    {ru:'🔇 Только звук моря',en:'🔇 Only the sound of the sea',de:'🔇 Nur das Meeresrauschen',tr:'🔇 Sadece denizin sesi',tags:['sail','romantic']},
+  ]},
+  {q:{ru:'Что возьмёшь на борт обязательно?',en:'What will you definitely bring on board?',de:'Was nimmst du unbedingt mit?',tr:'Mutlaka getireceğin şey?'},opts:[
+    {ru:'📚 Книгу или наушники',en:'📚 Book or headphones',de:'📚 Buch oder Kopfhörer',tr:'📚 Kitap veya kulaklık',tags:['sail','romantic']},
+    {ru:'🏄 Доску для сёрфинга',en:'🏄 Surfboard',de:'🏄 Surfbrett',tr:'🏄 Sörf tahtası',tags:['speedboat','party']},
+    {ru:'🍱 Вкусную еду и вино',en:'🍱 Delicious food and wine',de:'🍱 Leckeres Essen und Wein',tr:'🍱 Lezzetli yemek ve şarap',tags:['vip','romantic']},
+    {ru:'📷 Камеру — снимать всё',en:'📷 Camera — shoot everything',de:'📷 Kamera — alles filmen',tr:'📷 Kamera — her şeyi çek',tags:['motor','party']},
+  ]},
+];
+
+const QUIZ_RESULTS={
+  vip:{emoji:'👑',title:{ru:'Mirage IV — супер-яхта',en:'Mirage IV — Superyacht',de:'Mirage IV — Superjacht',tr:'Mirage IV'},desc:{ru:'Тебе нужна супер-яхта с пляж-клубом и шампанским!',en:'You need a superyacht with beach club and champagne!',de:'Superjacht mit Beachclub und Champagner!',tr:'Beach club ve şampanyalı süperjacht!'},yachtId:9,color:'#b5893a'},
+  sail:{emoji:'⛵',title:{ru:'Sommeliere — парусная',en:'Sommeliere — Sailing',de:'Sommeliere — Segelyacht',tr:'Sommeliere — Yelkenli'},desc:{ru:'Романтик и ценитель тишины. Ветер, тишина и закат под звёздами.',en:'A romantic soul. Wind, silence and starlit sunsets.',de:'Romantische Seele. Wind, Stille und Sternenhimmel.',tr:'Rüzgar, sessizlik ve yıldızlı günbatımı.'},yachtId:25,color:'#2a6a8a'},
+  party:{emoji:'🎉',title:{ru:'Abacus 70 — душа компании',en:'Abacus 70 — Life of the party',de:'Abacus 70 — Partylöwe',tr:'Abacus 70 — Eğlencenin kalbi'},desc:{ru:'Большая моторная яхта с флайбриджем для всей компании!',en:'Big motor yacht with flybridge for everyone!',de:'Große Motoryacht mit Flybridge für die ganze Gruppe.',tr:'Büyük motor yatı — herkes için!'},yachtId:1,color:'#8a2a2a'},
+  motor:{emoji:'⚡',title:{ru:'Cranchi Z35 — стиль и скорость',en:'Cranchi Z35 — Style and Speed',de:'Cranchi Z35 — Stil und Tempo',tr:'Cranchi Z35 — Stil ve Hız'},desc:{ru:'Современный и динамичный. Скорость, комфорт и виды залива.',en:'Modern and dynamic. Speed, comfort and great views.',de:'Modern und dynamisch. Tempo und Komfort.',tr:'Modern ve dinamik. Hız ve konfor.'},yachtId:12,color:'#1a4a2a'},
+  speedboat:{emoji:'🚤',title:{ru:'KeyLargo 36 — свободный дух',en:'KeyLargo 36 — Free spirit',de:'KeyLargo 36 — Freier Geist',tr:'KeyLargo 36 — Özgür ruh'},desc:{ru:'Свободный дух! Прыгнул в воду, поплыл куда хочешь.',en:'Free spirit! Jump in and go wherever you want.',de:'Freier Geist! Spring ins Wasser und los.',tr:'Özgür ruh! Suya atla ve istediğin yere git.'},yachtId:22,color:'#2a4a8a'},
+  catamaran:{emoji:'🪸',title:{ru:'Bali Catspace — простор',en:'Bali Catspace — Space',de:'Bali Catspace — Raum',tr:'Bali Catspace — Alan'},desc:{ru:'Просторный катамаран — идеально для семей и больших групп.',en:'Spacious catamaran — perfect for families and groups.',de:'Geräumiger Katamaran — ideal für Familien.',tr:'Geniş katamaran — aileler için mükemmel.'},yachtId:53,color:'#2a6a5a'},
+}
+let quizAnswers=[],quizStep=0,quizQuestions=[];
+
+function shuffleQuiz(){
+  const pool=[...QUIZ_POOL];
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  quizQuestions=pool.slice(0,5);
+}
+
+function openQuiz(){
+  shuffleQuiz();
+  quizAnswers=[];quizStep=0;
+  renderQuizStep();
+  document.getElementById('quizModal').classList.add('open');
+}
+
+function renderQuizStep(){
+  const total=quizQuestions.length;
+  if(quizStep>=total){showQuizResult();return;}
+  const q=quizQuestions[quizStep];
+  const pct=Math.round((quizStep/total)*100);
+  document.getElementById('quizContent').innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <div style="flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden">
+        <div style="height:100%;background:var(--gold);border-radius:2px;width:${pct}%;transition:width .4s ease"></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);flex-shrink:0">${quizStep+1}/${total}</div>
+    </div>
+    <div style="font-size:11px;font-weight:500;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">${lang==='ru'?'Какая я яхта?':lang==='de'?'Welche Yacht bin ich?':lang==='tr'?'Hangi yat benim?':'Which yacht am I?'}</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--navy);margin-bottom:18px;line-height:1.4">${q.q[lang]||q.q.en}</div>
+    <div id="quizOptsWrap" style="display:flex;flex-direction:column;gap:8px"></div>`;
+
+  const wrap=document.getElementById('quizOptsWrap');
+  q.opts.forEach(function(o,i){
+    const el=document.createElement('div');
+    el.textContent=o[lang]||o.en;
+    el.style.cssText='background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rs);padding:13px 14px;cursor:pointer;font-size:13px;color:var(--text2);transition:.15s;animation:fadeInUp .22s '+(i*0.05)+'s ease both';
+    el.addEventListener('mouseover',function(){this.style.background='var(--gold-dim)';this.style.borderColor='var(--gold)';});
+    el.addEventListener('mouseout',function(){this.style.background='var(--bg2)';this.style.borderColor='var(--border2)';});
+    el.addEventListener('click',function(){
+      this.style.background='var(--gold-dim)';
+      this.style.borderColor='var(--gold)';
+      quizAnswer(o.tags);
+    });
+    wrap.appendChild(el);
+  });
+}
+
+function quizAnswer(tags){
+  quizAnswers.push(...tags);
+  quizStep++;
+  setTimeout(()=>renderQuizStep(),150);
+}
+
+function showQuizResult(){
+  const counts={};
+  quizAnswers.forEach(t=>{counts[t]=(counts[t]||0)+1;});
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  const topTag=sorted[0]?.[0]||'motor';
+  const r=QUIZ_RESULTS[topTag]||QUIZ_RESULTS.motor;
+  const titleTxt=r.title[lang]||r.title.en;
+  const descTxt=r.desc[lang]||r.desc.en;
+  document.getElementById('quizContent').innerHTML=`
+    <div style="text-align:center;padding:10px 0 20px">
+      <div style="font-size:54px;margin-bottom:12px;animation:pulse 1.5s ease-in-out 3">${r.emoji}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:${r.color};margin-bottom:8px">${titleTxt}</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:20px;padding:0 4px">${descTxt}</div>
+    </div>
+    <div style="background:var(--bg3);border-radius:var(--rs);padding:13px;margin-bottom:14px;display:flex;align-items:center;gap:10px">
+      <div style="font-size:24px">${r.emoji}</div>
+      <div><div style="font-size:13px;font-weight:500;color:var(--navy)">${titleTxt}</div><div style="font-size:11px;color:var(--text3)">${lang==='ru'?'Идеальный вариант для тебя':lang==='de'?'Ihre perfekte Option':lang==='tr'?'Sizin için mükemmel':'Perfect option for you'}</div></div>
+    </div>
+    <button onclick="closeModal('quizModal');setTimeout(()=>openDetail(${r.yachtId}),200)" class="book-btn" style="margin-bottom:8px">${lang==='ru'?'Посмотреть эту яхту':lang==='de'?'Diese Yacht ansehen':lang==='tr'?'Bu yatı gör':'View this yacht'}</button>
+    <button onclick="shareQuizResult('${r.emoji}','${titleTxt.replace(/'/g,"\'")}')" style="background:transparent;border:1px solid var(--border2);border-radius:var(--rs);width:100%;padding:11px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text2);margin-bottom:8px">📲 ${lang==='ru'?'Поделиться результатом':lang==='de'?'Ergebnis teilen':lang==='tr'?'Sonucu paylaş':'Share result'}</button>
+    <button onclick="openQuiz()" style="background:transparent;border:none;width:100%;padding:10px;font-size:12px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text3)">${lang==='ru'?'🔀 Пройти заново (новые вопросы)':lang==='de'?'🔀 Nochmal (neue Fragen)':lang==='tr'?'🔀 Tekrar (yeni sorular)':'🔀 Try again (new questions)'}</button>`;
+}
+
+function shareQuizResult(emoji,title){
+  const text=emoji+' '+title+'\n\nУзнай какая яхта подходит тебе — Adriatic Yachts 🛥';
+  const url='https://408mne.github.io/adriaticyachts';
+  if(navigator.share){navigator.share({title:'Моя яхта',text,url}).catch(()=>{});}
+  else{window.open('https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text),'_blank');}
+}
+
+// ── YACHT PICKER ──
+let pickerGuests=0, pickerType='', pickerBudget=0;
+function openPicker(){
+  resetPicker();
+  // Translate picker content
+  const pq={
+    q1:{ru:'Сколько гостей?',en:'How many guests?',de:'Wie viele Gäste?',tr:'Kaç misafir?',me:'Koliko gostiju?'},
+    q2:{ru:'Какой тип яхты?',en:'What type of yacht?',de:'Welcher Yachttyp?',tr:'Ne tür yat?',me:'Koji tip jahte?'},
+    q3:{ru:'Бюджет на день?',en:'Budget per day?',de:'Budget pro Tag?',tr:'Günlük bütçe?',me:'Budžet po danu?'},
+  };
+  const po={
+    g1:{ru:'👫 1–4 чел.',en:'👫 1–4 pax',de:'👫 1–4 Pers.',tr:'👫 1–4 kişi',me:'👫 1–4 osobe'},
+    g2:{ru:'👨‍👩‍👧‍👦 5–8 чел.',en:'👨‍👩‍👧‍👦 5–8 pax',de:'👨‍👩‍👧‍👦 5–8 Pers.',tr:'👨‍👩‍👧‍👦 5–8 kişi',me:'👨‍👩‍👧‍👦 5–8'},
+    g3:{ru:'🎉 9–12 чел.',en:'🎉 9–12 pax',de:'🎉 9–12 Pers.',tr:'🎉 9–12 kişi',me:'🎉 9–12'},
+    g4:{ru:'🥳 12+ чел.',en:'🥳 12+ pax',de:'🥳 12+ Pers.',tr:'🥳 12+ kişi',me:'🥳 12+'},
+    t1:{ru:'⚡ Моторная',en:'⚡ Motor',de:'⚡ Motor',tr:'⚡ Motor',me:'⚡ Motorna'},
+    t2:{ru:'⛵ Парусная',en:'⛵ Sailing',de:'⛵ Segel',tr:'⛵ Yelkenli',me:'⛵ Jedrilica'},
+    t3:{ru:'🪸 Катамаран',en:'🪸 Catamaran',de:'🪸 Katamaran',tr:'🪸 Katamaran',me:'🪸 Katamaran'},
+    t4:{ru:'🤷 Неважно',en:'🤷 Any type',de:'🤷 Egal',tr:'🤷 Fark etmez',me:'🤷 Svejedno'},
+    b1:{ru:'💚 до 1 500€',en:'💚 up to 1 500€',de:'💚 bis 1 500€',tr:'💚 1 500€ kadar',me:'💚 do 1 500€'},
+    b2:{ru:'💛 до 3 000€',en:'💛 up to 3 000€',de:'💛 bis 3 000€',tr:'💛 3 000€ kadar',me:'💛 do 3 000€'},
+    b3:{ru:'🧡 до 6 000€',en:'🧡 up to 6 000€',de:'🧡 bis 6 000€',tr:'🧡 6 000€ kadar',me:'🧡 do 6 000€'},
+    b4:{ru:'👑 без лимита',en:'👑 No limit',de:'👑 Kein Limit',tr:'👑 Sınırsız',me:'👑 Bez limita'},
+  };
+  const L=lang;
+  document.getElementById('pickerQ1').textContent=pq.q1[L]||pq.q1.en;
+  document.getElementById('pickerQ2').textContent=pq.q2[L]||pq.q2.en;
+  document.getElementById('pickerQ3').textContent=pq.q3[L]||pq.q3.en;
+  const makeOpt=(el,text,fn)=>{el.innerHTML='';[[po.g1,()=>pickGuests(4)],[po.g2,()=>pickGuests(8)],[po.g3,()=>pickGuests(12)],[po.g4,()=>pickGuests(99)]].forEach(([o,f])=>{const d=document.createElement('div');d.className='picker-opt';d.textContent=o[L]||o.en;d.onclick=f;el.appendChild(d);});};
+  // Guests
+  const o1=document.getElementById('pickerOpts1');o1.innerHTML='';
+  [[po.g1,4],[po.g2,8],[po.g3,12],[po.g4,99]].forEach(([o,n])=>{const d=document.createElement('div');d.className='picker-opt';d.textContent=o[L]||o.en;d.onclick=()=>pickGuests(n);o1.appendChild(d);});
+  // Type
+  const o2=document.getElementById('pickerOpts2');o2.innerHTML='';
+  [[po.t1,'motor'],[po.t2,'sail'],[po.t3,'catamaran'],[po.t4,'any']].forEach(([o,t])=>{const d=document.createElement('div');d.className='picker-opt';d.textContent=o[L]||o.en;d.onclick=()=>pickType(t);o2.appendChild(d);});
+  // Budget
+  const o3=document.getElementById('pickerOpts3');o3.innerHTML='';
+  [[po.b1,1500],[po.b2,3000],[po.b3,6000],[po.b4,999999]].forEach(([o,b])=>{const d=document.createElement('div');d.className='picker-opt';d.textContent=o[L]||o.en;d.onclick=()=>pickBudget(b);o3.appendChild(d);});
+  document.getElementById('pickerModal').classList.add('open');
+}
+function resetPicker(){
+  pickerGuests=0;pickerType='';pickerBudget=0;
+  ['pickerStep1','pickerStep2','pickerStep3','pickerResults'].forEach((id,i)=>{
+    document.getElementById(id).style.display=i===0?'block':'none';
+  });
+  document.querySelectorAll('.picker-opt').forEach(el=>el.classList.remove('sel'));
+}
+function pickGuests(n){
+  pickerGuests=n;
+  document.querySelectorAll('#pickerStep1 .picker-opt').forEach(el=>el.classList.remove('sel'));
+  event.target.closest('.picker-opt').classList.add('sel');
+  setTimeout(()=>{document.getElementById('pickerStep1').style.display='none';document.getElementById('pickerStep2').style.display='block';},300);
+}
+function pickType(t){
+  pickerType=t;
+  document.querySelectorAll('#pickerStep2 .picker-opt').forEach(el=>el.classList.remove('sel'));
+  event.target.closest('.picker-opt').classList.add('sel');
+  setTimeout(()=>{document.getElementById('pickerStep2').style.display='none';document.getElementById('pickerStep3').style.display='block';},300);
+}
+function pickBudget(b){
+  pickerBudget=b;
+  document.querySelectorAll('#pickerStep3 .picker-opt').forEach(el=>el.classList.remove('sel'));
+  event.target.closest('.picker-opt').classList.add('sel');
+  setTimeout(()=>showPickerResults(),300);
+}
+function showPickerResults(){
+  document.getElementById('pickerStep3').style.display='none';
+  document.getElementById('pickerResults').style.display='block';
+  const catMap={motor:['motor','vip'],sail:['sail'],catamaran:['catamaran'],any:['motor','sail','catamaran','speedboat','vip']};
+  const cats=catMap[pickerType]||['motor','sail','catamaran','speedboat','vip'];
+  let results=YACHTS.filter(y=>{
+    if(y.capacity<pickerGuests&&pickerGuests<99)return false;
+    if(pickerGuests===99&&y.capacity<12)return false;
+    if(!cats.includes(y.cat))return false;
+    const price=y.dayRate||y.weekRate||0;
+    if(price>pickerBudget)return false;
+    return true;
+  }).sort((a,b)=>(a.dayRate||a.weekRate||0)-(b.dayRate||b.weekRate||0)).slice(0,4);
+  const t=T[lang];
+  const noMatch=lang==='ru'?'Ничего не нашли по этим параметрам. Напишите менеджеру — подберём!':lang==='me'?'Ništa nije pronađeno. Kontaktirajte menadžera!':'Nothing found. Contact manager \u2014 we\'ll find it!';
+  document.getElementById('pickerResultList').innerHTML=results.length?results.map(y=>`
+    <div onclick="closeModal('pickerModal');setTimeout(()=>openDetail(${y.id}),200)" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:11px 13px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:.15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+      ${y.photos&&y.photos.length?`<img src="${y.photos[0]}" style="width:52px;height:52px;object-fit:cover;border-radius:var(--rs);flex-shrink:0">`:`<div style="width:52px;height:52px;border-radius:var(--rs);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">${y.icon||'⛵'}</div>`}
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500;color:var(--navy);margin-bottom:2px">${(y.names[lang]||y.names['en']||'')}</div>
+        <div style="font-size:11px;color:var(--text3)">${(y.metas[lang]||y.metas['en']||'')}</div>
+        <div style="font-size:13px;color:var(--gold);margin-top:3px;font-weight:500">${y.dayRate?y.dayRate.toLocaleString()+'€/день':y.weekRate?y.weekRate.toLocaleString()+'€/нед.':''}</div>
+      </div>
+      <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>
+    </div>`).join(''):`<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px">${noMatch}<br><button onclick="openSpecial()" style="margin-top:10px;background:var(--navy);color:#fff;border:none;border-radius:var(--rs);padding:8px 16px;font-size:12px;cursor:pointer;font-family:'Jost',sans-serif">${lang==='ru'?'Написать менеджеру':'Contact manager'}</button></div>`;
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+
+// ── EASTER EGG - 5 rapid taps on dice ──
+let diceTapCount=0,diceTapTimer=null;
+function handleDiceTap(){
+  diceTapCount++;
+  clearTimeout(diceTapTimer);
+  diceTapTimer=setTimeout(()=>{diceTapCount=0;},600);
+  if(diceTapCount>=3){
+    diceTapCount=0;
+    clearTimeout(diceTapTimer);
+    // Close slot if open, show easter egg
+    closeModal('slotModal');
+    setTimeout(openEasterEgg,300);
+    return;
+  }
+  // Always open slot on first tap
+  if(diceTapCount===1){
+    spinDiceThenOpen();
+  }
+}
+function openEasterEgg(){
+  const overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;z-index:9999;background:linear-gradient(180deg,#1a2640 0%,#243352 40%,#1a3a6e 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;animation:fadeInUp .4s ease';
+  const txt1=lang==='ru'?'Ты нашла секрет':lang==='de'?'Du hast ein Geheimnis gefunden':lang==='tr'?'Gizemi buldun':'You found a secret';
+  const txt2=lang==='ru'?'Какая я яхта?':lang==='de'?'Welche Yacht bin ich?':lang==='tr'?'Hangi yat benim?':'Which yacht am I?';
+  const txt3=lang==='ru'?'Мало кто знает об этом квизе. Только избранные добрались сюда.':lang==='de'?'Nur wenige kennen dieses Quiz.':lang==='tr'?'Çok az kişi bu testi biliyor.':'Only a few know about this quiz. Only the chosen ones make it here.';
+  const txt4=lang==='ru'?'🎯 Пройти квиз':lang==='de'?'🎯 Quiz starten':lang==='tr'?'🎯 Quiz başlat':'🎯 Start Quiz';
+  const txt5=lang==='ru'?'Закрыть':'Close';
+  overlay.innerHTML='<div style="text-align:center;padding:20px"><div style="font-size:48px;margin-bottom:8px;animation:floatY 3s ease-in-out infinite">🎲</div><div style="font-size:12px;color:rgba(168,216,240,0.7);letter-spacing:.2em;text-transform:uppercase;margin-bottom:20px">'+txt1+'</div><div style="position:relative;width:260px;height:80px;margin:0 auto 20px;overflow:hidden"><div style="position:absolute;animation:cloudFloat 6s linear infinite;font-size:40px;top:10px;left:-50px">☁️</div><div style="position:absolute;animation:cloudFloat 9s linear infinite 2s;font-size:28px;top:30px;left:-50px;opacity:.7">☁️</div><div style="position:absolute;animation:cloudFloat 7s linear infinite 4s;font-size:22px;top:5px;left:-50px;opacity:.5">☁️</div></div><div style="font-family:Cormorant Garamond,serif;font-size:26px;color:#fff;margin-bottom:8px">'+txt2+'</div><div style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:24px;line-height:1.6">'+txt3+'</div><button id="eggQuizBtn" style="background:linear-gradient(135deg,#b5893a,#c9a24e);color:#fff;border:none;border-radius:10px;padding:13px 28px;font-size:14px;font-weight:500;cursor:pointer;margin-bottom:10px;width:200px">'+txt4+'</button><div id="eggCloseBtn" style="color:rgba(255,255,255,0.4);font-size:12px;cursor:pointer;padding:8px">'+txt5+'</div></div>';
+  const style=document.createElement('style');
+  style.textContent='@keyframes cloudFloat{0%{left:-60px;opacity:0}10%{opacity:1}90%{opacity:1}100%{left:320px;opacity:0}}';
+  document.head.appendChild(style);
+  document.body.appendChild(overlay);
+  overlay.querySelector('#eggQuizBtn').onclick=function(){overlay.remove();style.remove();openQuiz();};
+  overlay.querySelector('#eggCloseBtn').onclick=function(){overlay.remove();style.remove();};
+  setTimeout(()=>{if(overlay.parentNode){overlay.remove();style.remove();}},15000);
+}
+// ── SLOT MACHINE ──
+const SLOT_YACHTS_DATA=YACHTS.filter(function(y){return y.photos&&y.photos.length>0;});
+var slotSpinning=false;
+var slotChosen=null;
+
+function openSlot(){
+  var modal=document.getElementById('slotModal');
+  var title=document.getElementById('slotTitle');
+  var sub=document.getElementById('slotSub');
+  var btn=document.getElementById('slotBtn');
+  if(title)title.textContent=lang==='ru'?'Удиви меня!':lang==='de'?'Überrasch mich!':lang==='tr'?'Sürpriz!':'Surprise me!';
+  if(sub)sub.textContent=lang==='ru'?'Крутим барабан — выбираем яхту для тебя':lang==='de'?'Drehen wir die Trommel!':'Spinning — picking your yacht!';
+  if(btn)btn.textContent='🎰 '+(lang==='ru'?'Удиви меня!':lang==='de'?'Überrasch mich!':'Surprise me!');
+  var res=document.getElementById('slotResult');
+  var book=document.getElementById('slotBookBtn');
+  if(res)res.style.display='none';
+  if(book)book.style.display='none';
+  if(modal)modal.classList.add('open');
+  buildSlotReel();
+}
+
+function buildSlotReel(){
+  var reel=document.getElementById('slotReel');
+  if(!reel||SLOT_YACHTS_DATA.length===0)return;
+  var first=SLOT_YACHTS_DATA[0];
+  reel.innerHTML='<div style="height:200px;flex-shrink:0"><img src="'+first.photos[0]+'" style="width:100%;height:200px;object-fit:cover;display:block" loading="eager"></div>';
+  reel.style.transform='translateY(0)';
+  reel.style.transition='none';
+}
+
+function spinSlot(){
+  if(slotSpinning||SLOT_YACHTS_DATA.length===0)return;
+  slotSpinning=true;
+  slotChosen=SLOT_YACHTS_DATA[Math.floor(Math.random()*SLOT_YACHTS_DATA.length)];
+  var res=document.getElementById('slotResult');
+  var book=document.getElementById('slotBookBtn');
+  if(res)res.style.display='none';
+  if(book)book.style.display='none';
+  var btn=document.getElementById('slotBtn');
+  btn.disabled=true;
+  btn.textContent='🎰 '+(lang==='ru'?'Крутим...':lang==='de'?'Drehen...':'Spinning...');
+  var reel=document.getElementById('slotReel');
+  var items=SLOT_YACHTS_DATA.concat(SLOT_YACHTS_DATA).concat(SLOT_YACHTS_DATA).concat([slotChosen]);
+  reel.innerHTML=items.map(function(y){
+    return '<div style="height:200px;flex-shrink:0;position:relative"><img src="'+y.photos[0]+'" style="width:100%;height:200px;object-fit:cover;display:block" loading="lazy"><div style="position:absolute;bottom:0;left:0;right:0;padding:8px 12px;background:linear-gradient(to top,rgba(0,0,0,0.6),transparent)"><div style="color:#fff;font-size:14px;font-weight:500">'+(y.names[lang]||y.names['en']||'')+'</div></div></div>';
+  }).join('');
+  reel.style.transition='none';
+  reel.style.transform='translateY(0)';
+  setTimeout(function(){
+    reel.style.transition='transform 2.8s cubic-bezier(0.17,0.67,0.12,1.0)';
+    reel.style.transform='translateY(-'+((items.length-1)*200)+'px)';
+  },30);
+  setTimeout(function(){
+    slotSpinning=false;
+    btn.disabled=false;
+    btn.textContent='🎰 '+(lang==='ru'?'Ещё раз!':lang==='de'?'Nochmal!':'Again!');
+    var nameEl=document.getElementById('slotResultName');
+    var typeEl=document.getElementById('slotResultType');
+    var priceEl=document.getElementById('slotResultPrice');
+    if(nameEl)nameEl.textContent=slotChosen.names[lang];
+    if(typeEl)typeEl.textContent=slotChosen.types[lang]+' · '+slotChosen.metas[lang];
+    var price=slotChosen.weekRate?slotChosen.weekRate.toLocaleString()+'€ / '+(lang==='ru'?'нед.':'week'):slotChosen.dayRate?slotChosen.dayRate.toLocaleString()+'€ / '+(lang==='ru'?'день':'day'):'';
+    if(priceEl)priceEl.textContent=price?'💰 '+price:'';
+    if(res)res.style.display='block';
+    if(book){book.style.display='block';book.textContent=(lang==='ru'?'Забронировать ':lang==='de'?'Buchen ':lang==='tr'?'Rezervasyon ':'')+slotChosen.names[lang];}
+  },3000);
+}
+
+function slotBook(){
+  if(!slotChosen)return;
+  closeModal('slotModal');
+  setTimeout(function(){openDetail(slotChosen.id);},300);
+}
+
+
+function spinDiceThenOpen(){
+  const icon=document.getElementById('diceIcon');
+  if(icon){
+    icon.classList.remove('icon-flip');
+    void icon.offsetWidth;
+    icon.classList.add('icon-flip');
+    setTimeout(()=>{icon.classList.remove('icon-flip');openSlot();},480);
+  } else {openSlot();}
+}
+
+// Highlight active nav icon with glow
+function updateNavGlow(activeId){
+  document.querySelectorAll('.nav-item').forEach(item=>{
+    const svg=item.querySelector('svg');
+    if(svg)svg.classList.remove('nav-icon-glow');
+  });
+  const activeItem=document.getElementById(activeId);
+  if(activeItem){
+    const svg=activeItem.querySelector('svg');
+    if(svg){
+      void svg.offsetWidth;
+      svg.classList.add('nav-icon-glow');
+    }
+  }
+}
+
+
+function addNavTapEffects(){
+  document.querySelectorAll('.nav-item').forEach(function(item){
+    function doTapEffect(){
+      const svgs=item.querySelectorAll('svg:not(.nav-arc)');
+      const mainSvg=svgs[0];
+      if(!mainSvg)return;
+      if(mainSvg.id==='diceIcon'){return;}
+      mainSvg.classList.remove('nav-flash');
+      void mainSvg.offsetWidth;
+      mainSvg.classList.add('nav-flash');
+      setTimeout(function(){mainSvg.classList.remove('nav-flash');},420);
+    }
+    item.addEventListener('touchstart',doTapEffect,{passive:true});
+  });
+}
+
+function initParallax(){
+  var ticking=false;
+  function updateParallax(){
+    document.querySelectorAll('.card-img').forEach(function(img){
+      var card=img.closest('.card');
+      if(!card)return;
+      var rect=card.getBoundingClientRect();
+      var vh=window.innerHeight;
+      if(rect.top<vh+50&&rect.bottom>-50){
+        // progress: 0 when card bottom at viewport top, 1 when card top at viewport bottom
+        var progress=(vh-rect.top)/(vh+rect.height);
+        var offset=(progress-0.5)*18;
+        img.style.transform='translateY('+offset+'px) scale(1.08)';
+        img.style.transition='transform 0.05s linear';
+      }
+    });
+    ticking=false;
+  }
+  window.addEventListener('scroll',function(){
+    if(!ticking){ticking=true;requestAnimationFrame(updateParallax);}
+  },{passive:true});
+  // Run once on load
+  updateParallax();
+}
+
+init();
+try{initParallax();}catch(e){}
+try{loadSavedOrders();}catch(e){}
+try{addNavTapEffects();}catch(e){}
+
+// ── LIGHTHOUSE TAP MAGIC ──
+// Exact logic from lighthouse_animation_test.html
+// Beam: slow (0.8°/frame), dim (0.45 opacity). Auto-off after full cycle.
+(function(){
+  var ns='http://www.w3.org/2000/svg';
+  var tapN=0, beamOn=false, angle=0, raf=null, colorIdx=0;
+  var colors=['#ffe050','#50c8ff','#ff8050','#80e880','#f0c030','#E85420'];
+  // Full cycle: beam→birds→color→clouds→color→waves→color→OFF
+  var cycle=['birds','color','clouds','color','waves','color','__off__'];
+
+  function setColor(c){
+    var s1=document.getElementById('lhStop1');
+    var s2=document.getElementById('lhStop2');
+    var gc=document.getElementById('lhGlowC');
+    var l=document.getElementById('lhLantern');
+    if(s1)s1.setAttribute('stop-color',c);
+    if(s2)s2.setAttribute('stop-color',c);
+    if(gc)gc.setAttribute('fill',c);
+    if(l){l.setAttribute('fill',c);l.setAttribute('fill-opacity','0.4');}
+  }
+
+  function startBeam(){
+    var b=document.getElementById('lhBeamG');
+    var gc=document.getElementById('lhGlowC');
+    if(!b)return;
+    b.style.display='block';
+    function rot(){
+      angle=(angle+0.8)%360;
+      b.style.transform='rotate('+angle+'deg)';
+      b.style.transformOrigin='26px 17px';
+      if(gc){
+        var a=angle%360, pulse=(a<35||a>325);
+        gc.setAttribute('r', pulse?6:2);
+        gc.setAttribute('opacity', pulse?0.55:0.12);
+      }
+      raf=requestAnimationFrame(rot);
+    }
+    rot();
+  }
+
+  function stopBeam(){
+    if(raf){cancelAnimationFrame(raf);raf=null;}
+    var b=document.getElementById('lhBeamG');
+    var gc=document.getElementById('lhGlowC');
+    var l=document.getElementById('lhLantern');
+    if(b)b.style.display='none';
+    if(gc){gc.setAttribute('r','0');gc.setAttribute('opacity','0');}
+    if(l){l.setAttribute('fill','#b5893a');l.setAttribute('fill-opacity','0.15');}
+    var g=document.getElementById('lhFly');if(g)g.innerHTML='';
+  }
+
+  function spawnBirds(){
+    var g=document.getElementById('lhFly');if(!g)return;g.innerHTML='';
+    var birds=[
+      {sx:-10,sy:10,sz:0.9,delay:0,  sp:0.85},
+      {sx:-16,sy:20,sz:0.7,delay:500,sp:0.68},
+      {sx:-8, sy:6, sz:1.1,delay:200,sp:0.92},
+      {sx:-13,sy:32,sz:0.75,delay:900,sp:0.72},
+      {sx:-11,sy:16,sz:1.0,delay:350,sp:0.78},
+      {sx:-7, sy:26,sz:0.65,delay:700,sp:0.62}
+    ];
+    birds.forEach(function(b){
+      var el=document.createElementNS(ns,'g');el.style.opacity='0';
+      var p=document.createElementNS(ns,'path');
+      p.setAttribute('stroke','#E85420');p.setAttribute('stroke-width',(b.sz*1.3)+'');
+      p.setAttribute('fill','none');p.setAttribute('stroke-linecap','round');p.setAttribute('stroke-linejoin','round');
+      el.appendChild(p);g.appendChild(el);
+      setTimeout(function(b,el,p){
+        el.style.transition='opacity 0.4s';el.style.opacity='1';
+        var x=b.sx,fr=0;
+        function fly(){
+          fr++;x+=b.sp;
+          var flap=Math.sin(fr*0.1)*b.sz*2,drift=Math.sin(fr*0.03)*2,w=b.sz*6;
+          p.setAttribute('d','M'+(-w)+','+(flap*0.3)+' Q'+(-w*0.5)+','+(-w*0.5+flap)+' 0,'+flap+' Q'+(w*0.5)+','+(-w*0.5+flap)+' '+w+','+(flap*0.3));
+          el.setAttribute('transform','translate('+x+','+(b.sy+drift)+')');
+          if(x<440)requestAnimationFrame(fly);
+          else{el.style.transition='opacity 0.6s';el.style.opacity='0';}
+        }
+        fly();
+      },b.delay,b,el,p);
+    });
+    setTimeout(function(){var g=document.getElementById('lhFly');if(g)g.innerHTML='';},7000);
+  }
+
+  function spawnClouds(){
+    var g=document.getElementById('lhFly');if(!g)return;g.innerHTML='';
+    [{sx:-22,sy:8,sc:1.5,delay:0},{sx:-24,sy:22,sc:1.1,delay:400},{sx:-18,sy:2,sc:1.3,delay:200}].forEach(function(c){
+      var el=document.createElementNS(ns,'g');el.style.opacity='0';
+      el.setAttribute('transform','translate('+c.sx+','+c.sy+') scale('+c.sc+')');
+      var p=document.createElementNS(ns,'path');
+      p.setAttribute('d','M2,8 Q1,4 5,3 Q6,0 10,2 Q13,-1 17,2 Q21,1 22,4 Q25,3 25,7 Q25,10 2,10Z');
+      p.setAttribute('fill','rgba(255,255,255,0.93)');p.setAttribute('stroke','rgba(181,137,58,0.2)');p.setAttribute('stroke-width','0.6');
+      el.appendChild(p);g.appendChild(el);
+      setTimeout(function(c,el){
+        el.style.transition='opacity 0.4s';el.style.opacity='1';
+        var x=0;
+        function drift(){x+=0.85;el.setAttribute('transform','translate('+(c.sx+x)+','+c.sy+') scale('+c.sc+')');if(x<430)requestAnimationFrame(drift);else{el.style.transition='opacity 0.5s';el.style.opacity='0';}}
+        drift();
+      },c.delay+30,c,el);
+    });
+    setTimeout(function(){var g=document.getElementById('lhFly');if(g)g.innerHTML='';},6500);
+  }
+
+  function spawnWaves(){
+    var g=document.getElementById('lhFly');if(!g)return;g.innerHTML='';
+    var waves=[
+      {y:73,amp:2.5,sp:0.09,ph:0,  color:'rgba(80,170,210,0.55)',sw:1.6},
+      {y:77,amp:2,  sp:0.07,ph:1.5,color:'rgba(80,170,210,0.38)',sw:2},
+      {y:70,amp:1.5,sp:0.11,ph:0.8,color:'rgba(80,170,210,0.28)',sw:1.2}
+    ];
+    var wps=[];
+    waves.forEach(function(w){
+      var el=document.createElementNS(ns,'g');el.style.opacity='0';
+      var p=document.createElementNS(ns,'path');p.setAttribute('stroke',w.color);p.setAttribute('stroke-width',w.sw+'');p.setAttribute('fill','none');p.setAttribute('stroke-linecap','round');
+      el.appendChild(p);g.appendChild(el);
+      setTimeout(function(){el.style.transition='opacity 0.3s';el.style.opacity='1';},120);
+      wps.push({el:el,path:p,w:w});
+    });
+    var t=0;
+    function animW(){
+      t+=0.07;
+      wps.forEach(function(wp){
+        var w=wp.w,d='M-10,'+w.y;
+        for(var x=-10;x<=130;x+=3)d+=' L'+x+','+(w.y+Math.sin(x*w.sp+t+w.ph)*w.amp);
+        wp.path.setAttribute('d',d);
+      });
+      if(t<9)requestAnimationFrame(animW);
+      else wps.forEach(function(wp){wp.el.style.transition='opacity 0.5s';wp.el.style.opacity='0';});
+    }
+    animW();
+    setTimeout(function(){var g=document.getElementById('lhFly');if(g)g.innerHTML='';},5000);
+  }
+
+  // Tap handler: first tap = ON, cycle through, last step = OFF
+  // Next tap after OFF = new color, repeat cycle
+  window.lhTap=function(){
+    if(!beamOn){
+      beamOn=true;
+      tapN=1;
+      colorIdx=(colorIdx+1)%colors.length;
+      setColor(colors[colorIdx]);
+      startBeam();
+      return;
+    }
+    var step=cycle[(tapN-1)%cycle.length];
+    tapN++;
+    if(step==='birds')spawnBirds();
+    else if(step==='color'){colorIdx=(colorIdx+1)%colors.length;setColor(colors[colorIdx]);}
+    else if(step==='clouds')spawnClouds();
+    else if(step==='waves')spawnWaves();
+    else if(step==='__off__'){
+      beamOn=false;
+      tapN=0;
+      stopBeam();
+    }
+  };
+
+  // Auto-start with yellow
+  setTimeout(function(){
+    var b=document.getElementById('lhBeamG');
+    if(b&&!beamOn){
+      beamOn=true;
+      colorIdx=0; // yellow
+      tapN=1;
+      setColor(colors[0]);
+      startBeam();
+    }
+  },800);
+})();
+
+</script>
+
+<div class="modal-overlay" id="slotModal" onclick="if(event.target===this)closeModal('slotModal')">
+  <div class="modal-sheet" style="padding-bottom:40px">
+    <div class="modal-handle"></div>
+    <div style="padding:18px 16px 0;text-align:center">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--navy);margin-bottom:4px" id="slotTitle">Удиви меня!</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:16px" id="slotSub">Крутим барабан — выбираем яхту специально для тебя</div>
+    </div>
+    <div style="background:var(--bg3);border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;position:relative;height:200px">
+      <div id="slotReel" style="will-change:transform;display:flex;flex-direction:column"></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:50px;background:linear-gradient(to bottom,var(--bg3),transparent);pointer-events:none;z-index:2"></div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:50px;background:linear-gradient(to top,var(--bg3),transparent);pointer-events:none;z-index:2"></div>
+    </div>
+    <div style="padding:14px 16px 0">
+      <div id="slotResult" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;margin-bottom:12px;display:none">
+        <div id="slotResultName" onclick="slotBook()" style="font-size:16px;font-weight:500;color:var(--navy);margin-bottom:3px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(181,137,58,0.4)"></div>
+        <div id="slotResultType" style="font-size:12px;color:var(--text2);margin-bottom:6px"></div>
+        <div id="slotResultPrice" style="font-size:14px;font-weight:500;color:var(--gold)"></div>
+      </div>
+      <button id="slotBtn" onclick="spinSlot()" style="background:var(--navy);color:#fff;border:none;border-radius:var(--rs);width:100%;padding:14px;font-size:14px;font-weight:500;cursor:pointer;font-family:'Jost',sans-serif;margin-bottom:8px">🎰 Удиви меня!</button>
+      <button id="slotBookBtn" onclick="slotBook()" style="display:none;background:transparent;border:1px solid var(--border2);border-radius:var(--rs);width:100%;padding:12px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text2);margin-bottom:8px">Забронировать эту яхту</button>
+      <button onclick="closeSlot()" style="background:transparent;border:none;width:100%;padding:10px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text3)">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="pickerModal" onclick="if(event.target===this)closeModal('pickerModal')">
+  <div class="modal-sheet" style="padding-bottom:40px">
+    <div class="modal-handle"></div>
+    <div style="padding:18px 16px">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--navy);margin-bottom:4px" id="pickerTitle">Подбери яхту</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:20px" id="pickerSub">Ответь на 3 вопроса — подберём лучший вариант</div>
+
+      <div id="pickerStep1">
+        <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:10px" id="pickerQ1"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px" id="pickerOpts1"></div>
+      </div>
+      <div id="pickerStep2" style="display:none">
+        <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:10px" id="pickerQ2"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px" id="pickerOpts2"></div>
+      </div>
+      <div id="pickerStep3" style="display:none">
+        <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:10px" id="pickerQ3"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px" id="pickerOpts3"></div>
+      </div>
+
+      <div id="pickerResults" style="display:none">
+        <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:12px" id="pickerResultTitle">Подобранные яхты:</div>
+        <div id="pickerResultList"></div>
+        <button onclick="resetPicker()" style="background:transparent;border:1px solid var(--border2);border-radius:var(--rs);width:100%;padding:10px;font-size:12px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text2);margin-top:8px" id="pickerResetBtn">← Начать заново</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEWS MODAL -->
+<div class="modal-overlay" id="reviewsModal" onclick="if(event.target===this)closeModal('reviewsModal')">
+  <div class="modal-sheet" style="padding-bottom:40px">
+    <div class="modal-handle"></div>
+    <div style="padding:18px 16px">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--navy);margin-bottom:4px">Отзывы гостей</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:18px">Реальные истории наших клиентов</div>
+
+      <div id="reviewsList"></div>
+
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+        <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:10px" id="leaveReviewTitle">Оставить отзыв</div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:5px">Оценка</div>
+          <div id="starRow" style="display:flex;gap:6px">
+            <span class="star-btn" onclick="setStar(1)" style="font-size:24px;cursor:pointer;opacity:0.3">★</span>
+            <span class="star-btn" onclick="setStar(2)" style="font-size:24px;cursor:pointer;opacity:0.3">★</span>
+            <span class="star-btn" onclick="setStar(3)" style="font-size:24px;cursor:pointer;opacity:0.3">★</span>
+            <span class="star-btn" onclick="setStar(4)" style="font-size:24px;cursor:pointer;opacity:0.3">★</span>
+            <span class="star-btn" onclick="setStar(5)" style="font-size:24px;cursor:pointer;opacity:0.3">★</span>
+          </div>
+        </div>
+        <input class="inp" id="reviewName" placeholder="Ваше имя" type="text" style="margin-bottom:8px">
+        <input class="inp" id="reviewYacht" placeholder="Яхта (название)" type="text" style="margin-bottom:8px">
+        <textarea class="inp" id="reviewText" placeholder="Ваш отзыв..." style="height:70px;resize:none;margin-bottom:10px"></textarea>
+        <button onclick="submitReview()" class="book-btn">Отправить на проверку</button>
+        <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:8px" id="reviewNote">Отзыв появится после проверки менеджером</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ROUTES MODAL -->
+<div class="modal-overlay" id="routesModal" onclick="if(event.target===this)closeModal('routesModal')">
+  <div class="modal-sheet" style="padding-bottom:40px">
+    <div class="modal-handle"></div>
+    <div style="padding:18px 16px">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--navy);margin-bottom:4px" id="routesTitle">Маршруты по заливу</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:16px">Боко-Которский залив · круговые маршруты</div>
+
+      <div style="display:flex;border:1px solid var(--border2);border-radius:var(--rs);overflow:hidden;margin-bottom:16px">
+        <div class="route-tab active" id="rtab4" onclick="setRouteTab(4)" style="flex:1;padding:9px;text-align:center;font-size:12px;font-weight:500;cursor:pointer;background:var(--navy);color:#fff;transition:.15s">4 часа</div>
+        <div class="route-tab" id="rtab6" onclick="setRouteTab(6)" style="flex:1;padding:9px;text-align:center;font-size:12px;cursor:pointer;color:var(--text2);transition:.15s;border-left:1px solid var(--border2)">6 часов</div>
+        <div class="route-tab" id="rtab8" onclick="setRouteTab(8)" style="flex:1;padding:9px;text-align:center;font-size:12px;cursor:pointer;color:var(--text2);transition:.15s;border-left:1px solid var(--border2)">8 часов</div>
+      </div>
+
+      <!-- MAP PLACEHOLDER -->
+      <div style="background:linear-gradient(135deg,#daeeff,#c8e8fa);border-radius:var(--r);height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;border:1px solid rgba(91,184,232,0.3);position:relative;overflow:hidden">
+        <div style="font-size:32px;margin-bottom:8px" class="anim-pulse">🗺️</div>
+        <div style="font-size:14px;font-weight:500;color:#1a4a7a;margin-bottom:4px">Карта маршрута</div>
+        <div style="font-size:12px;color:#2e7ab8;text-align:center;padding:0 20px">Интерактивная карта будет добавлена в ближайшее время</div>
+        <div style="position:absolute;bottom:10px;right:10px;font-size:10px;color:rgba(26,74,122,0.5)">Боко-Которский залив</div>
+      </div>
+
+      <div id="routeStops" style="display:flex;flex-direction:column;gap:0"></div>
+
+      <div style="background:var(--gold-dim);border:1px solid rgba(181,137,58,0.2);border-radius:var(--rs);padding:10px 13px;margin-top:14px;font-size:12px;color:var(--text2);line-height:1.6" id="routeTip"></div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ MODAL -->
+<div class="modal-overlay" id="quizModal" onclick="if(event.target===this)closeModal('quizModal')">
+  <div class="modal-sheet" style="padding-bottom:40px">
+    <div class="modal-handle"></div>
+    <div style="padding:18px 16px" id="quizContent"></div>
+  </div>
+</div>
+
+<!-- lhFly overlay -->
+<svg id="lhFly" style="position:fixed;top:0;left:0;width:100%;height:90px;pointer-events:none;overflow:visible;z-index:9999" viewBox="0 0 360 90" preserveAspectRatio="none"></svg>
+</body>
+</html>
