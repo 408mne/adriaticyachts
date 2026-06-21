@@ -10,130 +10,138 @@
 
 // ── LIGHTHOUSE TAP MAGIC ──
 (function(){
-  var tapN=0,beamOn=false,angle=0,beamRaf=null;
-  var colors=['#ffe050','#50c8ff','#ff8050','#80e880','#ff80d0','#E85420'];
-  var seq=['birds','color','clouds','color','waves','color'];
-  var ns='http://www.w3.org/2000/svg';
+  var tapCount=0;
+  var beamOn=false;
+  var beamAngle=0;
+  var beamRaf=null;
+  var beamColors=[
+    ['#ffe050','#ffe050'],  // 1: gold
+    ['#50c8ff','#50c8ff'],  // 2: blue
+    ['#ff8c50','#ff8c50'],  // 3: orange
+    ['#b0ff80','#b0ff80'],  // 4: green
+    ['#ff80d0','#ff80d0'],  // 5: pink
+    ['#ffffff','#ffffff'],  // 6: white
+  ];
 
-  function el(id){return document.getElementById(id);}
-
-  function setColor(c){
-    var s1=el('lhStop1'),s2=el('lhStop2'),gc=el('lhGlowC'),lan=el('lhLantern');
+  function setBeamColor(c){
+    var s1=document.getElementById('lhStop1');
+    var s2=document.getElementById('lhStop2');
+    var gc=document.getElementById('lhGlowC');
     if(s1)s1.setAttribute('stop-color',c);
     if(s2)s2.setAttribute('stop-color',c);
     if(gc)gc.setAttribute('fill',c);
-    if(lan){lan.setAttribute('fill',c);lan.setAttribute('fill-opacity','0.4');}
+    var lan=document.getElementById('lhLantern');
+    if(lan)lan.setAttribute('fill',c);
   }
 
   function startBeam(){
-    var b=el('lhBeamG'),gc=el('lhGlowC');
-    if(!b)return;
-    b.style.display='block';
-    function spin(){
-      angle=(angle+2)%360;
-      b.style.transform='rotate('+angle+'deg)';
-      b.style.transformOrigin='26px 17px';
-      if(gc){
-        var a=angle%360,pulse=(a<30||a>330);
-        gc.setAttribute('r',pulse?9:2);
-        gc.setAttribute('opacity',pulse?'0.9':'0.2');
+    var beam=document.getElementById('lhBeamG');
+    var glow=document.getElementById('lhGlowC');
+    if(!beam)return;
+    beam.style.display='block';
+    if(glow){glow.setAttribute('r','7');glow.setAttribute('opacity','0.7');}
+    function rot(){
+      beamAngle=(beamAngle+2.5)%360;
+      beam.style.transform='rotate('+beamAngle+'deg)';
+      beam.style.transformOrigin='41px 18px';
+      if(glow){
+        var a=beamAngle%360;
+        var r=(a<25||a>335)?9:5;
+        var op=(a<25||a>335)?0.85:0.35;
+        glow.setAttribute('r',r);glow.setAttribute('opacity',op);
       }
-      beamRaf=requestAnimationFrame(spin);
+      beamRaf=requestAnimationFrame(rot);
     }
-    spin();
+    rot();
   }
 
-  function clearFly(){var g=el('lhFly');if(g)g.innerHTML='';}
+  function stopBeam(){
+    var beam=document.getElementById('lhBeamG');
+    var glow=document.getElementById('lhGlowC');
+    if(beam)beam.style.display='none';
+    if(glow){glow.setAttribute('r','0');}
+    if(beamRaf){cancelAnimationFrame(beamRaf);beamRaf=null;}
+  }
 
   function spawnBirds(){
-    clearFly();var g=el('lhFly');if(!g)return;
-    [{x:5,y:22,s:1.4,d:0,sp:1.2},{x:3,y:42,s:1.1,d:350,sp:0.95},{x:6,y:14,s:1.6,d:170,sp:1.4},{x:4,y:58,s:1.2,d:650,sp:1.05},{x:5,y:32,s:1.3,d:300,sp:1.1}].forEach(function(b){
-      var eEl=document.createElementNS(ns,'g');eEl.style.opacity='0';
-      var p=document.createElementNS(ns,'path');
-      p.setAttribute('stroke','#E85420');p.setAttribute('stroke-width',b.s*1.2+'');
-      p.setAttribute('fill','none');p.setAttribute('stroke-linecap','round');p.setAttribute('stroke-linejoin','round');
-      eEl.appendChild(p);g.appendChild(eEl);
-      setTimeout(function(b,eEl,p){
-        eEl.style.opacity='1';
-        var x=b.x,fr=0;
-        function fly(){
-          fr++;x+=b.sp;
-          var w=b.s*5,f=Math.sin(fr*.11)*b.s*2,dr=Math.sin(fr*.04)*1.5;
-          p.setAttribute('d','M'+-w+','+(f*.3)+' Q'+-w/2+','+-w/2+f+' 0,'+f+' Q'+w/2+','+-w/2+f+' '+w+','+(f*.3));
-          eEl.setAttribute('transform','translate('+x+','+(b.y+dr)+')');
-          if(x<380)requestAnimationFrame(fly);else eEl.style.opacity='0';
-        }fly();
-      },b.d,b,eEl,p);
+    var fly=document.getElementById('lhFly');
+    if(!fly)return;
+    fly.innerHTML='';
+    var birds=[
+      {x:-8,y:12,delay:0},{x:-14,y:8,delay:0.3},{x:-5,y:6,delay:0.6},
+      {x:-12,y:15,delay:0.15},{x:-18,y:10,delay:0.45}
+    ];
+    birds.forEach(function(b){
+      var g=document.createElementNS('http://www.w3.org/2000/svg','g');
+      g.style.cssText='animation:birdFly '+(1.4+b.delay*0.3)+'s '+(b.delay*0.5)+'s ease-in both;opacity:0.8';
+      g.setAttribute('transform','translate('+b.x+','+b.y+')');
+      // bird = two arcs (wings)
+      var path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      var s=0.7;
+      path.setAttribute('d','M0 0 Q'+(-3*s)+' '+(-2*s)+' '+(-6*s)+' 0 M0 0 Q'+(3*s)+' '+(-2*s)+' '+(6*s)+' 0');
+      path.setAttribute('stroke','#1a2640');
+      path.setAttribute('stroke-width','0.9');
+      path.setAttribute('fill','none');
+      path.setAttribute('stroke-linecap','round');
+      g.appendChild(path);
+      fly.appendChild(g);
     });
-    setTimeout(clearFly,6000);
+    setTimeout(function(){if(fly)fly.innerHTML='';},3000);
   }
 
   function spawnClouds(){
-    clearFly();var g=el('lhFly');if(!g)return;
-    [{x:5,y:12,sc:1.6,d:0},{x:3,y:50,sc:1.2,d:450},{x:6,y:4,sc:1.9,d:220}].forEach(function(c){
-      var eEl=document.createElementNS(ns,'g');eEl.style.opacity='0';
-      eEl.setAttribute('transform','translate('+c.x+','+c.y+') scale('+c.sc+')');
-      var p=document.createElementNS(ns,'path');
-      p.setAttribute('d','M2,8 Q1,4 5,3 Q6,0 10,2 Q13,-1 17,2 Q21,1 22,4 Q25,3 25,7 Q25,10 2,10Z');
-      p.setAttribute('fill','rgba(255,255,255,0.92)');p.setAttribute('stroke','rgba(181,137,58,0.2)');p.setAttribute('stroke-width','0.6');
-      eEl.appendChild(p);g.appendChild(eEl);
-      setTimeout(function(c,eEl){
-        eEl.style.opacity='1';
-        var x=0;
-        function drift(){x+=0.7;eEl.setAttribute('transform','translate('+(c.x+x)+','+c.y+') scale('+c.sc+')');if(x<390)requestAnimationFrame(drift);else eEl.style.opacity='0';}
-        drift();
-      },c.d+40,c,eEl);
-    });
-    setTimeout(clearFly,7000);
-  }
-
-  function spawnWaves(){
-    clearFly();var g=el('lhFly');if(!g)return;
-    var ws=[
-      {y:66,a:2.5,sp:.05,ph:0,  c:'rgba(80,170,210,.65)',sw:2},
-      {y:73,a:2,  sp:.04,ph:1.5,c:'rgba(80,170,210,.45)',sw:2.5},
-      {y:59,a:1.5,sp:.07,ph:.8, c:'rgba(80,170,210,.3)', sw:1.5}
+    var fly=document.getElementById('lhFly');
+    if(!fly)return;
+    fly.innerHTML='';
+    var clouds=[
+      {x:-10,y:8,s:1,delay:0},{x:-14,y:14,s:0.7,delay:0.4},{x:-8,y:4,s:0.85,delay:0.8}
     ];
-    var wps=[];
-    ws.forEach(function(w){
-      var eEl=document.createElementNS(ns,'g');eEl.style.opacity='0';
-      var p=document.createElementNS(ns,'path');
-      p.setAttribute('stroke',w.c);p.setAttribute('stroke-width',w.sw+'');
-      p.setAttribute('fill','none');p.setAttribute('stroke-linecap','round');
-      eEl.appendChild(p);g.appendChild(eEl);
-      setTimeout(function(){eEl.style.opacity='1';},80);
-      wps.push({eEl:eEl,p:p,w:w});
+    clouds.forEach(function(c){
+      var g=document.createElementNS('http://www.w3.org/2000/svg','g');
+      g.style.cssText='animation:cloudFly '+(2+c.delay*0.3)+'s '+(c.delay*0.5)+'s ease-in-out both;opacity:0.75';
+      g.setAttribute('transform','translate('+c.x+','+c.y+') scale('+c.s+')');
+      var path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d','M0 4 Q-1 1 2 1 Q3 -1 6 1 Q9 -1 10 2 Q12 1 12 4 Q12 6 0 6 Z');
+      path.setAttribute('fill','rgba(255,255,255,0.85)');
+      path.setAttribute('stroke','rgba(180,180,180,0.4)');
+      path.setAttribute('stroke-width','0.5');
+      g.appendChild(path);
+      fly.appendChild(g);
     });
-    var t=0;
-    function animW(){
-      t+=.07;
-      wps.forEach(function(wp){
-        var d='M0,'+wp.w.y;
-        for(var x=0;x<=370;x+=5)d+=' L'+x+','+(wp.w.y+Math.sin(x*wp.w.sp+t+wp.w.ph)*wp.w.a);
-        wp.p.setAttribute('d',d);
-      });
-      if(t<9)requestAnimationFrame(animW);
-      else wps.forEach(function(wp){wp.eEl.style.opacity='0';});
-    }
-    animW();
-    setTimeout(clearFly,5500);
+    setTimeout(function(){if(fly)fly.innerHTML='';},4000);
   }
 
   window.lhTap=function(){
-    tapN++;
-    if(!beamOn){beamOn=true;setColor(colors[0]);startBeam();return;}
-    var s=seq[(tapN-2)%seq.length];
-    if(s==='birds')spawnBirds();
-    else if(s==='clouds')spawnClouds();
-    else if(s==='waves')spawnWaves();
-    else setColor(colors[tapN%colors.length]);
+    tapCount++;
+    if(!beamOn){
+      beamOn=true;
+      var ci=((tapCount-1)%beamColors.length);
+      setBeamColor(beamColors[ci][0]);
+      startBeam();
+      return;
+    }
+    // beam is on - change color or spawn things
+    var ci=tapCount%beamColors.length;
+    // tap 3: birds
+    if(tapCount%7===3){
+      spawnBirds();
+    }
+    // tap 5 or 6: clouds
+    else if(tapCount%7===5||tapCount%7===0){
+      spawnClouds();
+    }
+    // otherwise change color
+    setBeamColor(beamColors[ci][0]);
   };
 
-  // Auto-start beam after 1s
+  // auto start after 0.8s
   setTimeout(function(){
-    if(el('lhBeamG')&&!beamOn)window.lhTap();
-  },1000);
+    var el=document.getElementById('lhIcon');
+    if(el&&!beamOn){window.lhTap();}
+  },800);
 })();
+
+setTimeout(function(){var el=document.getElementById("lhIcon");if(el)el.classList.add("lh-on");},800);
 
 </script>
 <style>
@@ -160,12 +168,12 @@ body{display:flex;flex-direction:column;min-height:100vh}
 .cats-scroll::-webkit-scrollbar{display:none}
 .cat-pill{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;color:var(--text2);font-size:12px;padding:6px 14px;white-space:nowrap;cursor:pointer;transition:.15s;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
 .cat-pill.active{background:var(--navy);border-color:var(--navy);color:#fff}
-.main{flex:1;padding:16px 14px 110px}
+.main{flex:1;padding:16px 14px 100px}
 .section-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--navy);margin-bottom:16px;letter-spacing:0.03em}
 .cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:.2s;position:relative;box-shadow:var(--shadow)}
 .card:hover{border-color:rgba(0,0,0,0.18);box-shadow:var(--shadow-hover);transform:translateY(-2px)}
-.card-img{will-change:transform;width:100%;height:110px;object-fit:cover;display:block;background:var(--bg3);transition:transform .1s linear;transform-origin:center}
+.card-img{width:100%;height:110px;object-fit:cover;display:block;background:var(--bg3);transition:transform .1s linear;transform-origin:center}
 .card-img-placeholder{width:100%;height:110px;display:flex;align-items:center;justify-content:center;background:var(--bg3)}
 .card-badge{position:absolute;top:7px;left:7px;background:rgba(255,255,255,0.92);border:1px solid rgba(0,0,0,0.08);border-radius:5px;font-size:9px;color:var(--green);font-weight:500;letter-spacing:.04em;padding:2px 7px}
 .card-fav{position:absolute;top:6px;right:6px;background:rgba(255,255,255,0.85);border:1px solid var(--border);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer}
@@ -265,16 +273,8 @@ body{display:flex;flex-direction:column;min-height:100vh}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes boatSail{0%{transform:translateX(-8px) rotate(-2deg)}25%{transform:translateX(2px) rotate(1deg)}50%{transform:translateX(6px) rotate(-1deg)}75%{transform:translateX(2px) rotate(2deg)}100%{transform:translateX(-8px) rotate(-2deg)}}
 @keyframes wavePulse{0%,100%{opacity:0.6}50%{opacity:1}}
-
-/* Lighthouse beam CSS animation - more reliable than JS in Telegram WebView */
-@keyframes lhBeamRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-@keyframes lhGlowPulse{0%,100%{r:3;opacity:0.3}50%{r:9;opacity:0.9}}
-#lhBeamG.spinning{display:block;animation:lhBeamRotate 4s linear infinite}
-#lhGlowC.glowing{animation:lhGlowPulse 4s linear infinite}
-
-@keyframes compassSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-@keyframes skeletonShimmer{0%{background-position:-600px 0}100%{background-position:600px 0}}
-.skeleton{background:var(--bg3)}
+@keyframes skeletonShimmer{0%{background-position:-200px 0}100%{background-position:200px 0}}
+.skeleton{background:linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%);background-size:400px 100%;animation:skeletonShimmer 1.4s ease-in-out infinite}
 
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
@@ -285,11 +285,11 @@ body{display:flex;flex-direction:column;min-height:100vh}
 .anim-float{animation:floatY 3s ease-in-out infinite}
 .nav-item{transition:color .2s;position:relative;-webkit-tap-highlight-color:transparent}
 .nav-item svg{transition:transform .15s,color .2s,stroke .15s}
-.nav-item.active svg{filter:none}
-@keyframes navFlash{0%{color:inherit}40%{color:#E85420;transform:scale(1.18)}100%{color:inherit;transform:scale(1)}}
+.nav-item.active svg{filter:drop-shadow(0 0 4px #E85420)}
+@keyframes navFlash{0%{color:inherit;filter:none}30%{color:#E85420;filter:drop-shadow(0 0 6px #E85420);transform:scale(1.2)}70%{color:#E85420;filter:drop-shadow(0 0 3px #E85420);transform:scale(1.05)}100%{color:inherit;filter:none;transform:scale(1)}}
 .nav-item.active{color:#E85420}
-.nav-item.active svg{filter:none}
-.cat-pill.active{background:var(--gold-dim);border-color:rgba(181,137,58,0.35);color:var(--gold);font-weight:500}
+.nav-item.active svg{filter:drop-shadow(0 0 4px #E85420)}
+.cat-pill.active,.cat-pill:active{background:#E85420;border-color:#E85420;color:#fff}
 .picker-opt:active{background:#E85420;border-color:#E85420;color:#fff}
 .lang-opt:active,.lang-opt:hover{color:#E85420}
 .nav-item.active span{color:#E85420}
@@ -309,7 +309,7 @@ body{display:flex;flex-direction:column;min-height:100vh}
 </style>
 </head>
 <body>
-<div class="app-header">
+<div class="app-header" style="position:relative;overflow:visible">
   <div class="header-top">
     <div class="logo">ADRIATIC<span>yachts</span></div>
     <div class="lang-switcher" style="position:relative">
@@ -324,20 +324,20 @@ body{display:flex;flex-direction:column;min-height:100vh}
     </div>
   </div>
 
-<div class="special-banner" id="specialBanner" onclick="openSpecial()" style="cursor:pointer;margin-top:0;position:relative;overflow:visible">
-  <div class="special-icon" style="flex-shrink:0;width:32px;height:44px;cursor:pointer;position:relative;z-index:2" onclick="event.stopPropagation();lhTap()" id="lhIcon">
-    <svg width="32" height="44" viewBox="0 0 56 80" fill="none" style="display:block;overflow:visible">
+<div class="special-banner" id="specialBanner" onclick="openSpecial()" style="margin-top:0">
+  <div class="special-icon" style="flex-shrink:0;width:28px;height:40px;cursor:pointer;position:relative" onclick="lhTap()" id="lhIcon">
+    <svg width="28" height="40" viewBox="0 0 56 80" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;position:relative;z-index:2">
+      <g id="lhBeamG" style="transform-origin:41px 18px;display:none">
+        <path d="M41 18 L80 2 L84 18 L80 34Z" fill="url(#lhbg)" opacity="0.9"/>
+      </g>
       <defs>
         <radialGradient id="lhbg" cx="0%" cy="50%" r="100%">
-          <stop offset="0%" id="lhStop1" stop-color="#ffe050" stop-opacity="0.95"/>
-          <stop offset="60%" id="lhStop2" stop-color="#ffe050" stop-opacity="0.4"/>
+          <stop offset="0%" stop-color="#ffe050" stop-opacity="0.95" id="lhStop1"/>
+          <stop offset="50%" stop-color="#ffe050" stop-opacity="0.4" id="lhStop2"/>
           <stop offset="100%" stop-color="#ffe050" stop-opacity="0"/>
         </radialGradient>
       </defs>
-      <g id="lhBeamG" style="display:none;transform-origin:26px 17px">
-        <path d="M26 17 L55 5 L56 17 L55 29Z" fill="url(#lhbg)" opacity="0.95"/>
-      </g>
-      <circle id="lhGlowC" cx="26" cy="17" r="0" fill="#ffe050" opacity="0.9"/>
+      <circle id="lhGlowC" cx="41" cy="18" r="0" fill="#ffe050" opacity="0.7"/>
       <ellipse cx="26" cy="76" rx="18" ry="4" fill="#b5893a" opacity="0.2"/>
       <path d="M10 76 L13 62 L39 62 L42 76Z" fill="#b5893a" opacity="0.88" stroke="#b5893a" stroke-width="0.8"/>
       <path d="M13 62 L16 50 L36 50 L39 62Z" fill="#f7f5f1" opacity="0.95" stroke="#b5893a" stroke-width="0.8"/>
@@ -350,14 +350,16 @@ body{display:flex;flex-direction:column;min-height:100vh}
       <ellipse cx="26" cy="35" rx="2" ry="3" stroke="#b5893a" stroke-width="0.9" fill="none"/>
       <rect x="18" y="21.5" width="16" height="2.5" rx="0.8" fill="#b5893a" opacity="0.9"/>
       <path d="M17 20 Q26 18 35 20" stroke="#b5893a" stroke-width="0.8" fill="none"/>
-      <rect id="lhLantern" x="20" y="13" width="12" height="9" rx="1.5" stroke="#b5893a" stroke-width="1" fill="#b5893a" fill-opacity="0.15"/>
+      <rect x="20" y="13" width="12" height="9" rx="1.5" stroke="#b5893a" stroke-width="1" fill="#b5893a" fill-opacity="0.12" id="lhLantern"/>
       <line x1="26" y1="13" x2="26" y2="22" stroke="#b5893a" stroke-width="0.6" opacity="0.4"/>
       <line x1="23" y1="13" x2="23" y2="22" stroke="#b5893a" stroke-width="0.6" opacity="0.4"/>
       <line x1="29" y1="13" x2="29" y2="22" stroke="#b5893a" stroke-width="0.6" opacity="0.4"/>
-      <path d="M19 13 L26 5 L33 13Z" fill="#b5893a" opacity="0.85"/>
+      <path d="M19 13 L26 5 L33 13Z" fill="#b5893a" opacity="0.85" stroke="#b5893a" stroke-width="0.8"/>
       <path d="M22 10 L26 5 L30 10" stroke="rgba(247,245,241,0.45)" stroke-width="0.7" fill="none"/>
       <line x1="26" y1="1" x2="26" y2="5" stroke="#b5893a" stroke-width="1.3" stroke-linecap="round"/>
       <circle cx="26" cy="1" r="1.5" fill="#b5893a"/>
+      <!-- flying things container -->
+      <g id="lhFly"></g>
     </svg>
   </div>
   <div class="special-text">
@@ -372,8 +374,23 @@ body{display:flex;flex-direction:column;min-height:100vh}
     <span id="pickerCatLbl">Подбор</span>
   </div>
   <div id="catsScroll" style="display:flex;gap:7px;flex-shrink:0;padding-right:14px"></div>
+</div></div>
+<div style="position:relative;height:48px;margin-top:-2px;pointer-events:none;z-index:49;overflow:hidden">
+  <svg viewBox="0 0 360 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block">
+    <path fill="rgba(181,137,58,0.22)" opacity="1">
+      <animate attributeName="d" dur="5s" repeatCount="indefinite"
+        values="M0,24 C45,38 90,10 135,24 C180,38 225,10 270,24 C315,38 345,18 360,24 L360,0 L0,0 Z;
+                M0,16 C45,30 90,4 135,18 C180,32 225,6 270,20 C315,34 345,12 360,18 L360,0 L0,0 Z;
+                M0,24 C45,38 90,10 135,24 C180,38 225,10 270,24 C315,38 345,18 360,24 L360,0 L0,0 Z"/>
+    </path>
+    <path fill="rgba(181,137,58,0.12)" opacity="1">
+      <animate attributeName="d" dur="3.5s" repeatCount="indefinite"
+        values="M0,32 C60,18 120,40 180,28 C240,16 300,36 360,30 L360,0 L0,0 Z;
+                M0,22 C60,36 120,14 180,26 C240,38 300,18 360,24 L360,0 L0,0 Z;
+                M0,32 C60,18 120,40 180,28 C240,16 300,36 360,30 L360,0 L0,0 Z"/>
+    </path>
+  </svg>
 </div>
-
 
 
 <div class="main" id="mainCatalog">
@@ -404,16 +421,6 @@ body{display:flex;flex-direction:column;min-height:100vh}
 <div class="modal-overlay" id="specialModal" onclick="if(event.target===this)closeSpecial()">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-<div style="position:relative;height:32px;margin-top:0;pointer-events:none;overflow:hidden">
-  <svg viewBox="0 0 360 32" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block">
-    <path fill="rgba(181,137,58,0.18)" opacity="1">
-      <animate attributeName="d" dur="5s" repeatCount="indefinite"
-        values="M0,16 C45,26 90,6 135,16 C180,26 225,6 270,16 C315,26 345,12 360,16 L360,0 L0,0 Z;
-                M0,10 C45,20 90,2 135,12 C180,22 225,4 270,14 C315,22 345,8 360,12 L360,0 L0,0 Z;
-                M0,16 C45,26 90,6 135,16 C180,26 225,6 270,16 C315,26 345,12 360,16 L360,0 L0,0 Z"/>
-    </path>
-  </svg>
-</div>
     <div class="special-modal">
       <div class="spec-title" id="specTitle">Special Request</div>
       <div class="spec-sub" id="specSub">Looking for a superyacht or special event? Describe it — we'll make it happen.</div>
@@ -542,41 +549,15 @@ function getPriceLabel(y){
 
 
 function renderSkeletonCards(count){
-  const id='sk'+Date.now();
-  const compassHtml=`
-    <div style="display:flex;align-items:center;justify-content:center;width:100%;height:110px;background:var(--bg3);border-radius:var(--rs) var(--rs) 0 0">
-      <svg viewBox="0 0 60 60" style="width:52px;height:52px">
-        <!-- outer ring -->
-        <circle cx="30" cy="30" r="27" stroke="var(--gold)" stroke-width="1" fill="none" opacity="0.25"/>
-        <circle cx="30" cy="30" r="23" stroke="var(--gold)" stroke-width="0.5" fill="none" opacity="0.15"/>
-        <!-- tick marks -->
-        <line x1="30" y1="3" x2="30" y2="8" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
-        <line x1="30" y1="52" x2="30" y2="57" stroke="var(--gold)" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
-        <line x1="3" y1="30" x2="8" y2="30" stroke="var(--gold)" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
-        <line x1="52" y1="30" x2="57" y2="30" stroke="var(--gold)" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
-        <!-- NE SW ticks -->
-        <line x1="49.1" y1="10.9" x2="45.6" y2="14.4" stroke="var(--gold)" stroke-width="0.8" opacity="0.2"/>
-        <line x1="10.9" y1="49.1" x2="14.4" y2="45.6" stroke="var(--gold)" stroke-width="0.8" opacity="0.2"/>
-        <line x1="10.9" y1="10.9" x2="14.4" y2="14.4" stroke="var(--gold)" stroke-width="0.8" opacity="0.2"/>
-        <line x1="49.1" y1="49.1" x2="45.6" y2="45.6" stroke="var(--gold)" stroke-width="0.8" opacity="0.2"/>
-        <!-- N S E W labels -->
-        <text x="30" y="15" text-anchor="middle" fill="var(--gold)" font-size="6" font-weight="700" font-family="sans-serif" opacity="0.6">N</text>
-        <text x="30" y="50" text-anchor="middle" fill="var(--gold)" font-size="5" font-family="sans-serif" opacity="0.3">S</text>
-        <text x="10" y="32" text-anchor="middle" fill="var(--gold)" font-size="5" font-family="sans-serif" opacity="0.3">W</text>
-        <text x="50" y="32" text-anchor="middle" fill="var(--gold)" font-size="5" font-family="sans-serif" opacity="0.3">E</text>
-        <!-- SPINNING needle -->
-        <g id="skNeedle" style="transform-origin:30px 30px;animation:compassSpin 3s linear infinite">
-          <!-- north needle - gold -->
-          <path d="M30 30 L28 32 L30 8 L32 32 Z" fill="var(--gold)" opacity="0.8"/>
-          <!-- south needle - lighter -->
-          <path d="M30 30 L32 28 L30 52 L28 28 Z" fill="var(--gold)" opacity="0.25"/>
-          <!-- center dot -->
-          <circle cx="30" cy="30" r="2.5" fill="var(--gold)" opacity="0.7"/>
-          <circle cx="30" cy="30" r="1" fill="var(--bg)" opacity="0.9"/>
-        </g>
-      </svg>
-    </div>`;
-  return Array(count).fill(0).map(function(){return '<div class="card" style="pointer-events:none">'+compassHtml+'<div style="padding:10px 10px 12px"><div class="skeleton" style="height:14px;border-radius:4px;margin-bottom:7px;width:70%"></div><div class="skeleton" style="height:11px;border-radius:4px;margin-bottom:10px;width:90%"></div><div class="skeleton" style="height:13px;border-radius:4px;width:40%;margin-left:auto"></div></div></div>';}).join('');
+  return Array(count).fill(0).map(()=>`
+    <div class="card" style="pointer-events:none">
+      <div class="skeleton" style="width:100%;height:110px;border-radius:var(--rs) var(--rs) 0 0;margin-bottom:10px"></div>
+      <div style="padding:0 2px">
+        <div class="skeleton" style="height:14px;border-radius:4px;margin-bottom:7px;width:70%"></div>
+        <div class="skeleton" style="height:11px;border-radius:4px;margin-bottom:10px;width:90%"></div>
+        <div class="skeleton" style="height:13px;border-radius:4px;width:40%;margin-left:auto"></div>
+      </div>
+    </div>`).join('');
 }
 
 function renderCards(){
@@ -589,7 +570,7 @@ function renderCards(){
     const imgHtml=img?`<img class="card-img" src="${img}" alt="${(y.names[lang]||y.names['en']||'')}" loading="lazy">`:`<div class="card-img-placeholder"><span style="font-size:36px">⛵</span></div>`;
     return `<div class="card" onclick="openDetail(${y.id})">
       ${imgHtml}
-      
+      <div class="card-badge">${T[lang].avail}</div>
       ${y.weekly?`<div class="weekly-badge">Weekly</div>`:''}
       <div class="card-fav ${favs.has(y.id)?'on':''}" id="fav${y.id}" onclick="event.stopPropagation();toggleFav(${y.id})">
         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -627,11 +608,9 @@ function openDetail(id){
   detailState={extras:new Set(),guests:2,date:'',duration:'',yachtId:id,tgName,tgUsername,tgId};
 
   const galHtml=y.photos&&y.photos.length
-    ?`<div class="modal-gallery-wrap">
-      <div class="modal-gallery">${y.photos.map((p,i)=>`<img src="${p}" alt="${(y.names[lang]||y.names['en']||'')} ${i+1}" loading="${i===0?'eager':'lazy'}" class="modal-gallery-img">`).join('')}</div>
-      ${y.photos.length>1?('<div style="display:flex;justify-content:center;gap:5px;padding:6px 0 2px">'+y.photos.map((_,i)=>'<div class="gal-dot'+(i===0?' gal-dot-active':'')+'">'+'</div>').join('')+'</div>'):''}
-    </div>`
-    :`<div class="modal-gallery-placeholder"><span style="font-size:48px">⛵</span></div>`
+    ?`<div class="modal-gallery">${y.photos.map((p,i)=>`<img src="${p}" alt="${(y.names[lang]||y.names['en']||'')} ${i+1}" loading="${i===0?'eager':'lazy'}">`).join('')}</div>`
+    :`<div class="modal-gallery-placeholder"><span style="font-size:48px">⛵</span></div>`;
+
   const priceHtml=y.weekRate
     ?`<div class="price-box"><div class="price-label">${t.calcTitle}</div><div class="price-amount">${y.weekRate.toLocaleString()} €</div><div class="price-note">1 ${t.overnight.toLowerCase()}</div></div>`
     :y.dayRate
@@ -1564,28 +1543,19 @@ function addNavTapEffects(){
 }
 
 function initParallax(){
-  var ticking=false;
-  function updateParallax(){
-    document.querySelectorAll('.card-img').forEach(function(img){
-      var card=img.closest('.card');
+  const handler=()=>{
+    const scrollY=window.scrollY||0;
+    document.querySelectorAll('.card-img').forEach(img=>{
+      const card=img.closest('.card');
       if(!card)return;
-      var rect=card.getBoundingClientRect();
-      var vh=window.innerHeight;
-      if(rect.top<vh+50&&rect.bottom>-50){
-        // progress: 0 when card bottom at viewport top, 1 when card top at viewport bottom
-        var progress=(vh-rect.top)/(vh+rect.height);
-        var offset=(progress-0.5)*18;
-        img.style.transform='translateY('+offset+'px) scale(1.08)';
-        img.style.transition='transform 0.05s linear';
+      const rect=card.getBoundingClientRect();
+      if(rect.top<window.innerHeight&&rect.bottom>0){
+        const offset=(rect.top/window.innerHeight-0.5)*14;
+        img.style.transform='translateY('+offset+'px) scale(1.06)';
       }
     });
-    ticking=false;
-  }
-  window.addEventListener('scroll',function(){
-    if(!ticking){ticking=true;requestAnimationFrame(updateParallax);}
-  },{passive:true});
-  // Run once on load
-  updateParallax();
+  };
+  window.addEventListener('scroll',handler,{passive:true});
 }
 
 init();
@@ -1716,8 +1686,5 @@ try{addNavTapEffects();}catch(e){}
     <div style="padding:18px 16px" id="quizContent"></div>
   </div>
 </div>
-
-<!-- lhFly overlay -->
-<svg id="lhFly" style="position:fixed;top:0;left:0;width:100%;height:90px;pointer-events:none;overflow:visible;z-index:9999" viewBox="0 0 360 90" preserveAspectRatio="none"></svg>
 </body>
 </html>
