@@ -258,6 +258,7 @@ to{transform:rotate(360deg)}}50%{opacity:0.9}}
   <div class="section-title" id="sectionTitle">Montenegro Yachts</div>
   <div class="cards-grid" id="cardsGrid"></div>
 </div>
+<div class="main" id="ordersPanel" style="display:none"></div>
 <div class="bottom-nav">
   <div class="nav-item active" id="navCatalog" onclick="showView('catalog')">
     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
@@ -897,13 +898,6 @@ function showOrders(){
   document.getElementById('navOrders').classList.add('active');
   // Build orders panel
   var panel=document.getElementById('ordersPanel');
-  if(!panel){
-    panel=document.createElement('div');
-    panel.id='ordersPanel';
-    panel.style.cssText='padding:16px 14px 100px';
-    var mc2=document.getElementById('mainCatalog');
-    if(mc2)mc2.parentElement.appendChild(panel);
-  }
   panel.style.display='block';
   const tgUser=window.Telegram?.WebApp?.initDataUnsafe?.user||null;
   const tgName=tgUser?(tgUser.first_name||''):'';
