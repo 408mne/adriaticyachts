@@ -875,7 +875,7 @@ function showOrders(){
   if(!panel){
     panel=document.createElement('div');
     panel.id='ordersPanel';
-    panel.style.cssText='padding:16px 14px 100px;flex:1';
+    panel.style.cssText='position:fixed;inset:0;bottom:0;overflow-y:auto;z-index:50;background:var(--bg);padding:16px 14px 90px';
     document.getElementById('mainCatalog').parentElement.appendChild(panel);
   }
   panel.style.display='block';
