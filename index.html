@@ -33,7 +33,7 @@ body{display:flex;flex-direction:column;min-height:100vh}
 .cats-scroll::-webkit-scrollbar{display:none}
 .cat-pill{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;color:var(--text2);font-size:12px;padding:6px 14px;white-space:nowrap;cursor:pointer;transition:.15s;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
 .cat-pill.active{background:var(--navy);border-color:var(--navy);color:#fff}
-.main{flex:1;padding:8px 14px 100px}
+.main{flex:1;padding:4px 14px 100px}
 .section-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--navy);margin-bottom:12px;letter-spacing:0.03em}
 .cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:.2s;position:relative;box-shadow:var(--shadow)}
@@ -243,7 +243,7 @@ to{transform:rotate(360deg)}}50%{opacity:0.9}}
   </div>
   <div style="color:var(--gold);font-size:18px;opacity:.7">›</div>
 </div>
-<div style="display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:12px 14px;margin-top:4px;background:var(--bg);position:relative;z-index:2;min-height:56px">
+<div style="display:flex;align-items:center;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:12px 14px;margin-top:4px;background:var(--bg);position:relative;z-index:2;height:56px;flex-shrink:0;touch-action:pan-x">
   <div onclick="openPicker()" style="background:var(--gold-dim);border:1px solid rgba(181,137,58,0.3);border-radius:20px;color:var(--gold);font-size:12px;padding:6px 12px;white-space:nowrap;cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;gap:4px;margin-right:8px" id="pickerCatBtn">
     <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
     <span id="pickerCatLbl">Подбор</span>
