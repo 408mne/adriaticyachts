@@ -59,7 +59,8 @@ body{display:flex;flex-direction:column;min-height:100vh}
 .modal-overlay.open{display:flex}
 .modal-sheet{background:var(--bg2);border-radius:22px 22px 0 0;width:100%;max-height:92vh;overflow-y:auto;padding:0 0 32px;animation:slideUp .26s cubic-bezier(.32,.72,0,1);border-top:1px solid var(--border);box-shadow:0 -8px 40px rgba(0,0,0,0.14)}
 @keyframes slideUp{from{transform:translateY(48px);opacity:0}to{transform:translateY(0);opacity:1}}
-.modal-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:14px auto 0}
+.modal-handle{width:40px;height:5px;background:rgba(0,0,0,0.18);border-radius:3px;margin:12px auto 4px;cursor:pointer;transition:.2s}
+.modal-handle:active{background:var(--gold);transform:scaleX(1.3)}
 .modal-gallery{width:100%;height:220px;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin-top:12px}
 .modal-gallery::-webkit-scrollbar{display:none}
 .modal-gallery img{width:100%;height:220px;object-fit:cover;display:block;flex-shrink:0;scroll-snap-align:start}
@@ -440,6 +441,28 @@ function getPriceLabel(y){
 }
 
 
+function launchConfetti(){
+  const colors=['#b5893a','#1a2640','#f7f5f1','#5a8f5a','#c04040'];
+  const container=document.createElement('div');
+  container.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;overflow:hidden';
+  document.body.appendChild(container);
+  for(let i=0;i<80;i++){
+    const el=document.createElement('div');
+    const color=colors[Math.floor(Math.random()*colors.length)];
+    const size=Math.random()*8+4;
+    const left=Math.random()*100;
+    const delay=Math.random()*0.8;
+    const duration=Math.random()*1.5+1.2;
+    const rotate=Math.random()*360;
+    el.style.cssText=`position:absolute;top:-10px;left:${left}%;width:${size}px;height:${size}px;background:${color};border-radius:${Math.random()>0.5?'50%':'2px'};animation:confettiFall ${duration}s ${delay}s ease-in forwards;transform:rotate(${rotate}deg)`;
+    container.appendChild(el);
+  }
+  const style=document.createElement('style');
+  style.textContent='@keyframes confettiFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}';
+  document.head.appendChild(style);
+  setTimeout(()=>{container.remove();style.remove();},3000);
+}
+
 function renderSkeletonCards(count){
   const id='sk'+Date.now();
   const compassHtml=`
@@ -547,7 +570,7 @@ function openDetail(id){
     :`<div class="price-box"><div class="price-label">${t.calcTitle}</div><div class="price-amount" style="font-size:20px">${lang==='ru'?'По запросу':lang==='me'?'Na upit':'On request'}</div></div>`;
 
   const featsHtml=(y.feats[lang]||y.feats['en']||[]).map(f=>`<div class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg><span>${f[0]}</span></div>`).join('');
-  const extrasHtml=y.extras.map((ex,i)=>`<div class="extra ${detailState.extras.has(i)?'sel':''}" onclick="toggleExtra(${y.id},${i})"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg><div><div class="extra-name">${ex[lang]}</div><div class="extra-p">+${ex.price>0?ex.price+'€':t.choose}</div></div></div>`).join('');
+  const extrasHtml=y.extras.map((ex,i)=>`<div class="extra ${detailState.extras.has(i)?'sel':''}" onclick="toggleExtra(${y.id},${i})"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg><div><div class="extra-name">${ex[lang]||ex['en']||ex['ru']||''}</div><div class="extra-p">+${ex.price>0?ex.price+'€':t.choose}</div></div></div>`).join('');
 
   const dateVal=detailState.date||'';
   const dateLbl=dateVal?(()=>{const d=new Date(dateVal+'T12:00:00');return d.toLocaleDateString(lang==='ru'?'ru-RU':lang==='me'?'sr-ME':'en-GB',{day:'numeric',month:'long',year:'numeric'});})():(lang==='ru'?'Выберите дату':lang==='me'?'Odaberite datum':'Select date');
@@ -629,11 +652,12 @@ function openDetail(id){
     if(el){const td=new Date();const mm=String(td.getMonth()+1).padStart(2,'0');const dd=String(td.getDate()).padStart(2,'0');el.min=td.getFullYear()+'-'+mm+'-'+dd;}
     if(detailState.tgName){const ni=document.getElementById('nameInp');if(ni&&!ni.value)ni.value=detailState.tgName;}
     if(detailState.tgUsername){const pi=document.getElementById('phoneInp');if(pi&&!pi.value)pi.value=detailState.tgUsername;}
+    buildQuickDates();
   },50);
 }
 
 
-function buildQuickDates_disabled(){
+function buildQuickDates(){
   const row=document.getElementById('quickDatesRow');
   if(!row)return;
   const labels=[
@@ -1529,6 +1553,59 @@ init();
 try{initParallax();}catch(e){}
 try{loadSavedOrders();}catch(e){}
 try{addNavTapEffects();}catch(e){}
+
+// ── SWIPE DOWN TO CLOSE ──
+(function(){
+  function addSwipe(overlayId, closeFn){
+    var overlay=document.getElementById(overlayId);
+    if(!overlay)return;
+    var sheet=overlay.querySelector('.modal-sheet');
+    if(!sheet)return;
+    var startY=0,startScrollTop=0,dragging=false;
+    sheet.addEventListener('touchstart',function(e){
+      startY=e.touches[0].clientY;
+      startScrollTop=sheet.scrollTop;
+      dragging=true;
+    },{passive:true});
+    sheet.addEventListener('touchmove',function(e){
+      if(!dragging)return;
+      var dy=e.touches[0].clientY-startY;
+      // Only drag down when at top of scroll
+      if(dy>0&&sheet.scrollTop<=0){
+        sheet.style.transform='translateY('+dy+'px)';
+        sheet.style.transition='none';
+      }
+    },{passive:true});
+    sheet.addEventListener('touchend',function(e){
+      if(!dragging)return;
+      dragging=false;
+      var dy=e.changedTouches[0].clientY-startY;
+      sheet.style.transition='transform .25s cubic-bezier(.32,.72,0,1)';
+      if(dy>80){
+        sheet.style.transform='translateY(100%)';
+        setTimeout(function(){
+          sheet.style.transform='';
+          sheet.style.transition='';
+          closeFn();
+        },220);
+      } else {
+        sheet.style.transform='';
+      }
+    },{passive:true});
+    // Handle tap on drag handle
+    var handle=sheet.querySelector('.modal-handle');
+    if(handle)handle.addEventListener('click',function(){closeFn();});
+  }
+  setTimeout(function(){
+    addSwipe('detailModal',function(){closeDetail();});
+    addSwipe('specialModal',function(){closeSpecial();});
+    addSwipe('slotModal',function(){closeModal('slotModal');});
+    addSwipe('routesModal',function(){closeModal('routesModal');});
+    addSwipe('pickerModal',function(){closeModal('pickerModal');});
+    addSwipe('reviewsModal',function(){closeModal('reviewsModal');});
+    addSwipe('quizModal',function(){closeModal('quizModal');});
+  },500);
+})();
 
 // ── LIGHTHOUSE TAP MAGIC ──
 // Exact logic from lighthouse_animation_test.html
