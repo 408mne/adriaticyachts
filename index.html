@@ -15,7 +15,7 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Jost',sans-serif;font-size:14px;overflow-x:hidden}
 body{display:flex;flex-direction:column;min-height:100vh}
-.app-header{background:rgba(247,245,241,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 14px 0;position:sticky;top:0;z-index:50}
+.app-header{background:rgba(247,245,241,0.95);backdrop-filter:blur(12px);padding:12px 14px 0;position:sticky;top:0;z-index:50}
 .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;letter-spacing:0.06em;color:var(--navy)}
 .logo span{color:var(--gold);font-style:italic}
@@ -243,12 +243,12 @@ to{transform:rotate(360deg)}}50%{opacity:0.9}}
   </div>
   <div style="color:var(--gold);font-size:18px;opacity:.7">›</div>
 </div>
-<div style="display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:18px 0 18px;margin-top:4px;background:var(--bg);position:relative;z-index:2">
-  <div onclick="openPicker()" style="background:var(--gold-dim);border:1px solid rgba(181,137,58,0.3);border-radius:20px;color:var(--gold);font-size:12px;padding:6px 12px;white-space:nowrap;cursor:pointer;flex-shrink:0;display:flex;align-items:center;gap:4px;margin-left:14px;margin-right:8px" id="pickerCatBtn">
+<div style="display:flex;align-items:center;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:16px 14px;margin-top:4px;background:var(--bg);position:relative;z-index:2;white-space:nowrap;height:56px;box-sizing:content-box">
+  <div onclick="openPicker()" style="background:var(--gold-dim);border:1px solid rgba(181,137,58,0.3);border-radius:20px;color:var(--gold);font-size:12px;padding:6px 12px;white-space:nowrap;cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;gap:4px;margin-right:8px" id="pickerCatBtn">
     <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
     <span id="pickerCatLbl">Подбор</span>
   </div>
-  <div id="catsScroll" style="display:flex;gap:7px;flex-shrink:0;padding-right:14px"></div>
+  <div id="catsScroll" style="display:inline-flex;gap:7px;flex-shrink:0;padding-right:14px"></div>
 </div>
 
 
