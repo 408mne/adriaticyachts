@@ -1535,8 +1535,8 @@ function initParallax(){
       if(rect.top<vh+50&&rect.bottom>-50){
         // progress: 0 when card bottom at viewport top, 1 when card top at viewport bottom
         var progress=(vh-rect.top)/(vh+rect.height);
-        var offset=(progress-0.5)*18;
-        img.style.transform='translateY('+offset+'px) scale(1.08)';
+        var offset=(progress-0.5)*32;
+        img.style.transform='translateY('+offset+'px) scale(1.14)';
         img.style.transition='transform 0.05s linear';
       }
     });
@@ -1561,38 +1561,50 @@ try{addNavTapEffects();}catch(e){}
     if(!overlay)return;
     var sheet=overlay.querySelector('.modal-sheet');
     if(!sheet)return;
-    var startY=0,startScrollTop=0,dragging=false;
+    var startY=0,startScrollTop=0,dragging=false,mayClose=false;
     sheet.addEventListener('touchstart',function(e){
       startY=e.touches[0].clientY;
       startScrollTop=sheet.scrollTop;
       dragging=true;
+      // Only allow close gesture if already at top
+      mayClose=(sheet.scrollTop<=0);
     },{passive:true});
     sheet.addEventListener('touchmove',function(e){
-      if(!dragging)return;
+      if(!dragging||!mayClose)return;
       var dy=e.touches[0].clientY-startY;
-      // Only drag down when at top of scroll
+      // Only pull down, not up
       if(dy>0&&sheet.scrollTop<=0){
-        sheet.style.transform='translateY('+dy+'px)';
+        sheet.style.transform='translateY('+Math.min(dy,200)+'px)';
         sheet.style.transition='none';
+        sheet.style.opacity=String(1-dy/400);
+      } else {
+        // Started dragging up — cancel close gesture
+        mayClose=false;
+        sheet.style.transform='';
+        sheet.style.opacity='';
       }
     },{passive:true});
     sheet.addEventListener('touchend',function(e){
       if(!dragging)return;
       dragging=false;
       var dy=e.changedTouches[0].clientY-startY;
-      sheet.style.transition='transform .25s cubic-bezier(.32,.72,0,1)';
-      if(dy>80){
+      sheet.style.transition='transform .25s cubic-bezier(.32,.72,0,1),opacity .25s';
+      if(mayClose&&dy>120){
         sheet.style.transform='translateY(100%)';
+        sheet.style.opacity='0';
         setTimeout(function(){
           sheet.style.transform='';
+          sheet.style.opacity='';
           sheet.style.transition='';
           closeFn();
-        },220);
+        },240);
       } else {
         sheet.style.transform='';
+        sheet.style.opacity='';
       }
+      mayClose=false;
     },{passive:true});
-    // Handle tap on drag handle
+    // Tap on handle always closes
     var handle=sheet.querySelector('.modal-handle');
     if(handle)handle.addEventListener('click',function(){closeFn();});
   }
