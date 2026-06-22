@@ -196,7 +196,7 @@ to{transform:rotate(360deg)}}50%{opacity:0.9}}
       </div>
     </div>
   </div>
-
+</div>
 <div class="special-banner" id="specialBanner" onclick="openSpecial()" style="cursor:pointer;margin-top:0;position:relative;overflow:visible">
   <div class="special-icon" style="flex-shrink:0;width:32px;height:44px;cursor:pointer;position:relative;z-index:2" onclick="event.stopPropagation();lhTap()" id="lhIcon">
     <svg width="32" height="44" viewBox="0 0 56 80" fill="none" style="display:block;overflow:visible">
@@ -243,12 +243,12 @@ to{transform:rotate(360deg)}}50%{opacity:0.9}}
   </div>
   <div style="color:var(--gold);font-size:18px;opacity:.7">›</div>
 </div>
-<div style="display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:8px 0;background:var(--bg)">
-  <div onclick="openPicker()" style="background:var(--gold-dim);border:1px solid rgba(181,137,58,0.3);border-radius:20px;color:var(--gold);font-size:12px;padding:6px 12px;white-space:nowrap;cursor:pointer;flex-shrink:0;display:flex;align-items:center;gap:4px;margin-right:8px" id="pickerCatBtn">
+<div style="display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:8px 14px 10px;background:var(--bg);gap:7px">
+  <div onclick="openPicker()" style="background:var(--gold-dim);border:1px solid rgba(181,137,58,0.3);border-radius:20px;color:var(--gold);font-size:12px;padding:6px 12px;white-space:nowrap;cursor:pointer;flex-shrink:0;display:flex;align-items:center;gap:4px" id="pickerCatBtn">
     <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
     <span id="pickerCatLbl">Подбор</span>
   </div>
-  <div id="catsScroll" style="display:flex;gap:7px;flex-shrink:0;padding-right:14px"></div>
+  <div id="catsScroll" style="display:flex;gap:7px;flex-shrink:0"></div>
 </div>
 
 
@@ -834,7 +834,8 @@ function closeAll(){
 }
 
 function showView(v){
-  closeAll();
+  const panel=document.getElementById('ordersPanel');
+  if(panel)panel.style.display='none';
   const mc=document.getElementById('mainCatalog');
   if(mc)mc.style.display='block';
   const pickerBtn=document.getElementById('pickerCatBtn');
@@ -880,7 +881,6 @@ function loadSavedOrders(){
 }
 
 function showOrders(){
-  closeAll();
   const pickerBtn=document.getElementById('pickerCatBtn');
   if(pickerBtn)pickerBtn.style.display='none';
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -1065,11 +1065,9 @@ const ROUTES_DATA = {
 };
 let currentRouteTab = 4;
 function openRoutes(){
-  closeAll();
+  document.getElementById('routesModal').classList.add('open');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('navRoutes').classList.add('active');
-  document.getElementById('mainCatalog').style.display='none';
-  document.getElementById('routesModal').classList.add('open');
   setRouteTab(4);
 }
 function setRouteTab(n){
@@ -1388,10 +1386,8 @@ var slotSpinning=false;
 var slotChosen=null;
 
 function openSlot(){
-  closeAll();
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('navSlot').classList.add('active');
-  document.getElementById('mainCatalog').style.display='none';
   var modal=document.getElementById('slotModal');
   var title=document.getElementById('slotTitle');
   var sub=document.getElementById('slotSub');
@@ -1719,7 +1715,7 @@ function updateGalDots(el){
 
 </script>
 
-<div class="modal-overlay" id="slotModal" onclick="if(event.target===this){closeModal('slotModal');showView('catalog')}">
+<div class="modal-overlay" id="slotModal" onclick="if(event.target===this)closeModal('slotModal')">
   <div class="modal-sheet" style="padding-bottom:40px">
     <div class="modal-handle"></div>
     <div style="padding:18px 16px 0;text-align:center">
@@ -1739,7 +1735,7 @@ function updateGalDots(el){
       </div>
       <button id="slotBtn" onclick="spinSlot()" style="background:rgba(181,137,58,0.1);color:var(--gold);border:1.5px solid rgba(181,137,58,0.4);border-radius:var(--rs);width:100%;padding:14px;font-size:14px;font-weight:500;cursor:pointer;font-family:'Jost',sans-serif;margin-bottom:8px">🎰 Удиви меня!</button>
       <button id="slotBookBtn" onclick="slotBook()" style="display:none;background:transparent;border:1px solid var(--border2);border-radius:var(--rs);width:100%;padding:12px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text2);margin-bottom:8px">Забронировать эту яхту</button>
-      <button onclick="closeModal('slotModal');showView('catalog')" style="background:transparent;border:none;width:100%;padding:10px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text3)">Закрыть</button>
+      <button onclick="closeModal('slotModal')" style="background:transparent;border:none;width:100%;padding:10px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text3)">Закрыть</button>
     </div>
   </div>
 </div>
@@ -1806,7 +1802,7 @@ function updateGalDots(el){
 </div>
 
 <!-- ROUTES MODAL -->
-<div class="modal-overlay" id="routesModal" onclick="if(event.target===this){closeModal('routesModal');showView('catalog')}">
+<div class="modal-overlay" id="routesModal" onclick="if(event.target===this)closeModal('routesModal')">
   <div class="modal-sheet" style="padding-bottom:40px">
     <div class="modal-handle"></div>
     <div style="padding:18px 16px">
