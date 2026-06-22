@@ -819,9 +819,19 @@ function sendSpecial(){
   setTimeout(()=>{b.querySelector('.special-title').textContent=t.sbanTitle;},2500);
 }
 
-function showView(v){
+function closeAll(){
+  // Закрываем все модалки
+  ['detailModal','specialModal','slotModal','pickerModal','reviewsModal','routesModal','quizModal'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.classList.remove('open');
+  });
+  // Закрываем ordersPanel
   const panel=document.getElementById('ordersPanel');
   if(panel)panel.style.display='none';
+}
+
+function showView(v){
+  closeAll();
   const mc=document.getElementById('mainCatalog');
   if(mc)mc.style.display='block';
   const pickerBtn=document.getElementById('pickerCatBtn');
@@ -867,6 +877,7 @@ function loadSavedOrders(){
 }
 
 function showOrders(){
+  closeAll();
   const pickerBtn=document.getElementById('pickerCatBtn');
   if(pickerBtn)pickerBtn.style.display='none';
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -1051,6 +1062,10 @@ const ROUTES_DATA = {
 };
 let currentRouteTab = 4;
 function openRoutes(){
+  closeAll();
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('navRoutes').classList.add('active');
+  document.getElementById('mainCatalog').style.display='none';
   document.getElementById('routesModal').classList.add('open');
   setRouteTab(4);
 }
@@ -1339,12 +1354,10 @@ function handleDiceTap(){
   if(diceTapCount>=3){
     diceTapCount=0;
     clearTimeout(diceTapTimer);
-    // Close slot if open, show easter egg
-    closeModal('slotModal');
+    closeAll();
     setTimeout(openEasterEgg,300);
     return;
   }
-  // Always open slot on first tap
   if(diceTapCount===1){
     spinDiceThenOpen();
   }
@@ -1372,6 +1385,10 @@ var slotSpinning=false;
 var slotChosen=null;
 
 function openSlot(){
+  closeAll();
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('navSlot').classList.add('active');
+  document.getElementById('mainCatalog').style.display='none';
   var modal=document.getElementById('slotModal');
   var title=document.getElementById('slotTitle');
   var sub=document.getElementById('slotSub');
@@ -1513,6 +1530,43 @@ init();
 try{initParallax();}catch(e){}
 try{loadSavedOrders();}catch(e){}
 try{addNavTapEffects();}catch(e){}
+
+// ── NAV POSITION FIX (Android + iPhone 17 Pro) ──
+(function fixNav(){
+  var nav=document.querySelector('.bottom-nav');
+  if(!nav)return;
+  function applyFix(){
+    var vh=window.innerHeight;
+    nav.style.position='fixed';
+    nav.style.bottom='0';
+    nav.style.left='0';
+    nav.style.right='0';
+    nav.style.width='100%';
+    nav.style.zIndex='9000';
+    // Padding for home indicator (safe area)
+    var safeBottom=0;
+    try{
+      var test=document.createElement('div');
+      test.style.cssText='position:fixed;bottom:env(safe-area-inset-bottom,0px);height:1px;pointer-events:none;visibility:hidden';
+      document.body.appendChild(test);
+      var computed=window.getComputedStyle(test).bottom;
+      safeBottom=parseInt(computed)||0;
+      test.remove();
+    }catch(e){}
+    var pb=Math.max(16,safeBottom);
+    nav.style.paddingBottom=pb+'px';
+    // Fix .main padding so content doesn't hide under nav
+    var navH=nav.offsetHeight||70;
+    document.querySelectorAll('.main').forEach(function(m){
+      m.style.paddingBottom=(navH+16)+'px';
+    });
+  }
+  applyFix();
+  window.addEventListener('resize',applyFix,{passive:true});
+  // Re-apply after Telegram expands
+  setTimeout(applyFix,300);
+  setTimeout(applyFix,800);
+})();
 
 // ── LIGHTHOUSE TAP MAGIC ──
 // Exact logic from lighthouse_animation_test.html
@@ -1699,7 +1753,7 @@ function updateGalDots(el){
 
 </script>
 
-<div class="modal-overlay" id="slotModal" onclick="if(event.target===this)closeModal('slotModal')">
+<div class="modal-overlay" id="slotModal" onclick="if(event.target===this){closeModal('slotModal');showView('catalog')}">
   <div class="modal-sheet" style="padding-bottom:40px">
     <div class="modal-handle"></div>
     <div style="padding:18px 16px 0;text-align:center">
@@ -1719,7 +1773,7 @@ function updateGalDots(el){
       </div>
       <button id="slotBtn" onclick="spinSlot()" style="background:rgba(181,137,58,0.1);color:var(--gold);border:1.5px solid rgba(181,137,58,0.4);border-radius:var(--rs);width:100%;padding:14px;font-size:14px;font-weight:500;cursor:pointer;font-family:'Jost',sans-serif;margin-bottom:8px">🎰 Удиви меня!</button>
       <button id="slotBookBtn" onclick="slotBook()" style="display:none;background:transparent;border:1px solid var(--border2);border-radius:var(--rs);width:100%;padding:12px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text2);margin-bottom:8px">Забронировать эту яхту</button>
-      <button onclick="closeSlot()" style="background:transparent;border:none;width:100%;padding:10px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text3)">Закрыть</button>
+      <button onclick="closeModal('slotModal');showView('catalog')" style="background:transparent;border:none;width:100%;padding:10px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text3)">Закрыть</button>
     </div>
   </div>
 </div>
@@ -1786,7 +1840,7 @@ function updateGalDots(el){
 </div>
 
 <!-- ROUTES MODAL -->
-<div class="modal-overlay" id="routesModal" onclick="if(event.target===this)closeModal('routesModal')">
+<div class="modal-overlay" id="routesModal" onclick="if(event.target===this){closeModal('routesModal');showView('catalog')}">
   <div class="modal-sheet" style="padding-bottom:40px">
     <div class="modal-handle"></div>
     <div style="padding:18px 16px">
