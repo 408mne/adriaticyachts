@@ -51,7 +51,7 @@ body{display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden}
 .card-meta{color:var(--text3);font-size:10px;margin-bottom:7px}
 .card-price{color:var(--gold);font-size:13px;font-weight:500;text-align:right}
 .card-price span{color:var(--text3);font-size:10px;font-weight:400}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(247,245,241,0.98);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;padding:8px 0 16px;z-index:9000;box-shadow:0 -2px 16px rgba(0,0,0,0.07)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(247,245,241,0.98);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;padding:8px 0 16px;padding-bottom:max(16px,env(safe-area-inset-bottom));z-index:9000;box-shadow:0 -2px 16px rgba(0,0,0,0.07)}
 .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:var(--text3);font-size:10px;letter-spacing:.03em;transition:.15s}
 .nav-item.active{color:var(--navy)}
 .nav-item svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.7}
