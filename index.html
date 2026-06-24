@@ -883,11 +883,13 @@ function submitBooking(yid){
 
   if(!detailState.date||!detailState.duration){document.getElementById('dateErr').style.display='block';ok=false;}else document.getElementById('dateErr').style.display='none';
 
-  // Read name from field OR fall back to Telegram name (fixes double-tap when autofill setTimeout not fired yet)
+  // Read name: field → Telegram WebApp direct (not detailState which may not be filled yet) → detailState fallback
+  const _tgUserNow=window.Telegram?.WebApp?.initDataUnsafe?.user||null;
   const nameField=document.getElementById('nameInp');
-  const nm=(nameField?.value||'').trim()||detailState.tgName||'';
-  if(nameField&&!nameField.value&&nm)nameField.value=nm; // sync field
-  const ph=document.getElementById('phoneInp').value.trim()||detailState.tgUsername||('tg:'+(detailState.tgId||''))||'—';
+  const _tgNameNow=_tgUserNow?(((_tgUserNow.first_name||'')+(_tgUserNow.last_name?' '+_tgUserNow.last_name:'')).trim()):'';
+  const nm=(nameField?.value||'').trim()||_tgNameNow||detailState.tgName||'';
+  if(nameField&&!nameField.value&&nm)nameField.value=nm;
+  const ph=document.getElementById('phoneInp').value.trim()||detailState.tgUsername||(_tgUserNow?.username?'@'+_tgUserNow.username:'')|(detailState.tgId?'tg:'+detailState.tgId:'')||'—';
   if(!nm){document.getElementById('nameErr').style.display='block';ok=false;}else document.getElementById('nameErr').style.display='none';
   document.getElementById('phoneErr').style.display='none';
   if(!ok)return;
@@ -921,21 +923,24 @@ function submitBooking(yid){
     +'─'.repeat(26)+'\n'
     +(detailState.slotOnRequest?'💰 По запросу':'💰 '+total+' €')+'\n\n❗ Подтвердить в течение 4 ч';
 
-  // Build inline keyboard for owner - write to client button
   const replyMarkup={inline_keyboard:[]};
+  const tgIdSafe=detailState.tgId||'0';
+  const yidShort=String(y.id);
+  const totalShort=detailState.slotOnRequest?'req':String(total);
+  // callback_data MUST be under 64 bytes — use only IDs, no names/dates
   if(detailState.tgId){
     replyMarkup.inline_keyboard.push([
       {text:'💬 Написать клиенту',url:'tg://user?id='+detailState.tgId}
     ]);
   }
-  if(detailState.tgUsername&&detailState.tgUsername!==ph){
+  if(detailState.tgUsername){
     replyMarkup.inline_keyboard.push([
       {text:'✈️ '+detailState.tgUsername,url:'https://t.me/'+detailState.tgUsername.replace('@','')}
     ]);
   }
   replyMarkup.inline_keyboard.push([
-    {text:'✅ Подтвердить',callback_data:'confirm|'+(detailState.tgId||'')+'|'+nm+'|'+y.names['en']+'|'+dateStr+'|'+total},
-    {text:'❌ Отклонить',callback_data:'reject|'+(detailState.tgId||'')+'|'+nm+'|'+y.names['en']}
+    {text:'✅ Подтвердить',callback_data:'ok|'+tgIdSafe+'|'+yidShort+'|'+totalShort},
+    {text:'❌ Отклонить',callback_data:'no|'+tgIdSafe+'|'+yidShort}
   ]);
   // Send with alternative yachts suggestion
   const altYachts=YACHTS.filter(a=>a.cat===y.cat&&a.id!==y.id&&a.capacity>=detailState.guests)
