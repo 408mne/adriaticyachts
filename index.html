@@ -871,19 +871,23 @@ function changeGuests(d){
 function submitBooking(yid){
   const t=T[lang];let ok=true;
 
-  // If slot wasn't set yet (auto-select setTimeout may not have fired) — pick cheapest now
+  // Auto-pick slot if not selected yet
   if(!detailState.duration){
     const y0=YACHTS[yid];
     const asl=(y0.pricing||[]).filter(s=>s.price>0);
     if(asl.length){const best=asl.reduce((m,s)=>s.price<m.price?s:m,asl[0]);setDurSlot(best.t+best.unit,best.price,false);}
     else{const anySlot=(y0.pricing||[])[0];if(anySlot)setDurSlot(anySlot.t+anySlot.unit,0,true);}
   }
-  // If still no date (shouldn't happen since we pre-set today, but guard anyway)
+  // Auto-set today if date empty
   if(!detailState.date){const d=new Date();detailState.date=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 
   if(!detailState.date||!detailState.duration){document.getElementById('dateErr').style.display='block';ok=false;}else document.getElementById('dateErr').style.display='none';
-  const nm=document.getElementById('nameInp').value.trim();
-  const ph=document.getElementById('phoneInp').value.trim()||detailState.tgUsername||('tg:'+detailState.tgId)||'—';
+
+  // Read name from field OR fall back to Telegram name (fixes double-tap when autofill setTimeout not fired yet)
+  const nameField=document.getElementById('nameInp');
+  const nm=(nameField?.value||'').trim()||detailState.tgName||'';
+  if(nameField&&!nameField.value&&nm)nameField.value=nm; // sync field
+  const ph=document.getElementById('phoneInp').value.trim()||detailState.tgUsername||('tg:'+(detailState.tgId||''))||'—';
   if(!nm){document.getElementById('nameErr').style.display='block';ok=false;}else document.getElementById('nameErr').style.display='none';
   document.getElementById('phoneErr').style.display='none';
   if(!ok)return;
@@ -1006,10 +1010,6 @@ function sendSpecial(){
       {text:'✈️ '+tgUsername,url:'https://t.me/'+tgUsername.replace('@','')}
     ]);
   }
-  replyMarkup.inline_keyboard.push([
-    {text:'✅ Принято',callback_data:'spec_ok|'+(tgId||'')+'|'+(specNameVal||contactStr)},
-    {text:'❌ Отклонить',callback_data:'spec_reject|'+(tgId||'')+'|'+(specNameVal||contactStr)}
-  ]);
 
   fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msg,reply_markup:replyMarkup})}).catch(e=>console.log(e));
   document.getElementById('specRequest').value='';document.getElementById('specContact').value='';
