@@ -386,6 +386,60 @@ const YACHTS=[
 
 const BOT_TOKEN='8864246711:AAH1dASsllqCtr6pI7cYDfDrA004hKLaO6o';
 const OWNER_ID=70131641;
+// 🛡 РЕЗЕРВНЫЕ ПОЛУЧАТЕЛИ — добавь сюда свой второй Telegram ID или ID группы
+// Как узнать ID группы: добавь @userinfobot в группу, он напишет ID (будет отрицательным, напр. -1001234567890)
+const BACKUP_IDS=[8675886948,-1003882430280]; // пример: [123456789, -1001234567890]
+
+// Надёжная отправка: шлёт на все chat_id, сохраняет в локальный лог, повторяет при ошибке
+async function sendTgMessage(text, replyMarkup){
+  const targets=[OWNER_ID,...BACKUP_IDS];
+  const body={text, parse_mode:'HTML'};
+  if(replyMarkup)body.reply_markup=replyMarkup;
+  
+  // Лог в localStorage — заявка сохраняется ВСЕГДА, даже если интернет упал
+  try{
+    const log=JSON.parse(localStorage.getItem('ay_send_log')||'[]');
+    log.unshift({ts:Date.now(),text:text.slice(0,200),sent:false});
+    if(log.length>50)log.length=50;
+    localStorage.setItem('ay_send_log',JSON.stringify(log));
+  }catch(e){}
+
+  let anySuccess=false;
+  for(const chatId of targets){
+    try{
+      const r=await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({...body,chat_id:chatId})
+      });
+      const j=await r.json();
+      if(j.ok){
+        anySuccess=true;
+        // Помечаем в логе что отправилось
+        try{
+          const log=JSON.parse(localStorage.getItem('ay_send_log')||'[]');
+          if(log[0])log[0].sent=true;
+          localStorage.setItem('ay_send_log',JSON.stringify(log));
+        }catch(e){}
+      } else {
+        console.error('TG error chat_id='+chatId+':',JSON.stringify(j));
+        // Если сообщение слишком длинное — шлём урезанную версию
+        if(j.error_code===400){
+          const shortBody={...body,text:text.slice(0,3000),chat_id:chatId};
+          delete shortBody.reply_markup;
+          const r2=await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{
+            method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify(shortBody)
+          });
+          const j2=await r2.json();
+          if(j2.ok)anySuccess=true;
+        }
+      }
+    }catch(e){
+      console.error('TG fetch error:',e);
+    }
+  }
+  return anySuccess;
+}
 
 let lang='en',activeCat='all',activeMarina='all',favs=new Set();
 function loadFavs(){try{window.Telegram.WebApp.CloudStorage.getItem('favs',function(err,v){if(!err&&v){v.split(',').filter(Boolean).forEach(function(id){favs.add(parseInt(id));});}renderCards();});}catch(e){}}
@@ -871,83 +925,92 @@ function changeGuests(d){
 function submitBooking(yid){
   const t=T[lang];let ok=true;
 
-  // Auto-pick slot if not selected yet
+  // Auto-pick slot
   if(!detailState.duration){
     const y0=YACHTS[yid];
     const asl=(y0.pricing||[]).filter(s=>s.price>0);
     if(asl.length){const best=asl.reduce((m,s)=>s.price<m.price?s:m,asl[0]);setDurSlot(best.t+best.unit,best.price,false);}
     else{const anySlot=(y0.pricing||[])[0];if(anySlot)setDurSlot(anySlot.t+anySlot.unit,0,true);}
   }
-  // Auto-set today if date empty
+  // Auto-set today
   if(!detailState.date){const d=new Date();detailState.date=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 
   if(!detailState.date||!detailState.duration){document.getElementById('dateErr').style.display='block';ok=false;}else document.getElementById('dateErr').style.display='none';
 
-  // Read name: field → Telegram WebApp direct (not detailState which may not be filled yet) → detailState fallback
-  const _tgUserNow=window.Telegram?.WebApp?.initDataUnsafe?.user||null;
+  // Read Telegram user directly at click moment (no setTimeout dependency)
+  const _tgNow=window.Telegram?.WebApp?.initDataUnsafe?.user||null;
+  const _tgNameNow=_tgNow?((_tgNow.first_name||'')+(_tgNow.last_name?' '+_tgNow.last_name:'')).trim():'';
+  const _tgUsernameNow=_tgNow&&_tgNow.username?'@'+_tgNow.username:'';
+  const _tgIdNow=_tgNow?_tgNow.id:null;
+
   const nameField=document.getElementById('nameInp');
-  const _tgNameNow=_tgUserNow?(((_tgUserNow.first_name||'')+(_tgUserNow.last_name?' '+_tgUserNow.last_name:'')).trim()):'';
-  const nm=(nameField?.value||'').trim()||_tgNameNow||detailState.tgName||'';
-  if(nameField&&!nameField.value&&nm)nameField.value=nm;
-  const ph=document.getElementById('phoneInp').value.trim()||detailState.tgUsername||(_tgUserNow?.username?'@'+_tgUserNow.username:'')|(detailState.tgId?'tg:'+detailState.tgId:'')||'—';
-  if(!nm){document.getElementById('nameErr').style.display='block';ok=false;}else document.getElementById('nameErr').style.display='none';
+  // FIX: was using bitwise | instead of || — caused crash on Android
+  const nm=(nameField?.value||'').trim()||_tgNameNow||detailState.tgName||'Гость';
+  if(nameField&&!nameField.value)nameField.value=nm;
+  const ph=(document.getElementById('phoneInp')?.value||'').trim()||_tgUsernameNow||detailState.tgUsername||(_tgIdNow?'tg:'+_tgIdNow:'')||'—';
+
+  // Name is now always set (fallback 'Гость') so nameErr never blocks
+  document.getElementById('nameErr').style.display='none';
   document.getElementById('phoneErr').style.display='none';
   if(!ok)return;
 
   const y=YACHTS[yid];
-  const extTotal=[...detailState.extras].reduce((s,i)=>s+y.extras[i].price,0);
+  const extTotal=[...detailState.extras].reduce((s,i)=>s+(y.extras[i]?.price||0),0);
   const basePrice=detailState.slotPrice||0;
   const total=detailState.slotOnRequest?0:(basePrice+extTotal);
-  const dateStr=new Date(detailState.date+'T12:00:00').toLocaleDateString(lang==='ru'?'ru-RU':lang==='me'?'sr-ME':'en-GB',{day:'numeric',month:'long',year:'numeric'});
+  const dateStr=new Date(detailState.date+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
   const durStr=detailState.duration;
-  const extrasNames=[...detailState.extras].map(i=>y.extras[i][lang]).join(', ');
-  const comment=document.getElementById('commentInp').value.trim();
+  const extrasNames=[...detailState.extras].map(i=>y.extras[i]?.(lang)||y.extras[i]?.ru||'').join(', ');
+  const comment=(document.getElementById('commentInp')?.value||'').trim();
 
-  const tgUser2=window.Telegram?.WebApp?.initDataUnsafe?.user||null;
-  const clientLang=tgUser2?.language_code||'unknown';
+  const clientLang=_tgNow?.language_code||'unknown';
   const countryFlag={ru:'🇷🇺',en:'🇬🇧',de:'🇩🇪',tr:'🇹🇷',me:'🇲🇪',uk:'🇺🇦',fr:'🇫🇷',it:'🇮🇹',es:'🇪🇸',sr:'🇷🇸',hr:'🇭🇷'}[clientLang.split('-')[0]]||'🌍';
-  const tgInfoLine=(detailState.tgUsername&&detailState.tgUsername!==ph?'\n✈️ TG: '+detailState.tgUsername:'')
-    +(detailState.tgId?'\n🔗 ID: '+detailState.tgId:'')
-    +'\n'+countryFlag+' Язык: '+clientLang.toUpperCase()+' · Смотрел на: '+lang.toUpperCase();
-  const msg='🛥 НОВАЯ ЗАЯВКА\n'+'─'.repeat(26)+'\n'
-    +'🚢 Яхта: '+y.names['en']+'\n'
-    +'👤 Клиент: '+nm+'\n'
-    +'📱 Контакт: '+ph
-    +tgInfoLine+'\n'
-    +'📅 Дата: '+dateStr+'\n'
-    +'⛵ Марина: '+(y.marina||'—')+'\n'
-    +'⏱ Длит.: '+durStr+'\n'
-    +'👥 Гостей: '+detailState.guests
-    +(extrasNames?'\n➕ Допы: '+extrasNames:'')
-    +(comment?'\n💬 '+comment:'')+'\n'
-    +'─'.repeat(26)+'\n'
-    +(detailState.slotOnRequest?'💰 По запросу':'💰 '+total+' €')+'\n\n❗ Подтвердить в течение 4 ч';
+
+  const tgIdSafe=_tgIdNow||detailState.tgId||null;
+  const tgUsernameSafe=_tgUsernameNow||detailState.tgUsername||'';
+
+  const msg=[
+    '🛥 НОВАЯ ЗАЯВКА',
+    '─'.repeat(26),
+    '🚢 ' + y.names['en'],
+    '👤 ' + nm,
+    '📱 ' + ph,
+    tgIdSafe ? '🔗 tg://user?id='+tgIdSafe : null,
+    tgUsernameSafe && tgUsernameSafe!==ph ? '✈️ '+tgUsernameSafe : null,
+    countryFlag+' '+clientLang.toUpperCase()+' / app:'+lang.toUpperCase(),
+    '📅 ' + dateStr,
+    '⛵ ' + (y.marina||'—'),
+    '⏱ ' + durStr,
+    '👥 ' + detailState.guests + ' чел.',
+    extrasNames ? '➕ ' + extrasNames : null,
+    comment ? '💬 ' + comment : null,
+    '─'.repeat(26),
+    detailState.slotOnRequest ? '💰 По запросу' : '💰 '+total+' €',
+    '❗ Подтвердить в течение 4 ч'
+  ].filter(Boolean).join('\n');
 
   const replyMarkup={inline_keyboard:[]};
-  const tgIdSafe=detailState.tgId||'0';
-  const yidShort=String(y.id);
-  const totalShort=detailState.slotOnRequest?'req':String(total);
-  // callback_data MUST be under 64 bytes — use only IDs, no names/dates
-  if(detailState.tgId){
-    replyMarkup.inline_keyboard.push([
-      {text:'💬 Написать клиенту',url:'tg://user?id='+detailState.tgId}
-    ]);
+  if(tgIdSafe){
+    replyMarkup.inline_keyboard.push([{text:'💬 Написать клиенту',url:'tg://user?id='+tgIdSafe}]);
   }
-  if(detailState.tgUsername){
-    replyMarkup.inline_keyboard.push([
-      {text:'✈️ '+detailState.tgUsername,url:'https://t.me/'+detailState.tgUsername.replace('@','')}
-    ]);
+  if(tgUsernameSafe){
+    replyMarkup.inline_keyboard.push([{text:'✈️ '+tgUsernameSafe,url:'https://t.me/'+tgUsernameSafe.replace('@','')}]);
   }
+  // callback_data strictly under 64 bytes
+  const cbConfirm='ok|'+(tgIdSafe||0)+'|'+y.id+'|'+(detailState.slotOnRequest?'req':total);
+  const cbReject='no|'+(tgIdSafe||0)+'|'+y.id;
   replyMarkup.inline_keyboard.push([
-    {text:'✅ Подтвердить',callback_data:'ok|'+tgIdSafe+'|'+yidShort+'|'+totalShort},
-    {text:'❌ Отклонить',callback_data:'no|'+tgIdSafe+'|'+yidShort}
+    {text:'✅ Подтвердить',callback_data:cbConfirm},
+    {text:'❌ Отклонить',callback_data:cbReject}
   ]);
-  // Send with alternative yachts suggestion
-  const altYachts=YACHTS.filter(a=>a.cat===y.cat&&a.id!==y.id&&a.capacity>=detailState.guests)
-    .slice(0,3).map(a=>a.names['en']).join(', ');
-  const altLine=altYachts?'\n💡 Альтернативы: '+altYachts:'';
-  const msgFull=msg+altLine;
-  fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msgFull,reply_markup:replyMarkup})}).catch(e=>console.log(e));
+
+  // Send and log any Telegram API error
+  sendTgMessage(msg, replyMarkup).then(ok=>{
+    if(!ok){
+      // Заявка уже сохранена локально, но покажем предупреждение
+      console.warn('Заявка не ушла в Telegram, но сохранена локально');
+    }
+  });
 
   // Save to local orders history
   saveMyOrder({yacht:(y.names[lang]||y.names['en']||''),date:dateStr,duration:durStr,guests:detailState.guests,extras:extrasNames,total,ts:Date.now()});
@@ -1016,7 +1079,7 @@ function sendSpecial(){
     ]);
   }
 
-  fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msg,reply_markup:replyMarkup})}).catch(e=>console.log(e));
+  sendTgMessage(msg, replyMarkup);
   document.getElementById('specRequest').value='';document.getElementById('specContact').value='';
   closeSpecial();
   const b=document.getElementById('specialBanner');
@@ -1083,6 +1146,25 @@ function loadSavedOrders(){
     const s=sessionStorage.getItem('ay_orders');
     if(s){const saved=JSON.parse(s);saved.forEach(o=>MY_ORDERS.push(o));}
   }catch(e){}
+}
+
+function buildSendLog(){
+  // Only show to owner (by tgId match)
+  const tgId=window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+  if(tgId!==OWNER_ID)return '';
+  let log=[];
+  try{log=JSON.parse(localStorage.getItem('ay_send_log')||'[]');}catch(e){}
+  if(!log.length)return '';
+  const rows=log.slice(0,10).map(l=>{
+    const d=new Date(l.ts).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    const status=l.sent?'<span style="color:#2a7a56">✓ ушло</span>':'<span style="color:#c04040">✗ ошибка</span>';
+    return `<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;color:var(--text2)"><span style="color:var(--text3)">${d}</span> ${status}<div style="color:var(--text3);margin-top:2px">${l.text.slice(0,80)}…</div></div>`;
+  }).join('');
+  return `<div style="margin-top:20px;padding:12px;background:rgba(26,38,64,0.04);border-radius:var(--rs);border:1px solid var(--border)">
+    <div style="font-size:11px;font-weight:600;color:var(--navy);margin-bottom:8px;letter-spacing:.05em">🔍 ЖУРНАЛ ОТПРАВОК (владелец)</div>
+    ${rows}
+    <button onclick="localStorage.removeItem('ay_send_log');showOrders()" style="margin-top:8px;background:transparent;border:1px solid var(--border2);border-radius:var(--rs);padding:5px 12px;font-size:11px;color:var(--text3);cursor:pointer">Очистить лог</button>
+  </div>`;
 }
 
 function showOrders(){
@@ -1172,6 +1254,7 @@ function showOrders(){
         </div>`).join('')}
       <button onclick="backToCatalog()" style="background:transparent;border:1px solid var(--border2);border-radius:var(--rs);width:100%;padding:11px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text2);margin-top:4px">${backText}</button>
       ${reviewBtn}
+      ${buildSendLog()}
     `}
   `;
 }
