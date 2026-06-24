@@ -321,6 +321,7 @@ to{transform:rotate(360deg)}}50%{opacity:0.9}}
       <div class="section-lbl" id="specReqLabel">Request description</div>
       <textarea class="inp" id="specRequest" style="height:80px;resize:none;margin-bottom:8px" placeholder="E.g. yacht for 15 people, wedding June 20..."></textarea>
       <div class="section-lbl">Contact</div>
+      <input class="inp" id="specName" placeholder="Your name" type="text" style="margin-bottom:8px">
       <input class="inp" id="specContact" placeholder="Telegram / phone" type="text">
       <button class="book-btn" id="specSendBtn" onclick="sendSpecial()" style="margin-bottom:8px">Send request</button>
       
@@ -443,6 +444,8 @@ function renderAll(){
   document.getElementById('specUrgLabel').textContent=t.specUrgLabel;
   document.getElementById('specReqLabel').textContent=t.specReqLabel;
   document.getElementById('specSendBtn').textContent=t.specSend;
+  const _sn=document.getElementById('specName');if(_sn)_sn.placeholder=t.name;
+  const _sc=document.getElementById('specContact');if(_sc)_sc.placeholder=t.phone;
   t.urgLabels.forEach((l,i)=>{document.getElementById('urgL'+i).textContent=l;});
   renderCats();renderCards();
   const _mpl=document.getElementById('marinaPillLbl');if(_mpl&&activeMarina==='all')_mpl.textContent=lang==='ru'?'Все марины':lang==='me'?'Sve marine':'All marinas';
@@ -689,7 +692,8 @@ function openDetail(id){
   const tgName=tgUser?(tgUser.first_name||'')+(tgUser.last_name?' '+tgUser.last_name:''):'';
   const tgUsername=tgUser&&tgUser.username?'@'+tgUser.username:'';
   const tgId=tgUser?tgUser.id:null;
-  detailState={extras:new Set(),guests:2,date:'',duration:'',yachtId:id,tgName,tgUsername,tgId,slotPrice:0,slotOnRequest:false};
+  const _today=(()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');})();
+  detailState={extras:new Set(),guests:2,date:_today,duration:'',yachtId:id,tgName,tgUsername,tgId,slotPrice:0,slotOnRequest:false};
 
   const galHtml=y.photos&&y.photos.length
     ?('<div class="modal-gallery-wrap" style="position:relative">'
@@ -866,6 +870,17 @@ function changeGuests(d){
 
 function submitBooking(yid){
   const t=T[lang];let ok=true;
+
+  // If slot wasn't set yet (auto-select setTimeout may not have fired) — pick cheapest now
+  if(!detailState.duration){
+    const y0=YACHTS[yid];
+    const asl=(y0.pricing||[]).filter(s=>s.price>0);
+    if(asl.length){const best=asl.reduce((m,s)=>s.price<m.price?s:m,asl[0]);setDurSlot(best.t+best.unit,best.price,false);}
+    else{const anySlot=(y0.pricing||[])[0];if(anySlot)setDurSlot(anySlot.t+anySlot.unit,0,true);}
+  }
+  // If still no date (shouldn't happen since we pre-set today, but guard anyway)
+  if(!detailState.date){const d=new Date();detailState.date=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+
   if(!detailState.date||!detailState.duration){document.getElementById('dateErr').style.display='block';ok=false;}else document.getElementById('dateErr').style.display='none';
   const nm=document.getElementById('nameInp').value.trim();
   const ph=document.getElementById('phoneInp').value.trim()||detailState.tgUsername||('tg:'+detailState.tgId)||'—';
@@ -915,8 +930,8 @@ function submitBooking(yid){
     ]);
   }
   replyMarkup.inline_keyboard.push([
-    {text:'✅ Подтвердить',callback_data:'confirm|'+detailState.tgId+'|'+nm+'|'+y.names['en']+'|'+dateStr+'|'+total},
-    {text:'❌ Отклонить',callback_data:'reject|'+detailState.tgId+'|'+nm+'|'+y.names['en']}
+    {text:'✅ Подтвердить',callback_data:'confirm|'+(detailState.tgId||'')+'|'+nm+'|'+y.names['en']+'|'+dateStr+'|'+total},
+    {text:'❌ Отклонить',callback_data:'reject|'+(detailState.tgId||'')+'|'+nm+'|'+y.names['en']}
   ]);
   // Send with alternative yachts suggestion
   const altYachts=YACHTS.filter(a=>a.cat===y.cat&&a.id!==y.id&&a.capacity>=detailState.guests)
@@ -977,35 +992,30 @@ function sendSpecial(){
   document.getElementById('specContact').classList.remove('err');
   const t=T[lang];
   const specPhoneVal=(document.getElementById('specPhone')?.value||'').trim();
-  const contactStr=contact||tgUsername||('tg:'+tgId);
-  const msg='⭐ СПЕЦЗАПРОС\n'+'─'.repeat(26)+'\n'+(specNameVal?'👤 '+specNameVal+'\n':'')+(specPhoneVal?'📞 '+specPhoneVal+'\n':'')+'📱 '+contactStr+(tgId?'\n🔗 tg://user?id='+tgId:'')+(tgUsername&&tgUsername!==contactStr?'\n✈️ '+tgUsername:'')+'\n'+'⚡ '+t.urgLabels[urgSel]+'\n'+'📝 '+(req||'—')+'\n'+'📱 '+contact+'\n'+'─'.repeat(26)+'\nОтветь клиенту как можно скорее!';
-  // Build inline keyboard for owner - write to client button
+  const contactStr=contact||tgUsername||('tg:'+tgId)||'—';
+  const msg='⭐ СПЕЦЗАПРОС\n'+'─'.repeat(26)+'\n'+(specNameVal?'👤 '+specNameVal+'\n':'')+(specPhoneVal?'📞 '+specPhoneVal+'\n':'')+'📱 '+contactStr+(tgId?'\n🔗 tg://user?id='+tgId:'')+(tgUsername&&tgUsername!==contactStr?'\n✈️ '+tgUsername:'')+'\n'+'⚡ '+t.urgLabels[urgSel]+'\n'+'📝 '+(req||'—')+'\n'+'─'.repeat(26)+'\nОтветь клиенту как можно скорее!';
+
   const replyMarkup={inline_keyboard:[]};
-  if(detailState.tgId){
+  if(tgId){
     replyMarkup.inline_keyboard.push([
-      {text:'💬 Написать клиенту',url:'tg://user?id='+detailState.tgId}
+      {text:'💬 Написать клиенту',url:'tg://user?id='+tgId}
     ]);
   }
-  if(detailState.tgUsername&&detailState.tgUsername!==ph){
+  if(tgUsername){
     replyMarkup.inline_keyboard.push([
-      {text:'✈️ '+detailState.tgUsername,url:'https://t.me/'+detailState.tgUsername.replace('@','')}
+      {text:'✈️ '+tgUsername,url:'https://t.me/'+tgUsername.replace('@','')}
     ]);
   }
   replyMarkup.inline_keyboard.push([
-    {text:'✅ Подтвердить',callback_data:'confirm|'+detailState.tgId+'|'+nm+'|'+y.names['en']+'|'+dateStr+'|'+total},
-    {text:'❌ Отклонить',callback_data:'reject|'+detailState.tgId+'|'+nm+'|'+y.names['en']}
+    {text:'✅ Принято',callback_data:'spec_ok|'+(tgId||'')+'|'+(specNameVal||contactStr)},
+    {text:'❌ Отклонить',callback_data:'spec_reject|'+(tgId||'')+'|'+(specNameVal||contactStr)}
   ]);
-  // Send with alternative yachts suggestion
-  const altYachts=YACHTS.filter(a=>a.cat===y.cat&&a.id!==y.id&&a.capacity>=detailState.guests)
-    .slice(0,3).map(a=>a.names['en']).join(', ');
-  const altLine=altYachts?'\n💡 Альтернативы: '+altYachts:'';
-  const msgFull=msg+altLine;
-  fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msgFull,reply_markup:replyMarkup})}).catch(e=>console.log(e));
+
+  fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:OWNER_ID,text:msg,reply_markup:replyMarkup})}).catch(e=>console.log(e));
   document.getElementById('specRequest').value='';document.getElementById('specContact').value='';
   closeSpecial();
   const b=document.getElementById('specialBanner');
-  b.querySelector('.special-title').textContent='✓ '+t.specSend;
-  setTimeout(()=>{b.querySelector('.special-title').textContent=t.sbanTitle;},2500);
+  if(b){b.querySelector('.special-title').textContent='✓ '+t.specSend;setTimeout(()=>{b.querySelector('.special-title').textContent=t.sbanTitle;},2500);}
 }
 
 function closeAll(){
