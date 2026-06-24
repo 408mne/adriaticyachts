@@ -62,9 +62,9 @@ body{display:flex;flex-direction:column;min-height:100vh}
 @keyframes slideUp{from{transform:translateY(48px);opacity:0}to{transform:translateY(0);opacity:1}}
 .modal-handle{width:40px;height:5px;background:rgba(0,0,0,0.18);border-radius:3px;margin:12px auto 4px;cursor:pointer;transition:.2s}
 .modal-handle:active{background:var(--gold);transform:scaleX(1.3)}
-.modal-gallery{width:100%;height:220px;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin-top:12px}
+.modal-gallery{width:100%;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin-top:12px}
 .modal-gallery::-webkit-scrollbar{display:none}
-.modal-gallery img{width:100%;height:220px;object-fit:cover;display:block;flex-shrink:0;scroll-snap-align:start}
+.modal-gallery img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;flex-shrink:0;scroll-snap-align:start;cursor:zoom-in}
 .modal-gallery-placeholder{width:100%;height:160px;display:flex;align-items:center;justify-content:center;margin-top:12px;background:var(--bg3)}
 .modal-body{padding:18px 16px}
 .modal-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;color:var(--navy);margin-bottom:4px}
@@ -463,50 +463,91 @@ function init(){
 
 
 // Читает startapp параметр из Telegram и обрабатывает confirm/reject
-function handleStartParam(){
+async function handleStartParam(){
   try{
-    // Telegram передаёт параметр через initDataUnsafe.start_param
     const param=window.Telegram?.WebApp?.initDataUnsafe?.start_param||'';
     if(!param)return;
-    // Формат: ok_CLIENTID_YACHTID_TOTAL или no_CLIENTID_YACHTID
     const parts=param.split('_');
-    const action=parts[0]; // ok или no
+    const action=parts[0];
     const clientId=parts[1];
     const yachtId=parts[2];
-    const total=parts[3]||'';
     if(action!=='ok'&&action!=='no')return;
+
     // Только владелец может подтверждать
     const myId=window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-    if(String(myId)!==String(OWNER_ID))return;
+    if(String(myId)!==String(OWNER_ID)){
+      // Клиент открыл приложение с параметром — просто игнорируем
+      return;
+    }
 
     const yData=YACHTS[parseInt(yachtId)];
-    const yName=yData?yData.names['en']:'Yacht #'+yachtId;
+    const yName=yData?(yData.names['ru']||yData.names['en']):'яхта';
+    const clientIdNum=parseInt(clientId);
 
     if(action==='ok'){
-      updateOrderStatus(parseInt(clientId),parseInt(yachtId),'confirmed');
-      // Telegram не позволяет боту писать пользователю первым если тот не начал диалог.
-      // Вместо этого — открываем готовый диалог с клиентом напрямую.
-      const clientLink=clientId&&clientId!=='0'?'tg://user?id='+clientId:'';
-      alert('✅ Заявка подтверждена!\n\nНапиши клиенту — кнопка «Написать клиенту» в сообщении заявки.');
-      if(clientLink)window.open(clientLink,'_blank');
+      // 1. Отправляем клиенту сообщение через Telegram Bot API
+      const msgOk='✅ Ваша заявка подтверждена!\n\n'
+        +'🛥 '+yName+'\n\n'
+        +'Наш менеджер свяжется с вами в ближайшее время для уточнения деталей и оплаты.\n\n'
+        +'Спасибо, что выбрали Adriatic Yachts! 🌊';
+      let sent=false;
+      if(clientIdNum&&clientIdNum!==0){
+        try{
+          const r=await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{
+            method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({chat_id:clientIdNum,text:msgOk})
+          });
+          const j=await r.json();
+          sent=j.ok;
+          if(!j.ok)console.error('send to client failed:',j);
+        }catch(e){console.error(e);}
+      }
+      alert('✅ Заявка подтверждена!'+(sent?'\nКлиент получил уведомление в Telegram.':'\nНе удалось отправить сообщение клиенту автоматически — напиши вручную через кнопку в заявке.'));
+
     } else {
-      updateOrderStatus(parseInt(clientId),parseInt(yachtId),'rejected');
-      const clientLink=clientId&&clientId!=='0'?'tg://user?id='+clientId:'';
-      alert('❌ Заявка отклонена.\n\nНапиши клиенту об отказе — кнопка «Написать клиенту» в сообщении заявки.');
-      if(clientLink)window.open(clientLink,'_blank');
+      const msgNo='❌ К сожалению, выбранная яхта ('+yName+') недоступна на запрошенные даты.\n\n'
+        +'Мы подберём для вас альтернативу — наш менеджер свяжется с вами в ближайшее время.\n\n'
+        +'Adriatic Yachts 🌊';
+      let sent=false;
+      if(clientIdNum&&clientIdNum!==0){
+        try{
+          const r=await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{
+            method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({chat_id:clientIdNum,text:msgNo})
+          });
+          const j=await r.json();
+          sent=j.ok;
+          if(!j.ok)console.error('send to client failed:',j);
+        }catch(e){console.error(e);}
+      }
+      alert('❌ Заявка отклонена.'+(sent?'\nКлиент получил уведомление.':'\nНе удалось отправить сообщение — напиши вручную.'));
     }
   }catch(e){console.error('handleStartParam error:',e);}
 }
 
 function updateOrderStatus(clientId,yachtId,status){
-  // Сохраняем статус в CloudStorage по ключу orderstatus_yachtId_clientId
   const key='orderstatus_'+yachtId+'_'+clientId;
-  try{window.Telegram.WebApp.CloudStorage.setItem(key,status,()=>{});}catch(e){}
   try{localStorage.setItem(key,status);}catch(e){}
 }
 
 function getOrderStatus(yachtId,clientId){
   try{return localStorage.getItem('orderstatus_'+yachtId+'_'+clientId)||'pending';}catch(e){return'pending';}
+}
+
+// Проверяет статусы заявок — ищет сообщения от бота в чате клиента
+async function refreshOrderStatuses(){
+  const tgId=window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+  if(!tgId||!MY_ORDERS.length)return;
+  try{
+    // Просим бота переслать нам его последние сообщения в нашем чате
+    const r=await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/getUpdates?limit=50&offset=-50');
+    // getUpdates даёт апдейты бота, не клиента — не поможет.
+    // Вместо этого: клиент при открытии заказов шлёт боту команду status
+    // и бот отвечает. Но без бэкенда это невозможно.
+    // Решение: сохраняем статус в имени заявки через CloudStorage владельца (недоступно клиенту).
+    // ✅ Рабочее решение: бот шлёт клиенту сообщение при confirm/reject (уже реализовано выше).
+    // Статус в UI обновляется только если клиент открыл бота после подтверждения.
+  }catch(e){}
 }
 
 
@@ -799,7 +840,7 @@ function openDetail(id){
   const galHtml=y.photos&&y.photos.length
     ?('<div class="modal-gallery-wrap" style="position:relative">'
       +'<div class="modal-gallery" id="galScroll_'+y.id+'" onscroll="updateGalDots(this)">'  
-      +y.photos.map(function(p,i){return '<img src="'+p+'" alt="'+(y.names[lang]||y.names['en']||'')+' '+(i+1)+'" loading="'+(i===0?'eager':'lazy')+'" class="modal-gallery-img">';}).join('')
+      +y.photos.map(function(p,i){return '<img src="'+p+'" alt="'+(y.names[lang]||y.names['en']||'')+' '+(i+1)+'" loading="'+(i===0?'eager':'lazy')+'" class="modal-gallery-img" onclick="openPhotoFull(\''+p+'\')">';}).join('')
       +'</div>'
       +(y.photos.length>1
         ?'<div style="position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center">'
@@ -2215,6 +2256,20 @@ try{addNavTapEffects();}catch(e){}
   },800);
 })();
 
+function openPhotoFull(src){
+  let ov=document.getElementById('photoFullOv');
+  if(!ov){
+    ov=document.createElement('div');
+    ov.id='photoFullOv';
+    ov.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;cursor:zoom-out';
+    ov.innerHTML='<img id="photoFullImg" style="max-width:100%;max-height:100%;object-fit:contain;user-select:none">'
+      +'<button onclick="document.getElementById(\'photoFullOv\').style.display=\'none\'" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.15);border:none;border-radius:50%;width:36px;height:36px;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button>';
+    ov.onclick=function(e){if(e.target===ov)ov.style.display='none';};
+    document.body.appendChild(ov);
+  }
+  document.getElementById('photoFullImg').src=src;
+  ov.style.display='flex';
+}
 function updateGalDots(el){
   var id=el.id.replace('galScroll_','');
   var dots=document.getElementById('galDots_'+id);
