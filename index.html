@@ -390,12 +390,14 @@ const OWNER_ID=70131641;
 // Как узнать ID группы: добавь @userinfobot в группу, он напишет ID (будет отрицательным, напр. -1001234567890)
 const BACKUP_IDS=[8675886948,-1003882430280]; // пример: [123456789, -1001234567890]
 
-// Надёжная отправка: шлёт на все chat_id, сохраняет в локальный лог, повторяет при ошибке
-async function sendTgMessage(text, replyMarkup){
-  const targets=[OWNER_ID,...BACKUP_IDS];
-  const body={text, parse_mode:'HTML'};
-  if(replyMarkup)body.reply_markup=replyMarkup;
-  
+async function sendTgMessage(text, replyMarkup, singleChatId){
+  // Если передан конкретный chatId — шлём только туда (уведомление клиенту)
+  // Иначе — на все targets (заявка владельцу)
+  const targets=singleChatId?[singleChatId]:[OWNER_ID,...BACKUP_IDS];
+  // НЕ используем parse_mode чтобы спецсимволы не ломали доставку
+  const baseBody={text};
+  if(replyMarkup)baseBody.reply_markup=replyMarkup;
+
   // Лог в localStorage — заявка сохраняется ВСЕГДА, даже если интернет упал
   try{
     const log=JSON.parse(localStorage.getItem('ay_send_log')||'[]');
@@ -404,40 +406,35 @@ async function sendTgMessage(text, replyMarkup){
     localStorage.setItem('ay_send_log',JSON.stringify(log));
   }catch(e){}
 
-  let anySuccess=false;
-  for(const chatId of targets){
-    try{
-      const r=await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{
+  // Отправляем параллельно на все chat_id
+  const results=await Promise.allSettled(targets.map(async chatId=>{
+    const r=await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({...baseBody,chat_id:chatId})
+    });
+    const j=await r.json();
+    if(!j.ok){
+      console.error('TG error chat_id='+chatId+':',JSON.stringify(j));
+      // Повтор без reply_markup (inline_keyboard может блокировать для группы)
+      const r2=await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{
         method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({...body,chat_id:chatId})
+        body:JSON.stringify({text,chat_id:chatId})
       });
-      const j=await r.json();
-      if(j.ok){
-        anySuccess=true;
-        // Помечаем в логе что отправилось
-        try{
-          const log=JSON.parse(localStorage.getItem('ay_send_log')||'[]');
-          if(log[0])log[0].sent=true;
-          localStorage.setItem('ay_send_log',JSON.stringify(log));
-        }catch(e){}
-      } else {
-        console.error('TG error chat_id='+chatId+':',JSON.stringify(j));
-        // Если сообщение слишком длинное — шлём урезанную версию
-        if(j.error_code===400){
-          const shortBody={...body,text:text.slice(0,3000),chat_id:chatId};
-          delete shortBody.reply_markup;
-          const r2=await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{
-            method:'POST',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify(shortBody)
-          });
-          const j2=await r2.json();
-          if(j2.ok)anySuccess=true;
-        }
-      }
-    }catch(e){
-      console.error('TG fetch error:',e);
+      const j2=await r2.json();
+      if(!j2.ok)throw new Error(JSON.stringify(j2));
     }
+    return chatId;
+  }));
+
+  const anySuccess=results.some(r=>r.status==='fulfilled');
+  if(anySuccess){
+    try{
+      const log=JSON.parse(localStorage.getItem('ay_send_log')||'[]');
+      if(log[0])log[0].sent=true;
+      localStorage.setItem('ay_send_log',JSON.stringify(log));
+    }catch(e){}
   }
+  results.forEach((r,i)=>{if(r.status==='rejected')console.error('Failed for',targets[i],r.reason);});
   return anySuccess;
 }
 
@@ -460,6 +457,58 @@ function init(){
     window.Telegram?.WebApp?.ready();
     window.Telegram?.WebApp?.expand();
   }catch(e){}
+  // Обработка confirm/reject от кнопок бота
+  handleStartParam();
+}
+
+
+// Читает startapp параметр из Telegram и обрабатывает confirm/reject
+function handleStartParam(){
+  try{
+    // Telegram передаёт параметр через initDataUnsafe.start_param
+    const param=window.Telegram?.WebApp?.initDataUnsafe?.start_param||'';
+    if(!param)return;
+    // Формат: ok_CLIENTID_YACHTID_TOTAL или no_CLIENTID_YACHTID
+    const parts=param.split('_');
+    const action=parts[0]; // ok или no
+    const clientId=parts[1];
+    const yachtId=parts[2];
+    const total=parts[3]||'';
+    if(action!=='ok'&&action!=='no')return;
+    // Только владелец может подтверждать
+    const myId=window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+    if(String(myId)!==String(OWNER_ID))return;
+
+    const yData=YACHTS[parseInt(yachtId)];
+    const yName=yData?yData.names['en']:'Yacht #'+yachtId;
+
+    if(action==='ok'){
+      // Отправляем клиенту подтверждение
+      if(clientId&&clientId!=='0'){
+        sendTgMessage('✅ Ваша заявка на '+yName+' подтверждена!\n\nМенеджер Adriatic Yachts свяжется с вами в ближайшее время для уточнения деталей.',null,parseInt(clientId));
+      }
+      // Обновляем статус в нашем логе
+      updateOrderStatus(parseInt(clientId),parseInt(yachtId),'confirmed');
+      alert('✅ Заявка подтверждена. Клиент уведомлён.');
+    } else {
+      if(clientId&&clientId!=='0'){
+        sendTgMessage('❌ К сожалению, выбранная яхта '+yName+' недоступна на запрошенные даты.\n\nСвяжитесь с нами для подбора альтернативы — мы найдём лучший вариант!',null,parseInt(clientId));
+      }
+      updateOrderStatus(parseInt(clientId),parseInt(yachtId),'rejected');
+      alert('❌ Заявка отклонена. Клиент уведомлён.');
+    }
+  }catch(e){console.error('handleStartParam error:',e);}
+}
+
+function updateOrderStatus(clientId,yachtId,status){
+  // Сохраняем статус в CloudStorage по ключу orderstatus_yachtId_clientId
+  const key='orderstatus_'+yachtId+'_'+clientId;
+  try{window.Telegram.WebApp.CloudStorage.setItem(key,status,()=>{});}catch(e){}
+  try{localStorage.setItem(key,status);}catch(e){}
+}
+
+function getOrderStatus(yachtId,clientId){
+  try{return localStorage.getItem('orderstatus_'+yachtId+'_'+clientId)||'pending';}catch(e){return'pending';}
 }
 
 
@@ -996,12 +1045,13 @@ function submitBooking(yid){
   if(tgUsernameSafe){
     replyMarkup.inline_keyboard.push([{text:'✈️ '+tgUsernameSafe,url:'https://t.me/'+tgUsernameSafe.replace('@','')}]);
   }
-  // callback_data strictly under 64 bytes
-  const cbConfirm='ok|'+(tgIdSafe||0)+'|'+y.id+'|'+(detailState.slotOnRequest?'req':total);
-  const cbReject='no|'+(tgIdSafe||0)+'|'+y.id;
+  // Кнопки — ссылки на Mini App с параметром (не callback_data, не нужен бэкенд)
+  const appUrl='https://t.me/adriaticyachts_bot/app';
+  const cbConfirm='ok_'+(tgIdSafe||0)+'_'+y.id+'_'+(detailState.slotOnRequest?'req':total);
+  const cbReject='no_'+(tgIdSafe||0)+'_'+y.id;
   replyMarkup.inline_keyboard.push([
-    {text:'✅ Подтвердить',callback_data:cbConfirm},
-    {text:'❌ Отклонить',callback_data:cbReject}
+    {text:'✅ Подтвердить',url:appUrl+'?startapp='+cbConfirm},
+    {text:'❌ Отклонить',url:appUrl+'?startapp='+cbReject}
   ]);
 
   // Send and log any Telegram API error
@@ -1013,7 +1063,7 @@ function submitBooking(yid){
   });
 
   // Save to local orders history
-  saveMyOrder({yacht:(y.names[lang]||y.names['en']||''),date:dateStr,duration:durStr,guests:detailState.guests,extras:extrasNames,total,ts:Date.now()});
+  saveMyOrder({yacht:(y.names[lang]||y.names['en']||''),yachtId:y.id,clientTgId:tgIdSafe,date:dateStr,duration:durStr,guests:detailState.guests,extras:extrasNames,total,ts:Date.now()});
   launchConfetti();
   clearInterval(timerInterval);
   document.getElementById('detailContent').innerHTML=`
@@ -1233,11 +1283,19 @@ function showOrders(){
       ${reviewBtn}
     `:`
       <div style="background:rgba(181,137,58,0.07);border:1px solid rgba(181,137,58,0.2);border-radius:var(--rs);padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--text2);line-height:1.6">${noteText}</div>
-      ${MY_ORDERS.map((o,i)=>`
+      ${MY_ORDERS.map((o,i)=>{
+        const tgId=window.Telegram?.WebApp?.initDataUnsafe?.user?.id||'';
+        const status=getOrderStatus(o.yachtId||0,tgId);
+        const badge=status==='confirmed'
+          ?'<div style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(42,122,86,0.12);border:1px solid rgba(42,122,86,0.3);color:#2a7a56">✅ '+(lang==='ru'?'Подтверждено':'Confirmed')+'</div>'
+          :status==='rejected'
+          ?'<div style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(192,64,64,0.08);border:1px solid rgba(192,64,64,0.2);color:#c04040">❌ '+(lang==='ru'?'Отклонено':'Declined')+'</div>'
+          :'<div style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(181,137,58,0.1);border:1px solid rgba(181,137,58,0.25);color:var(--gold)">⏳ '+(lang==='ru'?'На рассмотрении':'Pending')+'</div>';
+        return `
         <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:14px;margin-bottom:10px;animation:fadeInUp .3s ${i*0.06}s ease both">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
             <div style="font-size:14px;font-weight:500;color:var(--navy)">${o.yacht}</div>
-            <div style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(42,122,86,0.08);border:1px solid rgba(42,122,86,0.2);color:#2a7a56">${lang==='ru'?'Отправлено':'Sent'}</div>
+            ${badge}
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
             <div style="background:var(--bg3);border-radius:var(--rs);padding:7px 10px">
@@ -1251,7 +1309,7 @@ function showOrders(){
           </div>
           ${o.total?`<div style="font-size:13px;font-weight:500;color:var(--gold)">💰 ${o.total.toLocaleString()} €</div>`:''}
           <div style="font-size:11px;color:var(--text3);margin-top:5px">⏰ ${new Date(o.ts).toLocaleString(lang==='ru'?'ru-RU':'en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
-        </div>`).join('')}
+        </div>`;}).join('')}
       <button onclick="backToCatalog()" style="background:transparent;border:1px solid var(--border2);border-radius:var(--rs);width:100%;padding:11px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text2);margin-top:4px">${backText}</button>
       ${reviewBtn}
       ${buildSendLog()}
