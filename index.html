@@ -482,7 +482,7 @@ function getMinPrice(y){
 function getPriceLabel(y){
   const min=getMinPrice(y);
   if(!min)return '<span style="color:var(--text3)">на запрос</span>';
-  const unitLabel=min.unit==='w'?(lang==='ru'?'нед.':lang==='me'?'ned.':'week'):min.unit==='d'?(lang==='ru'?'д.':lang==='me'?'d.':'day'):(lang==='ru'?'ч':lang==='me'?'h':'h');
+  const unitLabel=min.unit==='w'?(lang==='ru'?'нед.':lang==='me'?'ned.':'week'):min.unit==='d'?(lang==='ru'?min.t+' д.':lang==='me'?min.t+' d.':min.t+' day'):( lang==='ru'?min.t+' ч':lang==='me'?min.t+' h':min.t+' h');
   return 'от '+min.price.toLocaleString()+'€ <span>/ '+unitLabel+'</span>';
 }
 
@@ -736,8 +736,6 @@ const priceHtml=`<div class="price-box" id="priceBox"><div class="price-label">$
       <div class="section-lbl">${t.included}</div>
       <div class="features-grid">${featsHtml}</div>
       <div style="margin-top:16px">${priceHtml}</div>
-      <div class="section-lbl" style="margin-top:16px">${t.extras}</div>
-      <div class="extras-grid">${extrasHtml}</div>
       <div class="modal-divider"></div>
       <div class="form-section">
         <div class="section-lbl">${t.startDate}</div>
@@ -752,6 +750,9 @@ const priceHtml=`<div class="price-box" id="priceBox"><div class="price-label">$
         <div id="pricingSlots">${buildSlots(y,t)}</div>
         <div class="err-msg" id="dateErr" style="display:none">${t.noDate}</div>
       </div>
+      <div class="section-lbl" style="margin-top:16px">${t.extras}</div>
+      <div class="extras-grid">${extrasHtml}</div>
+      <div class="modal-divider"></div>
       <div class="form-section">
         <div class="section-lbl">${t.contacts}</div>
         <input class="inp" id="nameInp" placeholder="${t.name}" type="text">
