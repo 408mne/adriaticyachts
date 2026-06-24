@@ -483,19 +483,17 @@ function handleStartParam(){
     const yName=yData?yData.names['en']:'Yacht #'+yachtId;
 
     if(action==='ok'){
-      // Отправляем клиенту подтверждение
-      if(clientId&&clientId!=='0'){
-        sendTgMessage('✅ Ваша заявка на '+yName+' подтверждена!\n\nМенеджер Adriatic Yachts свяжется с вами в ближайшее время для уточнения деталей.',null,parseInt(clientId));
-      }
-      // Обновляем статус в нашем логе
       updateOrderStatus(parseInt(clientId),parseInt(yachtId),'confirmed');
-      alert('✅ Заявка подтверждена. Клиент уведомлён.');
+      // Telegram не позволяет боту писать пользователю первым если тот не начал диалог.
+      // Вместо этого — открываем готовый диалог с клиентом напрямую.
+      const clientLink=clientId&&clientId!=='0'?'tg://user?id='+clientId:'';
+      alert('✅ Заявка подтверждена!\n\nНапиши клиенту — кнопка «Написать клиенту» в сообщении заявки.');
+      if(clientLink)window.open(clientLink,'_blank');
     } else {
-      if(clientId&&clientId!=='0'){
-        sendTgMessage('❌ К сожалению, выбранная яхта '+yName+' недоступна на запрошенные даты.\n\nСвяжитесь с нами для подбора альтернативы — мы найдём лучший вариант!',null,parseInt(clientId));
-      }
       updateOrderStatus(parseInt(clientId),parseInt(yachtId),'rejected');
-      alert('❌ Заявка отклонена. Клиент уведомлён.');
+      const clientLink=clientId&&clientId!=='0'?'tg://user?id='+clientId:'';
+      alert('❌ Заявка отклонена.\n\nНапиши клиенту об отказе — кнопка «Написать клиенту» в сообщении заявки.');
+      if(clientLink)window.open(clientLink,'_blank');
     }
   }catch(e){console.error('handleStartParam error:',e);}
 }
@@ -862,14 +860,32 @@ const priceHtml=`<div class="price-box" id="priceBox"><div class="price-label">$
       <div class="modal-divider"></div>
       <div class="form-section">
         <div class="section-lbl">${t.contacts}</div>
-        <input class="inp" id="nameInp" placeholder="${t.name}" type="text">
-        <div class="err-msg" id="nameErr" style="display:none">${t.noName}</div>
-        <div style="position:relative">
-          <input class="inp" id="phoneInp" placeholder="${t.phone}" type="text" style="margin-bottom:4px">
-          <div style="font-size:11px;color:var(--text3);padding:0 2px 8px">${lang==='ru'?'Telegram уже передан автоматически. Телефон / email — по желанию.':lang==='me'?'Telegram je proslijeđen automatski. Telefon / email — po želji.':'Your Telegram is shared automatically. Phone / email — optional.'}</div>
-        </div>
-        <div class="err-msg" id="phoneErr" style="display:none">${t.noPhone}</div>
-        <input class="inp" id="commentInp" placeholder="${t.comment}" type="text">
+        ${tgName
+          ? `<div id="nameAutoRow" style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(42,122,86,0.07);border:1px solid rgba(42,122,86,0.2);border-radius:var(--rs);margin-bottom:8px">
+              <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#2a7a56;fill:none;stroke-width:2.5;flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>
+              <div style="font-size:12px;color:#2a7a56;flex:1">${tgName}${tgUsername?' · '+tgUsername:''} — ${lang==='ru'?'данные из Telegram':lang==='me'?'Telegram podaci':'from Telegram'}</div>
+              <button onclick="document.getElementById('nameManualRow').style.display='block';this.style.display='none'" style="background:none;border:none;font-size:10px;color:var(--text3);cursor:pointer;padding:0;text-decoration:underline">${lang==='ru'?'изменить':lang==='me'?'promijeni':'edit'}</button>
+            </div>
+            <div id="nameManualRow" style="display:none">
+              <input class="inp" id="nameInp" placeholder="${t.name}" type="text" value="${tgName}">
+              <input class="inp" id="phoneInp" placeholder="${lang==='ru'?'Телефон или email':lang==='me'?'Telefon ili email':'Phone or email'}" type="text" value="${tgUsername}" style="margin-top:6px">
+              <div style="font-size:11px;color:var(--text3);margin-top:4px;padding:0 2px">${lang==='ru'?'📞 телефон · 📧 email · или оставьте Telegram':lang==='me'?'📞 telefon · 📧 email · ili ostavite Telegram':'📞 phone · 📧 email · or keep Telegram'}</div>
+            </div>`
+          : `<div id="nameManualRow">
+              <div style="font-size:11px;color:#c04040;font-weight:500;margin-bottom:6px;padding:8px 12px;background:rgba(192,64,64,0.06);border:1px solid rgba(192,64,64,0.15);border-radius:var(--rs)">
+                ⚠️ ${lang==='ru'?'Заполните имя и контакт — без этого нельзя отправить заявку':lang==='me'?'Unesite ime i kontakt — bez toga se ne može poslati zahtjev':'Fill in name and contact — required to submit'}
+              </div>
+              <input class="inp" id="nameInp" placeholder="${t.name} *" type="text" oninput="onContactInput()" style="border-color:var(--inp-border,var(--border2))">
+              <div class="err-msg" id="nameErr" style="display:none">${t.noName}</div>
+              <input class="inp" id="phoneInp" placeholder="${lang==='ru'?'Телефон или email *':lang==='me'?'Telefon ili email *':'Phone or email *'}" type="text" oninput="onContactInput()" style="margin-top:6px;border-color:var(--inp-border,var(--border2))">
+              <div style="font-size:11px;color:var(--text3);margin-top:4px;padding:0 2px">${lang==='ru'?'📞 +7 999 … · 📧 name@mail.com · или @telegram':lang==='me'?'📞 +382 … · 📧 name@mail.com · ili @telegram':'📞 +1 999 … · 📧 name@mail.com · or @telegram'}</div>
+              <div class="err-msg" id="phoneErr" style="display:none">${t.noPhone}</div>
+            </div>`
+        }
+        ${tgName
+          ? `<input class="inp" id="nameInp" type="hidden" value="${tgName}"><input class="inp" id="phoneInp" type="hidden" value="${tgUsername}">`
+          : ''}
+        <input class="inp" id="commentInp" placeholder="${t.comment}" type="text" style="margin-top:6px">
       </div>
       <div class="form-section">
         <div class="section-lbl">${t.guests}</div>
@@ -960,6 +976,14 @@ function setDurSlot(key,price,onRequest){
   }
 }
 
+function onContactInput(){
+  const ni=document.getElementById('nameInp');
+  const pi=document.getElementById('phoneInp');
+  if(ni&&ni.value.trim()){ni.style.borderColor='rgba(42,122,86,0.5)';ni.style.background='rgba(42,122,86,0.04)';}
+  else if(ni){ni.style.borderColor='rgba(192,64,64,0.5)';ni.style.background='rgba(192,64,64,0.04)';}
+  if(pi&&pi.value.trim()){pi.style.borderColor='rgba(42,122,86,0.5)';pi.style.background='rgba(42,122,86,0.04)';}
+  else if(pi){pi.style.borderColor='rgba(192,64,64,0.4)';pi.style.background='rgba(192,64,64,0.03)';}
+}
 function toggleExtra(yid,i){
   if(detailState.extras.has(i))detailState.extras.delete(i);else detailState.extras.add(i);
   document.querySelectorAll('.extras-grid .extra').forEach((el,idx)=>el.classList.toggle('sel',detailState.extras.has(idx)));
@@ -972,35 +996,42 @@ function changeGuests(d){
 }
 
 function submitBooking(yid){
-  const t=T[lang];let ok=true;
+  const t=T[lang];
 
-  // Auto-pick slot
+  // 1. Auto-pick slot if not selected — always resolve before validation
   if(!detailState.duration){
     const y0=YACHTS[yid];
     const asl=(y0.pricing||[]).filter(s=>s.price>0);
     if(asl.length){const best=asl.reduce((m,s)=>s.price<m.price?s:m,asl[0]);setDurSlot(best.t+best.unit,best.price,false);}
-    else{const anySlot=(y0.pricing||[])[0];if(anySlot)setDurSlot(anySlot.t+anySlot.unit,0,true);}
+    else if(y0.pricing?.length){setDurSlot(y0.pricing[0].t+y0.pricing[0].unit,0,true);}
+    else{setDurSlot('4h',0,true);}
   }
-  // Auto-set today
   if(!detailState.date){const d=new Date();detailState.date=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 
-  if(!detailState.date||!detailState.duration){document.getElementById('dateErr').style.display='block';ok=false;}else document.getElementById('dateErr').style.display='none';
-
-  // Read Telegram user directly at click moment (no setTimeout dependency)
+  // 2. Read TG user at click moment
   const _tgNow=window.Telegram?.WebApp?.initDataUnsafe?.user||null;
   const _tgNameNow=_tgNow?((_tgNow.first_name||'')+(_tgNow.last_name?' '+_tgNow.last_name:'')).trim():'';
   const _tgUsernameNow=_tgNow&&_tgNow.username?'@'+_tgNow.username:'';
   const _tgIdNow=_tgNow?_tgNow.id:null;
 
   const nameField=document.getElementById('nameInp');
-  // FIX: was using bitwise | instead of || — caused crash on Android
-  const nm=(nameField?.value||'').trim()||_tgNameNow||detailState.tgName||'Гость';
-  if(nameField&&!nameField.value)nameField.value=nm;
-  const ph=(document.getElementById('phoneInp')?.value||'').trim()||_tgUsernameNow||detailState.tgUsername||(_tgIdNow?'tg:'+_tgIdNow:'')||'—';
+  const nm=(nameField?.value||'').trim()||_tgNameNow||detailState.tgName||'';
+  if(nameField&&!nameField.value&&nm)nameField.value=nm;
+  const ph=(document.getElementById('phoneInp')?.value||'').trim()||_tgUsernameNow||detailState.tgUsername||(_tgIdNow?'tg:'+_tgIdNow:'')||'';
 
-  // Name is now always set (fallback 'Гость') so nameErr never blocks
-  document.getElementById('nameErr').style.display='none';
-  document.getElementById('phoneErr').style.display='none';
+  // 3. Validation with bright highlight
+  let ok=true;
+  const dateErrEl=document.getElementById('dateErr');
+  if(!detailState.date||!detailState.duration){if(dateErrEl)dateErrEl.style.display='block';ok=false;}
+  else if(dateErrEl)dateErrEl.style.display='none';
+
+  if(!nm){
+    const ni=document.getElementById('nameInp');
+    if(ni){ni.style.borderColor='#c04040';ni.style.background='rgba(192,64,64,0.07)';ni.style.boxShadow='0 0 0 3px rgba(192,64,64,0.15)';ni.focus();ni.placeholder=t.noName+' ⚠️';}
+    const ne=document.getElementById('nameErr');if(ne)ne.style.display='block';
+    ok=false;
+  } else {const ne=document.getElementById('nameErr');if(ne)ne.style.display='none';}
+
   if(!ok)return;
 
   const y=YACHTS[yid];
@@ -1009,35 +1040,36 @@ function submitBooking(yid){
   const total=detailState.slotOnRequest?0:(basePrice+extTotal);
   const dateStr=new Date(detailState.date+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
   const durStr=detailState.duration;
-  const extrasNames=[...detailState.extras].map(i=>y.extras[i]?.(lang)||y.extras[i]?.ru||'').join(', ');
+  const extrasNames=[...detailState.extras].map(i=>y.extras[i]?.(lang)||y.extras[i]?.ru||'').filter(Boolean).join(', ');
   const comment=(document.getElementById('commentInp')?.value||'').trim();
-
-  const clientLang=_tgNow?.language_code||'unknown';
-  const countryFlag={ru:'🇷🇺',en:'🇬🇧',de:'🇩🇪',tr:'🇹🇷',me:'🇲🇪',uk:'🇺🇦',fr:'🇫🇷',it:'🇮🇹',es:'🇪🇸',sr:'🇷🇸',hr:'🇭🇷'}[clientLang.split('-')[0]]||'🌍';
-
+  const clientLang=_tgNow?.language_code||'';
   const tgIdSafe=_tgIdNow||detailState.tgId||null;
   const tgUsernameSafe=_tgUsernameNow||detailState.tgUsername||'';
 
-  const msg=[
-    '🛥 НОВАЯ ЗАЯВКА',
-    '─'.repeat(26),
-    '🚢 ' + y.names['en'],
-    '👤 ' + nm,
-    '📱 ' + ph,
-    tgIdSafe ? '🔗 tg://user?id='+tgIdSafe : null,
-    tgUsernameSafe && tgUsernameSafe!==ph ? '✈️ '+tgUsernameSafe : null,
-    countryFlag+' '+clientLang.toUpperCase()+' / app:'+lang.toUpperCase(),
-    '📅 ' + dateStr,
-    '⛵ ' + (y.marina||'—'),
-    '⏱ ' + durStr,
-    '👥 ' + detailState.guests + ' чел.',
-    extrasNames ? '➕ ' + extrasNames : null,
-    comment ? '💬 ' + comment : null,
-    '─'.repeat(26),
-    detailState.slotOnRequest ? '💰 По запросу' : '💰 '+total+' €',
-    '❗ Подтвердить в течение 4 ч'
-  ].filter(Boolean).join('\n');
+  // 4. Short clean message (avoid Telegram length limits)
+  const lines=[
+    '🛥 ЗАЯВКА',
+    '─'.repeat(20),
+    '🚢 '+y.names['en'],
+    '👤 '+nm,
+    '📱 '+(ph||'—'),
+    tgIdSafe?'🔗 tg://user?id='+tgIdSafe:null,
+    tgUsernameSafe&&tgUsernameSafe!==ph?'✈️ '+tgUsernameSafe:null,
+    clientLang?'🌍 '+clientLang.toUpperCase()+'/'+lang.toUpperCase():null,
+    '📅 '+dateStr,
+    '⏱ '+durStr,
+    '👥 '+detailState.guests,
+    extrasNames?'➕ '+extrasNames:null,
+    comment?'💬 '+comment:null,
+    '─'.repeat(20),
+    detailState.slotOnRequest?'💰 На запрос':'💰 '+total+' €'
+  ].filter(Boolean);
+  const msg=lines.join('\n');
 
+  // 5. Inline keyboard
+  // Confirm/Reject: open Mini App with startapp param (no backend needed)
+  // BUT: can't send message to client via bot if they haven't started it.
+  // Instead: "Write to client" button opens Telegram chat directly.
   const replyMarkup={inline_keyboard:[]};
   if(tgIdSafe){
     replyMarkup.inline_keyboard.push([{text:'💬 Написать клиенту',url:'tg://user?id='+tgIdSafe}]);
@@ -1045,24 +1077,16 @@ function submitBooking(yid){
   if(tgUsernameSafe){
     replyMarkup.inline_keyboard.push([{text:'✈️ '+tgUsernameSafe,url:'https://t.me/'+tgUsernameSafe.replace('@','')}]);
   }
-  // Кнопки — ссылки на Mini App с параметром (не callback_data, не нужен бэкенд)
-  const appUrl='https://t.me/adriaticyachts_bot/app';
-  const cbConfirm='ok_'+(tgIdSafe||0)+'_'+y.id+'_'+(detailState.slotOnRequest?'req':total);
-  const cbReject='no_'+(tgIdSafe||0)+'_'+y.id;
+  // Confirm/Reject open Mini App — param uses short format
+  const botUsername='adriaticyachts_bot'; // ← имя бота
+  const paramOk='ok_'+(tgIdSafe||0)+'_'+y.id;
+  const paramNo='no_'+(tgIdSafe||0)+'_'+y.id;
   replyMarkup.inline_keyboard.push([
-    {text:'✅ Подтвердить',url:appUrl+'?startapp='+cbConfirm},
-    {text:'❌ Отклонить',url:appUrl+'?startapp='+cbReject}
+    {text:'✅ Подтвердить',url:'https://t.me/'+botUsername+'/app?startapp='+paramOk},
+    {text:'❌ Отклонить',url:'https://t.me/'+botUsername+'/app?startapp='+paramNo}
   ]);
 
-  // Send and log any Telegram API error
-  sendTgMessage(msg, replyMarkup).then(ok=>{
-    if(!ok){
-      // Заявка уже сохранена локально, но покажем предупреждение
-      console.warn('Заявка не ушла в Telegram, но сохранена локально');
-    }
-  });
-
-  // Save to local orders history
+  sendTgMessage(msg,replyMarkup);
   saveMyOrder({yacht:(y.names[lang]||y.names['en']||''),yachtId:y.id,clientTgId:tgIdSafe,date:dateStr,duration:durStr,guests:detailState.guests,extras:extrasNames,total,ts:Date.now()});
   launchConfetti();
   clearInterval(timerInterval);
