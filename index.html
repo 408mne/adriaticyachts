@@ -387,7 +387,8 @@ const YACHTS=[
 const BOT_TOKEN='8864246711:AAH1dASsllqCtr6pI7cYDfDrA004hKLaO6o';
 const OWNER_ID=70131641;
 const BOT_USERNAME='Adriatic_yachts_bot';
-const APP_NAME='adriaticyachts'; // short name из BotFather (Edit Bot → Bot Menu Button → short_name)
+const APP_NAME='orayacht';
+const APP_URL='https://t.me/Adriatic_yachts_bot/orayacht';
 // 🛡 РЕЗЕРВНЫЕ ПОЛУЧАТЕЛИ — добавь сюда свой второй Telegram ID или ID группы
 // Как узнать ID группы: добавь @userinfobot в группу, он напишет ID (будет отрицательным, напр. -1001234567890)
 const BACKUP_IDS=[8675886948,-1003882430280]; // пример: [123456789, -1001234567890]
@@ -471,9 +472,11 @@ async function handleStartParam(){
     const tgParam=window.Telegram?.WebApp?.initDataUnsafe?.start_param||'';
     const urlParam=new URLSearchParams(window.location.search).get('startapp')||'';
     const hashParam=(window.location.hash||'').replace('#','');
-    const param=tgParam||urlParam||hashParam||'';
+    const param=hashParam||tgParam||urlParam||'';
 
     if(!param)return;
+    // Очищаем hash чтобы не срабатывало повторно
+    if(hashParam)history.replaceState(null,'',window.location.pathname);
     const parts=param.split('_');
     if(parts.length<3)return;
     const action=parts[0];
@@ -1123,8 +1126,8 @@ function submitBooking(yid){
   const paramOk='ok_'+(tgIdSafe||0)+'_'+y.id;
   const paramNo='no_'+(tgIdSafe||0)+'_'+y.id;
   replyMarkup.inline_keyboard.push([
-    {text:'✅ Подтвердить',url:'https://t.me/'+BOT_USERNAME+'/'+APP_NAME+'?startapp='+paramOk},
-    {text:'❌ Отклонить',url:'https://t.me/'+BOT_USERNAME+'/'+APP_NAME+'?startapp='+paramNo}
+    {text:'✅ Подтвердить',url:APP_URL+'?startapp='+paramOk},
+    {text:'❌ Отклонить',url:APP_URL+'?startapp='+paramNo}
   ]);
 
   sendTgMessage(msg,replyMarkup);
