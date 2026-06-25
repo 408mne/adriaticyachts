@@ -468,14 +468,15 @@ function init(){
 // Читает startapp параметр из Telegram и обрабатывает confirm/reject
 async function handleStartParam(){
   try{
-    // Читаем параметр из всех возможных источников
-    const tgParam=window.Telegram?.WebApp?.initDataUnsafe?.start_param||'';
+    // web_app кнопка передаёт параметр через ?startapp= в URL
     const urlParam=new URLSearchParams(window.location.search).get('startapp')||'';
+    // Telegram deep link передаёт через initDataUnsafe.start_param
+    const tgParam=window.Telegram?.WebApp?.initDataUnsafe?.start_param||'';
+    // Fallback: hash
     const hashParam=(window.location.hash||'').replace('#','');
-    const param=hashParam||tgParam||urlParam||'';
+    const param=urlParam||tgParam||hashParam||'';
 
     if(!param)return;
-    // Очищаем hash чтобы не срабатывало повторно
     if(hashParam)history.replaceState(null,'',window.location.pathname);
     const parts=param.split('_');
     if(parts.length<3)return;
@@ -1085,16 +1086,16 @@ function submitBooking(yid){
   const total=detailState.slotOnRequest?0:(basePrice+extTotal);
   const dateStr=new Date(detailState.date+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
   const durStr=detailState.duration;
-  const extrasNames=[...detailState.extras].map(i=>y.extras[i]?.(lang)||y.extras[i]?.ru||'').filter(Boolean).join(', ');
+  const extrasNames=[...detailState.extras].map(i=>{const ex=y.extras&&y.extras[i];if(!ex)return '';return ex[lang]||ex['en']||ex['ru']||'';}).filter(Boolean).join(', ');
   const comment=(document.getElementById('commentInp')?.value||'').trim();
   const clientLang=_tgNow?.language_code||'';
   const tgIdSafe=_tgIdNow||detailState.tgId||null;
   const tgUsernameSafe=_tgUsernameNow||detailState.tgUsername||'';
 
-  // 4. Short clean message (avoid Telegram length limits)
+  const sep='-'.repeat(20);
   const lines=[
     '🛥 ЗАЯВКА',
-    '─'.repeat(20),
+    sep,
     '🚢 '+y.names['en'],
     '👤 '+nm,
     '📱 '+(ph||'—'),
@@ -1106,7 +1107,7 @@ function submitBooking(yid){
     '👥 '+detailState.guests,
     extrasNames?'➕ '+extrasNames:null,
     comment?'💬 '+comment:null,
-    '─'.repeat(20),
+    sep,
     detailState.slotOnRequest?'💰 На запрос':'💰 '+total+' €'
   ].filter(Boolean);
   const msg=lines.join('\n');
@@ -1126,8 +1127,8 @@ function submitBooking(yid){
   const paramOk='ok_'+(tgIdSafe||0)+'_'+y.id;
   const paramNo='no_'+(tgIdSafe||0)+'_'+y.id;
   replyMarkup.inline_keyboard.push([
-    {text:'✅ Подтвердить',url:APP_URL+'?startapp='+paramOk},
-    {text:'❌ Отклонить',url:APP_URL+'?startapp='+paramNo}
+    {text:'✅ Подтвердить',web_app:{url:'https://408mne.github.io/adriaticyachts?startapp='+paramOk}},
+    {text:'❌ Отклонить',web_app:{url:'https://408mne.github.io/adriaticyachts?startapp='+paramNo}}
   ]);
 
   sendTgMessage(msg,replyMarkup);
