@@ -386,6 +386,8 @@ const YACHTS=[
 
 const BOT_TOKEN='8864246711:AAH1dASsllqCtr6pI7cYDfDrA004hKLaO6o';
 const OWNER_ID=70131641;
+const BOT_USERNAME='Adriatic_yachts_bot';
+const APP_NAME='adriaticyachts'; // short name из BotFather (Edit Bot → Bot Menu Button → short_name)
 // 🛡 РЕЗЕРВНЫЕ ПОЛУЧАТЕЛИ — добавь сюда свой второй Telegram ID или ID группы
 // Как узнать ID группы: добавь @userinfobot в группу, он напишет ID (будет отрицательным, напр. -1001234567890)
 const BACKUP_IDS=[8675886948,-1003882430280]; // пример: [123456789, -1001234567890]
@@ -465,62 +467,61 @@ function init(){
 // Читает startapp параметр из Telegram и обрабатывает confirm/reject
 async function handleStartParam(){
   try{
-    const param=window.Telegram?.WebApp?.initDataUnsafe?.start_param||'';
+    // Читаем параметр из всех возможных источников
+    const tgParam=window.Telegram?.WebApp?.initDataUnsafe?.start_param||'';
+    const urlParam=new URLSearchParams(window.location.search).get('startapp')||'';
+    const hashParam=(window.location.hash||'').replace('#','');
+    const param=tgParam||urlParam||hashParam||'';
+
     if(!param)return;
     const parts=param.split('_');
+    if(parts.length<3)return;
     const action=parts[0];
     const clientId=parts[1];
     const yachtId=parts[2];
     if(action!=='ok'&&action!=='no')return;
 
-    // Только владелец может подтверждать
+    // Проверка владельца — сравниваем числами
     const myId=window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-    if(String(myId)!==String(OWNER_ID)){
-      // Клиент открыл приложение с параметром — просто игнорируем
+    const myIdNum=parseInt(myId)||0;
+    if(myIdNum!==OWNER_ID){
+      console.log('Not owner, ignoring param. myId='+myIdNum+' OWNER_ID='+OWNER_ID);
       return;
     }
 
     const yData=YACHTS[parseInt(yachtId)];
-    const yName=yData?(yData.names['ru']||yData.names['en']):'яхта';
-    const clientIdNum=parseInt(clientId);
+    const yName=yData?(yData.names['ru']||yData.names['en']):'яхта #'+yachtId;
+    const clientIdNum=parseInt(clientId)||0;
+
+    const sendToClient=async(text)=>{
+      if(!clientIdNum)return false;
+      try{
+        const r=await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({chat_id:clientIdNum,text})
+        });
+        const j=await r.json();
+        if(!j.ok)console.error('sendMessage failed:',JSON.stringify(j));
+        return j.ok;
+      }catch(e){console.error(e);return false;}
+    };
 
     if(action==='ok'){
-      // 1. Отправляем клиенту сообщение через Telegram Bot API
-      const msgOk='✅ Ваша заявка подтверждена!\n\n'
-        +'🛥 '+yName+'\n\n'
-        +'Наш менеджер свяжется с вами в ближайшее время для уточнения деталей и оплаты.\n\n'
-        +'Спасибо, что выбрали Adriatic Yachts! 🌊';
-      let sent=false;
-      if(clientIdNum&&clientIdNum!==0){
-        try{
-          const r=await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{
-            method:'POST',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({chat_id:clientIdNum,text:msgOk})
-          });
-          const j=await r.json();
-          sent=j.ok;
-          if(!j.ok)console.error('send to client failed:',j);
-        }catch(e){console.error(e);}
-      }
-      alert('✅ Заявка подтверждена!'+(sent?'\nКлиент получил уведомление в Telegram.':'\nНе удалось отправить сообщение клиенту автоматически — напиши вручную через кнопку в заявке.'));
-
+      const sent=await sendToClient(
+        '✅ Ваша заявка подтверждена!\n\n🛥 '+yName+'\n\nМенеджер свяжется с вами для уточнения деталей и оплаты.\n\nAdriatic Yachts 🌊'
+      );
+      window.Telegram?.WebApp?.showAlert(sent
+        ?'✅ Подтверждено. Клиент уведомлён в Telegram.'
+        :'✅ Подтверждено. Не удалось написать клиенту автоматически — напиши через кнопку «Написать клиенту» в заявке.'
+      );
     } else {
-      const msgNo='❌ К сожалению, выбранная яхта ('+yName+') недоступна на запрошенные даты.\n\n'
-        +'Мы подберём для вас альтернативу — наш менеджер свяжется с вами в ближайшее время.\n\n'
-        +'Adriatic Yachts 🌊';
-      let sent=false;
-      if(clientIdNum&&clientIdNum!==0){
-        try{
-          const r=await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{
-            method:'POST',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({chat_id:clientIdNum,text:msgNo})
-          });
-          const j=await r.json();
-          sent=j.ok;
-          if(!j.ok)console.error('send to client failed:',j);
-        }catch(e){console.error(e);}
-      }
-      alert('❌ Заявка отклонена.'+(sent?'\nКлиент получил уведомление.':'\nНе удалось отправить сообщение — напиши вручную.'));
+      const sent=await sendToClient(
+        '❌ К сожалению, яхта «'+yName+'» недоступна на эти даты.\n\nМенеджер предложит альтернативу — ожидайте сообщения.\n\nAdriatic Yachts 🌊'
+      );
+      window.Telegram?.WebApp?.showAlert(sent
+        ?'❌ Отклонено. Клиент уведомлён.'
+        :'❌ Отклонено. Напиши клиенту вручную через кнопку в заявке.'
+      );
     }
   }catch(e){console.error('handleStartParam error:',e);}
 }
@@ -1119,12 +1120,11 @@ function submitBooking(yid){
     replyMarkup.inline_keyboard.push([{text:'✈️ '+tgUsernameSafe,url:'https://t.me/'+tgUsernameSafe.replace('@','')}]);
   }
   // Confirm/Reject open Mini App — param uses short format
-  const botUsername='adriaticyachts_bot'; // ← имя бота
   const paramOk='ok_'+(tgIdSafe||0)+'_'+y.id;
   const paramNo='no_'+(tgIdSafe||0)+'_'+y.id;
   replyMarkup.inline_keyboard.push([
-    {text:'✅ Подтвердить',url:'https://t.me/'+botUsername+'/app?startapp='+paramOk},
-    {text:'❌ Отклонить',url:'https://t.me/'+botUsername+'/app?startapp='+paramNo}
+    {text:'✅ Подтвердить',url:'https://t.me/'+BOT_USERNAME+'/'+APP_NAME+'?startapp='+paramOk},
+    {text:'❌ Отклонить',url:'https://t.me/'+BOT_USERNAME+'/'+APP_NAME+'?startapp='+paramNo}
   ]);
 
   sendTgMessage(msg,replyMarkup);
