@@ -1148,9 +1148,8 @@ function submitBooking(yid){
     replyMarkup.inline_keyboard.push([{text:'✈️ '+tgUsernameSafe,url:'https://t.me/'+tgUsernameSafe.replace('@','')}]);
   }
   // Confirm/Reject open Mini App — param uses short format
-  const yName=encodeURIComponent(y.names['en']||y.names['ru']||'');
-  const paramOk='ok|'+(tgIdSafe||0)+'|'+y.id+'|'+yName;
-  const paramNo='no|'+(tgIdSafe||0)+'|'+y.id+'|'+yName;
+  const paramOk='ok|'+(tgIdSafe||0)+'|'+y.id;
+  const paramNo='no|'+(tgIdSafe||0)+'|'+y.id;
   if(BACKEND_URL){
     replyMarkup.inline_keyboard.push([
       {text:'✅ Подтвердить',callback_data:paramOk},
@@ -1169,11 +1168,12 @@ function submitBooking(yid){
 
   // Сохраняем детали в KV чтобы Worker мог включить их в уведомление клиенту
   if(BACKEND_URL&&tgIdSafe){
+    const yNameEn=y.names['en']||y.names['ru']||'';
     const details='📅 '+dateStr+'\n⏱ '+durStr+'\n👥 '+detailState.guests+' чел.'+(extrasNames?'\n➕ '+extrasNames:'');
     fetch(BACKEND_URL+'/order',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({yacht_id:y.id,client_id:tgIdSafe,details})
+      body:JSON.stringify({yacht_id:y.id,client_id:tgIdSafe,yacht_name:yNameEn,details})
     }).catch(()=>{});
   }
   saveMyOrder({yacht:(y.names[lang]||y.names['en']||''),yachtId:y.id,clientTgId:tgIdSafe,date:dateStr,duration:durStr,guests:detailState.guests,extras:extrasNames,total,ts:Date.now()});
@@ -1358,6 +1358,13 @@ function showOrders(){
   const emptyTitle=lang==='ru'?'Заявок пока нет':lang==='de'?'Noch keine Buchungen':lang==='tr'?'Henüz rezervasyon yok':'No bookings yet';
   const emptyText=lang==='ru'?'Выберите яхту в каталоге и отправьте запрос':lang==='de'?'Wählen Sie eine Yacht und senden Sie eine Anfrage':lang==='tr'?'Kataloğdan bir yat seçin':'Choose a yacht from the catalog';
   const backText=lang==='ru'?'← Назад к каталогу':lang==='de'?'← Katalog':lang==='tr'?'← Katalog':'← Catalog';
+  const tgId=tgUser?tgUser.id:null;
+  const isOwner=tgId===OWNER_ID;
+  const clearBtn=isOwner?`
+    <div style="margin-top:12px;padding:10px 12px;background:rgba(192,64,64,0.05);border:1px solid rgba(192,64,64,0.15);border-radius:var(--rs);display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:11px;color:var(--text3)">🔧 Режим менеджера · очистить тестовые заявки</div>
+      <button onclick="clearAllOrders()" style="background:rgba(192,64,64,0.1);border:1px solid rgba(192,64,64,0.25);border-radius:var(--rs);padding:5px 12px;font-size:11px;color:#c04040;cursor:pointer;font-family:'Jost',sans-serif">Очистить</button>
+    </div>`:'';
   const reviewBtn=`<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
     <div style="font-size:12px;color:var(--text3);margin-bottom:10px;text-align:center">${lang==='ru'?'Уже отдыхали с нами?':lang==='de'?'Schon mit uns gesegelt?':lang==='tr'?'Bizimle seyahat ettiniz mi?':'Already sailed with us?'}</div>
     <button onclick="openReviews()" style="background:var(--gold-dim);border:1px solid rgba(181,137,58,0.3);border-radius:var(--rs);width:100%;padding:12px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--gold);display:flex;align-items:center;justify-content:center;gap:7px">
@@ -1424,6 +1431,7 @@ function showOrders(){
           <div style="font-size:11px;color:var(--text3);margin-top:5px">⏰ ${new Date(o.ts).toLocaleString(lang==='ru'?'ru-RU':'en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
         </div>`;}).join('')}
       <button onclick="backToCatalog()" style="background:transparent;border:1px solid var(--border2);border-radius:var(--rs);width:100%;padding:11px;font-size:13px;cursor:pointer;font-family:'Jost',sans-serif;color:var(--text2);margin-top:4px">${backText}</button>
+      ${clearBtn}
       ${reviewBtn}
       ${buildSendLog()}
     `}
@@ -1463,6 +1471,17 @@ async function refreshOrderStatuses(){
       }
     }
   }
+}
+
+function clearAllOrders(){
+  if(!confirm('Очистить все заявки? Это действие нельзя отменить.'))return;
+  MY_ORDERS.length=0;
+  try{sessionStorage.removeItem('ay_orders');}catch(e){}
+  try{localStorage.removeItem('ay_orders');}catch(e){}
+  try{
+    window.Telegram?.WebApp?.CloudStorage?.removeItem('ay_orders',()=>{});
+  }catch(e){}
+  showOrders();
 }
 
 function backToCatalog(){
