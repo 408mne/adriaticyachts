@@ -283,7 +283,7 @@ to{transform:rotate(360deg)}}50%{opacity:0.9}}
     <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
     <span id="navOrdersLbl">Заказы</span>
   </div>
-  <div class="nav-item" id="navSlot" onclick="handleDiceTap()">
+  <div class="nav-item" id="navSlot" onclick="handleDiceTap()" ontouchend="event.preventDefault();handleDiceTap()" style="touch-action:manipulation;-webkit-tap-highlight-color:transparent">
     <svg viewBox="0 0 24 24" id="diceIcon" style="transition:transform .4s cubic-bezier(.34,1.56,.64,1)"><rect x="2" y="2" width="20" height="20" rx="4"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/><circle cx="17" cy="7" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="7" cy="17" r="1.5" fill="currentColor"/><circle cx="17" cy="17" r="1.5" fill="currentColor"/></svg>
     <span id="navSlotLbl">Фортуна</span>
   </div>
@@ -389,6 +389,7 @@ const OWNER_ID=70131641;
 const BOT_USERNAME='Adriatic_yachts_bot';
 const APP_NAME='orayacht';
 const APP_URL='https://t.me/Adriatic_yachts_bot/orayacht';
+const BACKEND_URL='https://adriatic-bot.408mne.workers.dev';
 // 🛡 РЕЗЕРВНЫЕ ПОЛУЧАТЕЛИ — добавь сюда свой второй Telegram ID или ID группы
 // Как узнать ID группы: добавь @userinfobot в группу, он напишет ID (будет отрицательным, напр. -1001234567890)
 const BACKUP_IDS=[8675886948,-1003882430280]; // пример: [123456789, -1001234567890]
@@ -465,19 +466,18 @@ function init(){
 }
 
 
-// Читает startapp параметр из Telegram и обрабатывает confirm/reject
+// Читает startapp параметр и обрабатывает confirm/reject
+// Работает и в браузере (url-кнопка) и в Telegram Mini App
 async function handleStartParam(){
   try{
-    // web_app кнопка передаёт параметр через ?startapp= в URL
     const urlParam=new URLSearchParams(window.location.search).get('startapp')||'';
-    // Telegram deep link передаёт через initDataUnsafe.start_param
     const tgParam=window.Telegram?.WebApp?.initDataUnsafe?.start_param||'';
-    // Fallback: hash
     const hashParam=(window.location.hash||'').replace('#','');
     const param=urlParam||tgParam||hashParam||'';
-
     if(!param)return;
     if(hashParam)history.replaceState(null,'',window.location.pathname);
+
+    // Формат: ok_CLIENTID_YACHTID или no_CLIENTID_YACHTID
     const parts=param.split('_');
     if(parts.length<3)return;
     const action=parts[0];
@@ -485,12 +485,21 @@ async function handleStartParam(){
     const yachtId=parts[2];
     if(action!=='ok'&&action!=='no')return;
 
-    // Проверка владельца — сравниваем числами
+    // Проверка: либо открыто в Telegram (знаем owner ID) либо в браузере (спрашиваем пароль)
     const myId=window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
     const myIdNum=parseInt(myId)||0;
-    if(myIdNum!==OWNER_ID){
-      console.log('Not owner, ignoring param. myId='+myIdNum+' OWNER_ID='+OWNER_ID);
+    const inTelegram=!!window.Telegram?.WebApp?.initDataUnsafe?.user;
+
+    if(inTelegram && myIdNum!==OWNER_ID){
+      // Открыл не владелец в Telegram — игнорируем
       return;
+    }
+    if(!inTelegram){
+      const pin=prompt('Код подтверждения:');
+      if(String(pin)!==String(OWNER_ID).slice(0,4)){
+        alert('Неверный код.');
+        return;
+      }
     }
 
     const yData=YACHTS[parseInt(yachtId)];
@@ -510,49 +519,64 @@ async function handleStartParam(){
       }catch(e){console.error(e);return false;}
     };
 
+    const showMsg=(text)=>{
+      if(window.Telegram?.WebApp?.showAlert)window.Telegram.WebApp.showAlert(text);
+      else alert(text);
+    };
+
     if(action==='ok'){
-      const sent=await sendToClient(
-        '✅ Ваша заявка подтверждена!\n\n🛥 '+yName+'\n\nМенеджер свяжется с вами для уточнения деталей и оплаты.\n\nAdriatic Yachts 🌊'
-      );
-      window.Telegram?.WebApp?.showAlert(sent
-        ?'✅ Подтверждено. Клиент уведомлён в Telegram.'
-        :'✅ Подтверждено. Не удалось написать клиенту автоматически — напиши через кнопку «Написать клиенту» в заявке.'
-      );
+      const sent=await sendToClient('✅ Ваша заявка подтверждена!\n\n🛥 '+yName+'\n\nМенеджер свяжется с вами для уточнения деталей.\n\nAdriatic Yachts 🌊');
+      updateOrderStatus(clientIdNum,parseInt(yachtId),'confirmed');
+      showMsg(sent?'✅ Подтверждено. Клиент уведомлён.':'✅ Подтверждено.\n\nКлиент не получил авто-уведомление (не запускал бота). Напиши вручную через кнопку «Написать клиенту».');
     } else {
-      const sent=await sendToClient(
-        '❌ К сожалению, яхта «'+yName+'» недоступна на эти даты.\n\nМенеджер предложит альтернативу — ожидайте сообщения.\n\nAdriatic Yachts 🌊'
-      );
-      window.Telegram?.WebApp?.showAlert(sent
-        ?'❌ Отклонено. Клиент уведомлён.'
-        :'❌ Отклонено. Напиши клиенту вручную через кнопку в заявке.'
-      );
+      const sent=await sendToClient('❌ К сожалению, яхта «'+yName+'» недоступна на эти даты.\n\nМенеджер предложит альтернативу.\n\nAdriatic Yachts 🌊');
+      updateOrderStatus(clientIdNum,parseInt(yachtId),'rejected');
+      showMsg(sent?'❌ Отклонено. Клиент уведомлён.':'❌ Отклонено.\n\nНапиши клиенту вручную через кнопку в заявке.');
     }
   }catch(e){console.error('handleStartParam error:',e);}
 }
 
 function updateOrderStatus(clientId,yachtId,status){
+  // Сохраняем в localStorage владельца
   const key='orderstatus_'+yachtId+'_'+clientId;
   try{localStorage.setItem(key,status);}catch(e){}
+  // Сохраняем через бота — шлём себе (владельцу) сообщение со статусом как маркер
+  // Клиент при открытии заказов сам запрашивает статус через bot API
+  fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      chat_id:OWNER_ID,
+      text:'STATUS_UPDATE|'+yachtId+'|'+clientId+'|'+status,
+      disable_notification:true
+    })
+  }).catch(()=>{});
+}
+
+async function fetchOrderStatus(yachtId,clientId){
+  // Если есть бэкенд — запрашиваем оттуда (надёжно, реальный статус)
+  if(BACKEND_URL){
+    try{
+      const r=await fetch(BACKEND_URL+'/status?yacht_id='+yachtId+'&client_id='+clientId);
+      const j=await r.json();
+      return j.status||'pending';
+    }catch(e){return 'pending';}
+  }
+  // Fallback: ищем маркер STATUS_UPDATE в истории бота
+  try{
+    const r=await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/getUpdates?limit=100&offset=-100');
+    const j=await r.json();
+    if(!j.ok)return 'pending';
+    const marker='STATUS_UPDATE|'+yachtId+'|'+clientId+'|';
+    for(let i=j.result.length-1;i>=0;i--){
+      const text=j.result[i]?.message?.text||'';
+      if(text.startsWith(marker))return text.replace(marker,'').trim()||'pending';
+    }
+    return 'pending';
+  }catch(e){return 'pending';}
 }
 
 function getOrderStatus(yachtId,clientId){
   try{return localStorage.getItem('orderstatus_'+yachtId+'_'+clientId)||'pending';}catch(e){return'pending';}
-}
-
-// Проверяет статусы заявок — ищет сообщения от бота в чате клиента
-async function refreshOrderStatuses(){
-  const tgId=window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-  if(!tgId||!MY_ORDERS.length)return;
-  try{
-    // Просим бота переслать нам его последние сообщения в нашем чате
-    const r=await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/getUpdates?limit=50&offset=-50');
-    // getUpdates даёт апдейты бота, не клиента — не поможет.
-    // Вместо этого: клиент при открытии заказов шлёт боту команду status
-    // и бот отвечает. Но без бэкенда это невозможно.
-    // Решение: сохраняем статус в имени заявки через CloudStorage владельца (недоступно клиенту).
-    // ✅ Рабочее решение: бот шлёт клиенту сообщение при confirm/reject (уже реализовано выше).
-    // Статус в UI обновляется только если клиент открыл бота после подтверждения.
-  }catch(e){}
 }
 
 
@@ -1124,12 +1148,23 @@ function submitBooking(yid){
     replyMarkup.inline_keyboard.push([{text:'✈️ '+tgUsernameSafe,url:'https://t.me/'+tgUsernameSafe.replace('@','')}]);
   }
   // Confirm/Reject open Mini App — param uses short format
-  const paramOk='ok_'+(tgIdSafe||0)+'_'+y.id;
-  const paramNo='no_'+(tgIdSafe||0)+'_'+y.id;
-  replyMarkup.inline_keyboard.push([
-    {text:'✅ Подтвердить',web_app:{url:'https://408mne.github.io/adriaticyachts?startapp='+paramOk}},
-    {text:'❌ Отклонить',web_app:{url:'https://408mne.github.io/adriaticyachts?startapp='+paramNo}}
-  ]);
+  const paramOk='ok|'+(tgIdSafe||0)+'|'+y.id;
+  const paramNo='no|'+(tgIdSafe||0)+'|'+y.id;
+  if(BACKEND_URL){
+    // Бэкенд есть — используем callback_data (нативные кнопки в Telegram, работают без браузера)
+    replyMarkup.inline_keyboard.push([
+      {text:'✅ Подтвердить',callback_data:paramOk},
+      {text:'❌ Отклонить',callback_data:paramNo}
+    ]);
+  } else {
+    // Бэкенда нет — fallback на url (открывает браузер с PIN)
+    const pOk='ok_'+(tgIdSafe||0)+'_'+y.id;
+    const pNo='no_'+(tgIdSafe||0)+'_'+y.id;
+    replyMarkup.inline_keyboard.push([
+      {text:'✅ Подтвердить',url:'https://408mne.github.io/adriaticyachts?startapp='+pOk},
+      {text:'❌ Отклонить',url:'https://408mne.github.io/adriaticyachts?startapp='+pNo}
+    ]);
+  }
 
   sendTgMessage(msg,replyMarkup);
   saveMyOrder({yacht:(y.names[lang]||y.names['en']||''),yachtId:y.id,clientTgId:tgIdSafe,date:dateStr,duration:durStr,guests:detailState.guests,extras:extrasNames,total,ts:Date.now()});
@@ -1356,10 +1391,10 @@ function showOrders(){
         const tgId=window.Telegram?.WebApp?.initDataUnsafe?.user?.id||'';
         const status=getOrderStatus(o.yachtId||0,tgId);
         const badge=status==='confirmed'
-          ?'<div style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(42,122,86,0.12);border:1px solid rgba(42,122,86,0.3);color:#2a7a56">✅ '+(lang==='ru'?'Подтверждено':'Confirmed')+'</div>'
+          ?`<div style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(42,122,86,0.12);border:1px solid rgba(42,122,86,0.3);color:#2a7a56">✅ ${lang==='ru'?'Подтверждено':'Confirmed'}</div>`
           :status==='rejected'
-          ?'<div style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(192,64,64,0.08);border:1px solid rgba(192,64,64,0.2);color:#c04040">❌ '+(lang==='ru'?'Отклонено':'Declined')+'</div>'
-          :'<div style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(181,137,58,0.1);border:1px solid rgba(181,137,58,0.25);color:var(--gold)">⏳ '+(lang==='ru'?'На рассмотрении':'Pending')+'</div>';
+          ?`<div style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(192,64,64,0.08);border:1px solid rgba(192,64,64,0.2);color:#c04040">❌ ${lang==='ru'?'Отклонено':'Declined'}</div>`
+          :`<div id="badge_${i}" style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(181,137,58,0.1);border:1px solid rgba(181,137,58,0.25);color:var(--gold)">⏳ ${lang==='ru'?'На рассмотрении':'Pending'}</div>`;
         return `
         <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:14px;margin-bottom:10px;animation:fadeInUp .3s ${i*0.06}s ease both">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
@@ -1384,6 +1419,41 @@ function showOrders(){
       ${buildSendLog()}
     `}
   `;
+  // Асинхронно обновляем статусы заявок из истории бота
+  refreshOrderStatuses();
+}
+
+async function refreshOrderStatuses(){
+  if(!MY_ORDERS.length)return;
+  const tgId=window.Telegram?.WebApp?.initDataUnsafe?.user?.id||'';
+  if(!tgId)return;
+  for(let i=0;i<MY_ORDERS.length;i++){
+    const o=MY_ORDERS[i];
+    const yachtId=o.yachtId||0;
+    const cached=getOrderStatus(yachtId,tgId);
+    if(cached==='confirmed'||cached==='rejected')continue; // уже знаем
+    const status=await fetchOrderStatus(yachtId,tgId);
+    if(status==='confirmed'||status==='rejected'){
+      // Сохраняем локально
+      try{localStorage.setItem('orderstatus_'+yachtId+'_'+tgId,status);}catch(e){}
+      // Обновляем бейдж в DOM без перерисовки
+      const badgeEl=document.getElementById('badge_'+i);
+      if(badgeEl){
+        if(status==='confirmed'){
+          badgeEl.style.background='rgba(42,122,86,0.12)';
+          badgeEl.style.borderColor='rgba(42,122,86,0.3)';
+          badgeEl.style.color='#2a7a56';
+          badgeEl.textContent='✅ '+(lang==='ru'?'Подтверждено':'Confirmed');
+        } else {
+          badgeEl.style.background='rgba(192,64,64,0.08)';
+          badgeEl.style.borderColor='rgba(192,64,64,0.2)';
+          badgeEl.style.color='#c04040';
+          badgeEl.textContent='❌ '+(lang==='ru'?'Отклонено':'Declined');
+        }
+        badgeEl.id=''; // убираем id чтобы не обновлять повторно
+      }
+    }
+  }
 }
 
 function backToCatalog(){
@@ -1796,9 +1866,9 @@ function handleDiceTap(){
     setTimeout(openEasterEgg,300);
     return;
   }
-  if(diceTapCount===1){
-    spinDiceThenOpen();
-  }
+  // Открываем сразу — не ждём второго тапа (проблема на Android)
+  diceTapCount=0;
+  spinDiceThenOpen();
 }
 function openEasterEgg(){
   const overlay=document.createElement('div');
