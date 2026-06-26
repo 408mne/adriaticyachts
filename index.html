@@ -384,25 +384,16 @@ const YACHTS=[
 {id:42,cat:"sailing",names:{ru:"Bavaria 50",en:"Bavaria 50",me:"Bavaria 50",de:"Bavaria 50",tr:"Bavaria 50"},types:{ru:"Парусная яхта",en:"Sailing Yacht",me:"Jedrilica",de:"Segelyacht",tr:"Yelkenli"},metas:{ru:"15 м · до 10 чел. · 3 каюты · 2015",en:"15 m · up to 10 pax · 3 cabins · 2015",me:"15 m · do 10 osoba · 3 kabine · 2015",de:"15 m · bis 10 Pers. · 3 Kabinen · 2015",tr:"15 m · 10 kişiye kadar · 3 kabin · 2015"},descs:{ru:"Bavaria 50 Vision «Astra» из Тивата — 50-футовая парусная яхта 15 м. Просторная 3-каютная планировка, яркий салон, хорошо продуманные жилые пространства. BOSE аудио. Доступна от 4 часов до недели.",en:"Bavaria 50 Vision \"Astra\" from Tivat — 50ft, 15m sailing yacht. Spacious 3-cabin layout, bright salon, well-designed living areas. BOSE audio. Available from 4 hours to a full week.",me:"Bavaria 50 Vision \"Astra\" iz Tivata — 50-stopalna jedrilica 15m. Prostrani raspored s 3 kabine, osvijetljeni salon. BOSE audio. Dostupna od 4 sata do sedmice."},tags:{ru:["Парусная","BOSE","Тиват"],en:["Sailing","BOSE","Tivat"],me:["Jedrilica","BOSE","Tivat"]},feats:{ru:[["Капитан включён"],["3 каюты · 2 WC"],["Топливо включено"],["BOSE аудиосистема"],["Полотенца & тент"],["SUP доска +150€"]],en:[["Skipper included"],["3 cabins · 2 WC"],["Fuel included"],["BOSE audio system"],["Towels & sunshade"],["SUP board +150€"]],me:[["Kapetan uključen"],["3 kabine · 2 WC"],["Gorivo uključeno"],["BOSE audio sistem"],["Peškiri & suncobran"],["SUP daska +150€"]]},fuelIncl:true,marina:"Tivat",capacity:10,pricing:[{t:4,unit:"h",price:400},{t:6,unit:"h",price:600},{t:8,unit:"h",price:800},{t:1,unit:"d",price:1000},{t:1,unit:"w",price:4450}],photos:["https://res.cloudinary.com/dfz5wxjur/image/upload/v1782235503/1a_utjydq.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1782235499/2a_tttqvc.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1782235512/3a_yqjumh.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1782235508/5a_szatkh.jpg","https://res.cloudinary.com/dfz5wxjur/image/upload/v1782235501/6a_wwuquo.jpg"],extras:[{ru:"Фотограф",en:"Photographer",me:"Fotograf",de:"Fotograf",tr:"Fotoğrafçı",price:50,unit:"hour"},{ru:"SUP доска",en:"SUP board",me:"SUP daska",de:"SUP-Brett",tr:"SUP tahtası",price:150,unit:"day"},{"ru":"Гидроцикл","en":"Jet ski","me":"Jet ski","de":"Jet ski","tr":"Jet ski","price":500,"unit":"day"},{"ru":"Seabob","en":"Seabob","me":"Seabob","de":"Seabob","tr":"Seabob","price":300,"unit":"day"},{"ru":"Фотограф","en":"Photographer","me":"Fotograf","de":"Fotograf","tr":"Fotoğrafçı","price":50,"unit":"hour"},{"ru":"Кейтеринг","en":"Catering","me":"Ketering","de":"Catering","tr":"Catering","price":0,"unit":"req"},{ru:"Хостесс",en:"Hostess",me:"Hostesa",de:"Hostess",tr:"Hostes",price:150,unit:"day"},{ru:"Шеф-повар",en:"Chef",me:"Šef kuhinje",de:"Koch",tr:"Aşçı",price:200,unit:"day"}]}
 ];
 
-const BOT_TOKEN='8864246711:AAH1dASsllqCtr6pI7cYDfDrA004hKLaO6o';
+// BOT_TOKEN убран из фронтенда — все запросы идут через Worker
 const OWNER_ID=70131641;
 const BOT_USERNAME='Adriatic_yachts_bot';
 const APP_NAME='orayacht';
 const APP_URL='https://t.me/Adriatic_yachts_bot/orayacht';
 const BACKEND_URL='https://adriatic-bot.408mne.workers.dev';
-// 🛡 РЕЗЕРВНЫЕ ПОЛУЧАТЕЛИ — добавь сюда свой второй Telegram ID или ID группы
-// Как узнать ID группы: добавь @userinfobot в группу, он напишет ID (будет отрицательным, напр. -1001234567890)
-const BACKUP_IDS=[8675886948,-1003882430280]; // пример: [123456789, -1001234567890]
+const BACKUP_IDS=[8675886948,-1003882430280];
 
 async function sendTgMessage(text, replyMarkup, singleChatId){
-  // Если передан конкретный chatId — шлём только туда (уведомление клиенту)
-  // Иначе — на все targets (заявка владельцу)
-  const targets=singleChatId?[singleChatId]:[OWNER_ID,...BACKUP_IDS];
-  // НЕ используем parse_mode чтобы спецсимволы не ломали доставку
-  const baseBody={text};
-  if(replyMarkup)baseBody.reply_markup=replyMarkup;
-
-  // Лог в localStorage — заявка сохраняется ВСЕГДА, даже если интернет упал
+  // Лог в localStorage
   try{
     const log=JSON.parse(localStorage.getItem('ay_send_log')||'[]');
     log.unshift({ts:Date.now(),text:text.slice(0,200),sent:false});
@@ -410,36 +401,38 @@ async function sendTgMessage(text, replyMarkup, singleChatId){
     localStorage.setItem('ay_send_log',JSON.stringify(log));
   }catch(e){}
 
-  // Отправляем параллельно на все chat_id
-  const results=await Promise.allSettled(targets.map(async chatId=>{
-    const r=await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{
+  if(singleChatId){
+    // Уведомление конкретному клиенту — напрямую через бота (Worker знает токен)
+    // Используем Worker как прокси
+    try{
+      const r=await fetch(BACKEND_URL+'/send',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({text,targets:[singleChatId]})
+      });
+      const j=await r.json();
+      return j.ok;
+    }catch(e){console.error(e);return false;}
+  }
+
+  // Заявка владельцу — через Worker (токен скрыт, работает даже при VPN клиента)
+  try{
+    const targets=[OWNER_ID,...BACKUP_IDS];
+    const r=await fetch(BACKEND_URL+'/send',{
       method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({...baseBody,chat_id:chatId})
+      body:JSON.stringify({text,reply_markup:replyMarkup||null,targets})
     });
     const j=await r.json();
-    if(!j.ok){
-      console.error('TG error chat_id='+chatId+':',JSON.stringify(j));
-      // Повтор без reply_markup (inline_keyboard может блокировать для группы)
-      const r2=await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/sendMessage',{
-        method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({text,chat_id:chatId})
-      });
-      const j2=await r2.json();
-      if(!j2.ok)throw new Error(JSON.stringify(j2));
-    }
-    return chatId;
-  }));
-
-  const anySuccess=results.some(r=>r.status==='fulfilled');
-  if(anySuccess){
+    const anySuccess=j.ok;
     try{
       const log=JSON.parse(localStorage.getItem('ay_send_log')||'[]');
-      if(log[0])log[0].sent=true;
+      if(log[0])log[0].sent=anySuccess;
       localStorage.setItem('ay_send_log',JSON.stringify(log));
     }catch(e){}
+    return anySuccess;
+  }catch(e){
+    console.error('Worker /send error:',e);
+    return false;
   }
-  results.forEach((r,i)=>{if(r.status==='rejected')console.error('Failed for',targets[i],r.reason);});
-  return anySuccess;
 }
 
 let lang='en',activeCat='all',activeMarina='all',favs=new Set();
