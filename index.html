@@ -1148,16 +1148,15 @@ function submitBooking(yid){
     replyMarkup.inline_keyboard.push([{text:'✈️ '+tgUsernameSafe,url:'https://t.me/'+tgUsernameSafe.replace('@','')}]);
   }
   // Confirm/Reject open Mini App — param uses short format
-  const paramOk='ok|'+(tgIdSafe||0)+'|'+y.id;
-  const paramNo='no|'+(tgIdSafe||0)+'|'+y.id;
+  const yName=encodeURIComponent(y.names['en']||y.names['ru']||'');
+  const paramOk='ok|'+(tgIdSafe||0)+'|'+y.id+'|'+yName;
+  const paramNo='no|'+(tgIdSafe||0)+'|'+y.id+'|'+yName;
   if(BACKEND_URL){
-    // Бэкенд есть — используем callback_data (нативные кнопки в Telegram, работают без браузера)
     replyMarkup.inline_keyboard.push([
       {text:'✅ Подтвердить',callback_data:paramOk},
       {text:'❌ Отклонить',callback_data:paramNo}
     ]);
   } else {
-    // Бэкенда нет — fallback на url (открывает браузер с PIN)
     const pOk='ok_'+(tgIdSafe||0)+'_'+y.id;
     const pNo='no_'+(tgIdSafe||0)+'_'+y.id;
     replyMarkup.inline_keyboard.push([
@@ -1167,6 +1166,16 @@ function submitBooking(yid){
   }
 
   sendTgMessage(msg,replyMarkup);
+
+  // Сохраняем детали в KV чтобы Worker мог включить их в уведомление клиенту
+  if(BACKEND_URL&&tgIdSafe){
+    const details='📅 '+dateStr+'\n⏱ '+durStr+'\n👥 '+detailState.guests+' чел.'+(extrasNames?'\n➕ '+extrasNames:'');
+    fetch(BACKEND_URL+'/order',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({yacht_id:y.id,client_id:tgIdSafe,details})
+    }).catch(()=>{});
+  }
   saveMyOrder({yacht:(y.names[lang]||y.names['en']||''),yachtId:y.id,clientTgId:tgIdSafe,date:dateStr,duration:durStr,guests:detailState.guests,extras:extrasNames,total,ts:Date.now()});
   launchConfetti();
   clearInterval(timerInterval);
