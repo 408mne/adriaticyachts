@@ -862,7 +862,7 @@ function openDetail(id){
   const galHtml=y.photos&&y.photos.length
     ?('<div class="modal-gallery-wrap" style="position:relative">'
       +'<div class="modal-gallery" id="galScroll_'+y.id+'" onscroll="updateGalDots(this)">'  
-      +y.photos.map(function(p,i){return '<img src="'+p+'" alt="'+(y.names[lang]||y.names['en']||'')+' '+(i+1)+'" loading="'+(i===0?'eager':'lazy')+'" class="modal-gallery-img" onclick="openPhotoFull(\''+p+'\')">';}).join('')
+      +y.photos.map(function(p,i){return '<div class="modal-gallery-img-wrap" style="position:relative;flex-shrink:0;width:100%;scroll-snap-align:start"><img src="'+p+'" alt="'+(y.names[lang]||y.names['en']||'')+' '+(i+1)+'" loading="'+(i===0?'eager':'lazy')+'" class="modal-gallery-img" onclick="openPhotoFull('+y.id+','+i+')" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;cursor:zoom-in"><div onclick="openPhotoFull('+y.id+','+i+')" style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.45);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:zoom-in;pointer-events:auto"><svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg></div></div>';}).join('')
       +'</div>'
       +(y.photos.length>1
         ?'<div style="position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center">'
@@ -2351,19 +2351,82 @@ try{addNavTapEffects();}catch(e){}
   },800);
 })();
 
-function openPhotoFull(src){
-  let ov=document.getElementById('photoFullOv');
-  if(!ov){
-    ov=document.createElement('div');
-    ov.id='photoFullOv';
-    ov.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;cursor:zoom-out';
-    ov.innerHTML='<img id="photoFullImg" style="max-width:100%;max-height:100%;object-fit:contain;user-select:none">'
-      +'<button onclick="document.getElementById(\'photoFullOv\').style.display=\'none\'" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.15);border:none;border-radius:50%;width:36px;height:36px;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button>';
-    ov.onclick=function(e){if(e.target===ov)ov.style.display='none';};
-    document.body.appendChild(ov);
+function openPhotoFull(yachtId, startIdx){
+  const y = YACHTS[yachtId];
+  if(!y||!y.photos||!y.photos.length) return;
+  const photos = y.photos;
+  let cur = startIdx || 0;
+
+  let ov = document.getElementById('photoFullOv');
+  if(ov) ov.remove(); // всегда пересоздаём чтобы сбросить состояние
+
+  ov = document.createElement('div');
+  ov.id = 'photoFullOv';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;touch-action:none';
+
+  // Счётчик фото
+  const counter = document.createElement('div');
+  counter.style.cssText = 'position:absolute;top:16px;left:50%;transform:translateX(-50%);font-size:13px;color:rgba(255,255,255,.6);z-index:2;font-family:Jost,sans-serif';
+
+  // Картинка
+  const img = document.createElement('img');
+  img.style.cssText = 'max-width:100%;max-height:85vh;object-fit:contain;user-select:none;-webkit-user-drag:none';
+
+  // Кнопка закрыть
+  const closeBtn = document.createElement('button');
+  closeBtn.innerHTML = '×';
+  closeBtn.style.cssText = 'position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.15);border:none;border-radius:50%;width:36px;height:36px;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;z-index:3;font-family:sans-serif';
+
+  // Стрелки (только если > 1 фото)
+  const prevBtn = document.createElement('button');
+  const nextBtn = document.createElement('button');
+  const arrowStyle = 'position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:none;border-radius:50%;width:38px;height:38px;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:3';
+  prevBtn.style.cssText = arrowStyle + ';left:10px';
+  nextBtn.style.cssText = arrowStyle + ';right:10px';
+  prevBtn.innerHTML = '‹';
+  nextBtn.innerHTML = '›';
+
+  function update(){
+    img.src = photos[cur];
+    counter.textContent = (cur+1) + ' / ' + photos.length;
+    prevBtn.style.opacity = cur === 0 ? '0.3' : '1';
+    nextBtn.style.opacity = cur === photos.length-1 ? '0.3' : '1';
   }
-  document.getElementById('photoFullImg').src=src;
-  ov.style.display='flex';
+
+  function close(e){
+    if(e) { e.stopPropagation(); e.preventDefault(); }
+    ov.remove();
+  }
+
+  closeBtn.addEventListener('click', close);
+  prevBtn.addEventListener('click', function(e){ e.stopPropagation(); if(cur>0){cur--;update();} });
+  nextBtn.addEventListener('click', function(e){ e.stopPropagation(); if(cur<photos.length-1){cur++;update();} });
+
+  // Свайп влево/вправо
+  let touchStartX = 0;
+  ov.addEventListener('touchstart', function(e){ touchStartX = e.touches[0].clientX; }, {passive:true});
+  ov.addEventListener('touchend', function(e){
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if(Math.abs(dx) > 50){
+      if(dx < 0 && cur < photos.length-1){ cur++; update(); }
+      if(dx > 0 && cur > 0){ cur--; update(); }
+    }
+  });
+
+  // Закрытие только по тапу на фон (не на фото)
+  ov.addEventListener('click', function(e){
+    if(e.target === ov) close(e);
+  });
+
+  if(photos.length > 1){
+    ov.appendChild(prevBtn);
+    ov.appendChild(nextBtn);
+  }
+  ov.appendChild(counter);
+  ov.appendChild(img);
+  ov.appendChild(closeBtn);
+  document.body.appendChild(ov);
+  update();
 }
 function updateGalDots(el){
   var id=el.id.replace('galScroll_','');
