@@ -137,7 +137,6 @@ body{display:flex;flex-direction:column;min-height:100vh}
 .urg-icon{font-size:22px;margin-bottom:5px}
 .urg-label{color:var(--text2);font-size:12px;line-height:1.4}
 .urg-card.sel .urg-label{color:var(--gold);font-weight:500}
-@keyframes pickerPulse{0%,100%{box-shadow:0 2px 12px rgba(181,137,58,0.35)}50%{box-shadow:0 2px 22px rgba(181,137,58,0.65)}}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes boatSail{0%{transform:translateX(-8px) rotate(-2deg)}25%{transform:translateX(2px) rotate(1deg)}50%{transform:translateX(6px) rotate(-1deg)}75%{transform:translateX(2px) rotate(2deg)}100%{transform:translateX(-8px) rotate(-2deg)}}
 @keyframes wavePulse{0%,100%{opacity:0.6}50%{opacity:1}}
@@ -1765,48 +1764,55 @@ function shareQuizResult(emoji,title){
 // ── YACHT PICKER — умный подбор 8 шагов ──
 let FAVS=new Set();
 let PS={who:'',guests:0,overnight:false,clarify:'',mood:'',budget:0,duration:0,marina:'all'};
-
-// SVG иконки — разные для каждого варианта
-const PI={
-  couple:'<svg viewBox="0 0 32 20" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="10" cy="5" r="3.5"/><path d="M3 19c0-4 3-6 7-6s7 2 7 6"/><circle cx="22" cy="5" r="3.5"/><path d="M16 19c0-4 3-6 7-6"/></svg>',
-  family:'<svg viewBox="0 0 36 22" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="9" cy="5" r="3.5"/><path d="M2 20c0-4 3-6 7-6s7 2 7 6"/><circle cx="23" cy="5" r="3.5"/><path d="M17 20c0-4 3-6 7-6"/><circle cx="30" cy="12" r="2.2"/><path d="M27 20c0-2.5 1.5-3.5 3-3.5s3 1 3 3.5"/></svg>',
-  group:'<svg viewBox="0 0 40 20" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="7" cy="5" r="3"/><path d="M1 18c0-3.5 2.5-5 6-5s6 1.5 6 18"/><circle cx="20" cy="5" r="3"/><path d="M14 18c0-3.5 2.5-5 6-5s6 1.5 6 18"/><circle cx="33" cy="5" r="3"/><path d="M27 18c0-3.5 2.5-5 6-5s6 1.5 6 18"/></svg>',
-  big:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
-  yes:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/><circle cx="12" cy="12" r="3" fill="currentColor" opacity=".3"/></svg>',
-  no:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>',
-  toddler:'<svg viewBox="0 0 30 22" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="9" cy="5" r="3.5"/><path d="M2 20c0-4 3-6 7-6s7 2 7 6"/><circle cx="23" cy="12" r="2.2"/><path d="M20 20c0-2.5 1.5-3.5 3-3.5s3 1 3 3.5"/></svg>',
-  older:'<svg viewBox="0 0 30 22" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="9" cy="5" r="3.5"/><path d="M2 20c0-4 3-6 7-6s7 2 7 6"/><circle cx="23" cy="6" r="3"/><path d="M17 20c0-3.5 2.5-5 6-5s6 1.5 6 5"/></svg>',
-  chill:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M2 20h20M6 20V10l6-7 6 7v10"/><path d="M10 20v-5h4v5"/></svg>',
-  speed:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
-  luxury:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
-  event:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>',
-  noevent:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
-  relax:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
-  romantic:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
-  sailing:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M3 17l9-13 9 13H3z"/><line x1="12" y1="4" x2="12" y2="20"/><path d="M5 20h14"/></svg>',
-  swim:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M2 12c2-3 4 0 6 0s4-3 6 0 4 0 6 0M2 17c2-2 4 0 6 0s4-2 6 0 4 0 6 0"/></svg>',
-  scenic:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M3 17L7 9l4 6 3-4 5 6H3z"/><circle cx="17" cy="5" r="2"/></svg>',
-  cruise:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M3 17l4-8 5 4 4-6 5 10H3z"/><path d="M3 20h18"/></svg>',
-  adventure:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><polygon points="12 2 2 19 22 19"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
-  water:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M12 2c0 0-7 7-7 12a7 7 0 0 0 14 0c0-5-7-12-7-12z"/></svg>',
-  party:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M22 3l-9.17 9.17M22 3H15M22 3v7M3 21l6-6"/><circle cx="6" cy="18" r="3"/></svg>',
-  clock:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
-  moon:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
-  cal:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
-  kotor:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
-  pin:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
-  globe:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
-  persons:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+const YACHT_RULES={
+  19:{noOvernight:true,minGuests:20},           // Tahiti 80 — только большие группы, нет ночёвок
+  21:{weeklyOnly:true},                          // Lagoon 46 — только недельный чартер
 };
+// Приоритетные яхты — получают бонус в подборе
+const PROMOTED_YACHTS={3:true,4:true,39:true,41:true,42:true}; // Cranchi 44, Cranchi Z35, Elan 4E, Bali Catspace, Bavaria 50
 
-function pIcon(key){
-  const svg=PI[key]||PI.globe;
-  return '<div style="width:32px;height:32px;border-radius:8px;background:rgba(181,137,58,0.08);border:0.5px solid rgba(181,137,58,0.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--gold)">'+svg+'</div>';
+// SVG иконки через функцию — безопасно для всех браузеров
+function pSVG(key){
+  const icons={
+    couple:'<svg viewBox="0 0 32 20" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="10" cy="5" r="3.5"/><path d="M3 19c0-4 3-6 7-6s7 2 7 6"/><circle cx="22" cy="5" r="3.5"/><path d="M16 19c0-4 3-6 7-6"/></svg>',
+    family:'<svg viewBox="0 0 36 22" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="9" cy="5" r="3.5"/><path d="M2 20c0-4 3-6 7-6s7 2 7 6"/><circle cx="23" cy="5" r="3.5"/><path d="M17 20c0-4 3-6 7-6"/><circle cx="30" cy="12" r="2.2"/><path d="M27 20c0-2.5 1.5-3.5 3-3.5s3 1 3 3.5"/></svg>',
+    group:'<svg viewBox="0 0 40 20" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="7" cy="5" r="3"/><path d="M1 18c0-3.5 2.5-5 6-5s6 1.5 6 5"/><circle cx="20" cy="5" r="3"/><path d="M14 18c0-3.5 2.5-5 6-5s6 1.5 6 5"/><circle cx="33" cy="5" r="3"/><path d="M27 18c0-3.5 2.5-5 6-5s6 1.5 6 5"/></svg>',
+    big:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
+    yes:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+    no:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg>',
+    toddler:'<svg viewBox="0 0 30 22" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="9" cy="5" r="3.5"/><path d="M2 20c0-4 3-6 7-6s7 2 7 6"/><circle cx="23" cy="12" r="2.2"/><path d="M20 20c0-2.5 1.5-3.5 3-3.5s3 1 3 3.5"/></svg>',
+    older:'<svg viewBox="0 0 30 22" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="9" cy="5" r="3.5"/><path d="M2 20c0-4 3-6 7-6s7 2 7 6"/><circle cx="23" cy="6" r="3"/><path d="M17 20c0-3.5 2.5-5 6-5s6 1.5 6 5"/></svg>',
+    chill:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M2 20h20M6 20V10l6-7 6 7v10"/><path d="M10 20v-5h4v5"/></svg>',
+    speed:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+    luxury:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+    event:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>',
+    noevent:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+    relax:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/></svg>',
+    romantic:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+    sailing:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M3 17l9-13 9 13H3z"/><line x1="12" y1="4" x2="12" y2="20"/><path d="M5 20h14"/></svg>',
+    swim:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M2 12c2-3 4 0 6 0s4-3 6 0 4 0 6 0"/></svg>',
+    scenic:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M3 17L7 9l4 6 3-4 5 6H3z"/><circle cx="17" cy="5" r="2"/></svg>',
+    cruise:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M3 17l4-8 5 4 4-6 5 10H3z"/></svg>',
+    adventure:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><polygon points="12 2 2 19 22 19"/></svg>',
+    water:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M12 2c0 0-7 7-7 12a7 7 0 0 0 14 0c0-5-7-12-7-12z"/></svg>',
+    party:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M22 3l-9.17 9.17M22 3H15M22 3v7"/><circle cx="6" cy="18" r="3"/></svg>',
+    clock:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+    moon:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+    cal:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+    pin:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+    globe:'<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+  };
+  return icons[key]||icons.globe;
 }
 
-function pRow(label,sub,val,icon,fn){
-  return '<div class="picker-opt" onclick="'+fn+'(\''+val+'\',this)" style="display:flex;align-items:center;gap:10px;padding:11px 13px">'
-    +pIcon(icon)
+function pIcon(key){
+  return '<div style="width:32px;height:32px;border-radius:8px;background:rgba(181,137,58,0.08);border:0.5px solid rgba(181,137,58,0.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#b5893a">'+pSVG(key)+'</div>';
+}
+
+function pRow(label,sub,val,iconKey,fn){
+  var onclick=fn+'(this,\''+val+'\')';
+  return '<div class="picker-opt" onclick="'+onclick+'" style="display:flex;align-items:center;gap:10px;padding:11px 13px">'
+    +pIcon(iconKey)
     +'<div style="flex:1"><div style="font-size:13px">'+label+'</div>'
     +(sub?'<div style="font-size:10px;color:var(--text3);margin-top:2px">'+sub+'</div>':'')
     +'</div></div>';
@@ -1824,264 +1830,276 @@ function pHead(t,sub){
     +(sub?'<div style="font-size:11px;color:var(--text3);margin-bottom:14px">'+sub+'</div>':'');
 }
 
+function pBackBtn(toStep){
+  var L=lang;
+  return '<button onclick="pShowStep('+toStep+')" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;padding:0;margin-bottom:14px;display:flex;align-items:center;gap:5px;font-family:\'Jost\',sans-serif">'
+    +'<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>'
+    +(L==='ru'?'Назад':'Back')+'</button>';
+}
+
 function openPicker(){
   PS={who:'',guests:0,overnight:false,clarify:'',mood:'',budget:0,duration:0,marina:'all'};
-  const el=document.getElementById('pickerContentWrap');
+  var el=document.getElementById('pickerContentWrap');
   if(el)el.innerHTML='';
   document.getElementById('pickerModal').classList.add('open');
   pShowStep(1);
 }
 function resetPicker(){openPicker();}
 
-function pSetSel(el){
-  el.closest('[style*="flex-direction:column"]').querySelectorAll('.picker-opt').forEach(x=>x.classList.remove('sel'));
-  el.classList.add('sel');
-}
-
 function pShowStep(n){
-  const L=lang;
-  const w=document.getElementById('pickerContentWrap');
+  var L=lang;
+  var w=document.getElementById('pickerContentWrap');
   if(!w)return;
-  let html='';
+  var html='';
 
   if(n===1){
     html=pProg(1)+pHead(L==='ru'?'Кто едет?':'Who\'s coming?',L==='ru'?'От этого зависят все следующие вопросы':'This shapes all the next questions')
       +'<div style="display:flex;flex-direction:column;gap:8px">'
-      +pRow(L==='ru'?'Пара':'Couple',L==='ru'?'романтика, тишина, комфорт':'romance, quiet, comfort','couple','couple','p1')
-      +pRow(L==='ru'?'Семья с детьми':'Family with kids',L==='ru'?'безопасность и удобство':'safety and comfort','family','family','p1')
-      +pRow(L==='ru'?'Компания друзей':'Friends group',L==='ru'?'до 10 человек':'up to 10 people','group','group','p1')
-      +pRow(L==='ru'?'Большая группа / мероприятие':'Large group / event',L==='ru'?'10+ человек, свадьба, корпоратив':'10+ people, wedding, corporate','big','big','p1')
+      +pRow(L==='ru'?'Пара':'Couple',L==='ru'?'романтика, тишина, комфорт':'romance, quiet, comfort','couple','couple','p1sel')
+      +pRow(L==='ru'?'Семья с детьми':'Family with kids',L==='ru'?'безопасность и удобство':'safety and comfort','family','family','p1sel')
+      +pRow(L==='ru'?'Компания друзей':'Friends group',L==='ru'?'до 10 человек':'up to 10 people','group','group','p1sel')
+      +pRow(L==='ru'?'Большая группа / мероприятие':'Large group / event',L==='ru'?'10+ человек, свадьба, корпоратив':'10+ people, wedding, corporate','big','big','p1sel')
       +'</div>';
   }
   else if(n===2){
-    const opts={
+    var gMap={
       couple:[[L==='ru'?'Двое':'Two','','2','couple'],[L==='ru'?'3–4 человека':'3–4 people','','4','couple']],
       family:[[L==='ru'?'3–4 человека':'3–4 people','','4','family'],[L==='ru'?'5–6 человек':'5–6 people','','6','family'],[L==='ru'?'7–8 человек':'7–8 people','','8','family']],
       group:[[L==='ru'?'4–6 человек':'4–6 people','','6','group'],[L==='ru'?'6–8 человек':'6–8 people','','8','group'],[L==='ru'?'8–10 человек':'8–10 people','','10','group']],
       big:[[L==='ru'?'10–12 человек':'10–12 people','','12','big'],[L==='ru'?'12 и больше':'12 and more','','20','big']],
     };
-    html=pProg(2)+pHead(L==='ru'?'Сколько человек?':'How many people?')
+    var opts=gMap[PS.who]||gMap.group;
+    html=pProg(2)+pBackBtn(1)+pHead(L==='ru'?'Сколько человек?':'How many people?')
       +'<div style="display:flex;flex-direction:column;gap:8px">'
-      +(opts[PS.who]||opts.group).map(o=>pRow(o[0],o[1],o[2],o[3],'p2')).join('')
+      +opts.map(function(o){return pRow(o[0],o[1],o[2],o[3],'p2sel');}).join('')
       +'</div>';
   }
   else if(n===3){
-    html=pProg(3)+pHead(L==='ru'?'Планируете ночёвку?':'Planning to stay overnight?',L==='ru'?'Это определит нужны ли каюты':'This determines if cabins are needed')
+    html=pProg(3)+pBackBtn(2)+pHead(L==='ru'?'Планируете ночёвку?':'Planning to stay overnight?',L==='ru'?'Это определит нужны ли каюты':'This determines if cabins are needed')
       +'<div style="display:flex;flex-direction:column;gap:8px">'
-      +pRow(L==='ru'?'Да — хотим остаться ночевать':'Yes — we want to sleep on board',L==='ru'?'нужны яхты с каютами':'yachts with cabins needed','yes','yes','p3')
-      +pRow(L==='ru'?'Нет — один день':'No — just one day',L==='ru'?'весь каталог':'full catalog available','no','no','p3')
+      +pRow(L==='ru'?'Нет — один день':'No — just one day',L==='ru'?'все яхты каталога':'all yachts available','no','no','p3sel')
+      +pRow(L==='ru'?'Да — хотим ночевать':'Yes — we want to sleep on board',L==='ru'?'только яхты с каютами':'only yachts with cabins','yes','yes','p3sel')
       +'</div>';
   }
   else if(n===4){
-    if(PS.who==='couple'){setTimeout(()=>pShowStep(5),50);return;}
-    let q='',sub='',rows='';
+    if(PS.who==='couple'){pShowStep(5);return;}
+    var q4='',sub4='',rows4='';
     if(PS.who==='family'){
-      q=L==='ru'?'Есть дети до 5 лет?':'Children under 5 years?';
-      sub=L==='ru'?'Для малышей важна устойчивость яхты':'Stability matters for toddlers';
-      rows=pRow(L==='ru'?'Да, есть малыши':'Yes, toddlers',L==='ru'?'подберём устойчивые катамараны':'stable catamarans','toddler','toddler','p4')
-        +pRow(L==='ru'?'Нет, дети постарше':'No, older kids',L==='ru'?'весь каталог':'full catalog','older','older','p4');
-    } else if(PS.who==='group'){
-      q=L==='ru'?'Что важнее для компании?':'What matters most to your group?';
-      rows=pRow(L==='ru'?'Спокойно — купаться, загорать':'Relaxed — swim, sunbathe',L==='ru'?'парусные, катамараны':'sailing, catamarans','chill','chill','p4')
-        +pRow(L==='ru'?'Активно — скорость, адреналин':'Active — speed, adrenaline',L==='ru'?'быстрые моторные яхты':'fast motor yachts','speed','speed','p4')
-        +pRow(L==='ru'?'Красиво — простор, хороший вид':'Beautiful — space, views',L==='ru'?'большие яхты и VIP':'large yachts and VIP','luxury','luxury','p4');
-    } else {
-      q=L==='ru'?'Это особое мероприятие?':'Is this a special event?';
-      sub=L==='ru'?'Свадьба или корпоратив — нужны яхты 12+ мест':'Wedding or corporate — yachts 12+ seats needed';
-      rows=pRow(L==='ru'?'Да — свадьба или корпоратив':'Yes — wedding or corporate',L==='ru'?'яхты 12+ мест':'yachts 12+ seats','event','event','p4')
-        +pRow(L==='ru'?'Нет — просто большой компанией':'No — just a large group',L==='ru'?'вместимость 10+':'capacity 10+','noevent','noevent','p4');
+      q4=L==='ru'?'Есть дети до 5 лет?':'Children under 5 years?';
+      sub4=L==='ru'?'Для малышей важна устойчивость':'Stability matters for toddlers';
+      rows4=pRow(L==='ru'?'Да, есть малыши':'Yes, toddlers',L==='ru'?'катамараны — самые устойчивые':'catamarans — most stable','toddler','toddler','p4sel')
+        +pRow(L==='ru'?'Нет, дети постарше':'No, older kids',L==='ru'?'парусные, моторные, катамараны':'sailing, motor, catamarans','older','older','p4sel');
+    }else if(PS.who==='group'){
+      q4=L==='ru'?'Что важнее для компании?':'What matters most?';
+      rows4=pRow(L==='ru'?'Спокойно — купаться, загорать':'Relaxed — swim, sunbathe',L==='ru'?'парусные и катамараны':'sailing and catamarans','chill','chill','p4sel')
+        +pRow(L==='ru'?'Активно — скорость, адреналин':'Active — speed, adrenaline',L==='ru'?'быстрые моторные яхты':'fast motor yachts','speed','speed','p4sel')
+        +pRow(L==='ru'?'Красиво — простор, вид':'Beautiful — space, views',L==='ru'?'большие яхты и VIP':'large yachts and VIP','luxury','luxury','p4sel');
+    }else{
+      q4=L==='ru'?'Это особое мероприятие?':'Is this a special event?';
+      sub4=L==='ru'?'Свадьба или корпоратив — нужны яхты 12+ мест':'Wedding/corporate — need yachts 12+ seats';
+      rows4=pRow(L==='ru'?'Да — свадьба или корпоратив':'Yes — wedding or corporate',L==='ru'?'катамараны и большие яхты 12+ мест':'catamarans and large yachts 12+','event','event','p4sel')
+        +pRow(L==='ru'?'Нет — просто большой компанией':'No — just a large group',L==='ru'?'моторные и катамараны 10+':'motor and catamarans 10+','noevent','noevent','p4sel');
     }
-    html=pProg(4)+pHead(q,sub)+'<div style="display:flex;flex-direction:column;gap:8px">'+rows+'</div>';
+    html=pProg(4)+pBackBtn(3)+pHead(q4,sub4)+'<div style="display:flex;flex-direction:column;gap:8px">'+rows4+'</div>';
   }
   else if(n===5){
-    const key=PS.who==='couple'?(PS.overnight?'cy':'cn'):PS.clarify||'chill';
-    const moods={
-      cn:[[L==='ru'?'Расслабленно — закат, купание':'Relaxed — sunset, swim','','relax','relax'],[L==='ru'?'Романтика и паруса':'Romance and sails','','romantic','romantic'],[L==='ru'?'Роскошь и комфорт':'Luxury and comfort','','luxury','luxury'],[L==='ru'?'Скорость и драйв':'Speed and thrill','','speed','speed']],
-      cy:[[L==='ru'?'Романтика — паруса, звёзды':'Romance — sails, stars','','romantic','romantic'],[L==='ru'?'Комфорт и роскошь':'Comfort and luxury','','luxury','luxury'],[L==='ru'?'Приключение и маршрут':'Adventure and route','','adventure','sailing']],
-      toddler:[[L==='ru'?'Спокойно покупаться':'Calm swimming','','relax','relax'],[L==='ru'?'Прогулка по заливу':'Bay cruise','','cruise','cruise']],
-      older:[[L==='ru'?'Парусное приключение':'Sailing adventure','','sailing','sailing'],[L==='ru'?'Купаться и нырять':'Swim and dive','','swim','swim'],[L==='ru'?'Красивые места и виды':'Scenic spots and views','','scenic','scenic']],
-      chill:[[L==='ru'?'Паруса и тишина':'Sails and silence','','sailing','sailing'],[L==='ru'?'Красивые закаты':'Beautiful sunsets','','scenic','scenic'],[L==='ru'?'Спокойное купание':'Calm swimming','','relax','relax']],
-      speed:[[L==='ru'?'Максимальная скорость':'Maximum speed','','speed','speed'],[L==='ru'?'Нырять и водные развлечения':'Dive and water sports','','water','water']],
-      luxury:[[L==='ru'?'Роскошь и простор':'Luxury and space','','luxury','luxury'],[L==='ru'?'Панорамные виды':'Panoramic views','','scenic','scenic']],
-      event:[[L==='ru'?'Торжественно и красиво':'Elegant and beautiful','','luxury','luxury'],[L==='ru'?'Ярко и незабываемо':'Bright and unforgettable','','party','party']],
-      noevent:[[L==='ru'?'Расслабленно на воде':'Relaxed on water','','relax','relax'],[L==='ru'?'Активно и весело':'Active and fun','','speed','speed'],[L==='ru'?'Комфортно и красиво':'Comfortable and beautiful','','luxury','luxury']],
+    var mKey=PS.who==='couple'?(PS.overnight?'cy':'cn'):PS.clarify||'chill';
+    var moodMap={
+      cn:[[L==='ru'?'Расслабленно — закат, купание':'Relaxed — sunset, swim',L==='ru'?'парусные и тихие моторные':'sailing and quiet motor','relax','relax'],[L==='ru'?'Романтика и паруса':'Romance and sails',L==='ru'?'парусные яхты':'sailing yachts','romantic','romantic'],[L==='ru'?'Роскошь и комфорт':'Luxury and comfort',L==='ru'?'VIP и большие моторные':'VIP and large motor','luxury','luxury'],[L==='ru'?'Скорость и драйв':'Speed and thrill',L==='ru'?'быстрые моторные':'fast motor yachts','speed','speed']],
+      cy:[[L==='ru'?'Романтика — паруса, звёзды':'Romance — sails, stars',L==='ru'?'парусные с каютами':'sailing with cabins','romantic','romantic'],[L==='ru'?'Комфорт и роскошь':'Comfort and luxury',L==='ru'?'VIP и моторные с каютами':'VIP and motor with cabins','luxury','luxury'],[L==='ru'?'Приключение и маршрут':'Adventure and route',L==='ru'?'парусные, маршрут по морю':'sailing, sea route','adventure','adventure']],
+      toddler:[[L==='ru'?'Спокойно покупаться':'Calm swimming',L==='ru'?'катамараны — безопасно':'catamarans — safe and stable','relax','relax'],[L==='ru'?'Прогулка по заливу':'Bay cruise',L==='ru'?'катамараны и моторные':'catamarans and motor','cruise','cruise']],
+      older:[[L==='ru'?'Парусное приключение':'Sailing adventure',L==='ru'?'парусные яхты':'sailing yachts','sailing','sailing'],[L==='ru'?'Купаться и нырять':'Swim and dive',L==='ru'?'катамараны и моторные':'catamarans and motor','swim','swim'],[L==='ru'?'Красивые места и виды':'Scenic spots',L==='ru'?'парусные и катамараны':'sailing and catamarans','scenic','scenic']],
+      chill:[[L==='ru'?'Паруса и тишина':'Sails and silence',L==='ru'?'парусные яхты':'sailing yachts','sailing','sailing'],[L==='ru'?'Красивые закаты':'Beautiful sunsets',L==='ru'?'парусные и катамараны':'sailing and catamarans','scenic','scenic'],[L==='ru'?'Спокойное купание':'Calm swimming',L==='ru'?'катамараны и моторные':'catamarans and motor','relax','relax']],
+      speed:[[L==='ru'?'Максимальная скорость':'Maximum speed',L==='ru'?'быстрые моторные яхты':'fast motor yachts','speed','speed'],[L==='ru'?'Нырять и водные развлечения':'Dive and water sports',L==='ru'?'моторные с платформой':'motor with swim platform','water','water']],
+      luxury:[[L==='ru'?'Роскошь и простор':'Luxury and space',L==='ru'?'VIP яхты и большие моторные':'VIP and large motor','luxury','luxury'],[L==='ru'?'Панорамные виды':'Panoramic views',L==='ru'?'парусные и катамараны':'sailing and catamarans','scenic','scenic']],
+      event:[[L==='ru'?'Торжественно и красиво':'Elegant and beautiful',L==='ru'?'большие яхты и VIP':'large yachts and VIP','luxury','luxury'],[L==='ru'?'Ярко и незабываемо':'Bright and unforgettable',L==='ru'?'катамараны с большой палубой':'catamarans with large deck','party','party']],
+      noevent:[[L==='ru'?'Расслабленно на воде':'Relaxed on water',L==='ru'?'катамараны и парусные':'catamarans and sailing','relax','relax'],[L==='ru'?'Активно и весело':'Active and fun',L==='ru'?'быстрые моторные':'fast motor yachts','speed','speed'],[L==='ru'?'Комфортно и красиво':'Comfortable and beautiful',L==='ru'?'большие яхты и VIP':'large yachts and VIP','luxury','luxury']],
     };
-    html=pProg(5)+pHead(L==='ru'?'Какое настроение?':'What\'s the vibe?',L==='ru'?'Выберите одно':'Choose one')
+    var backTo=PS.who==='couple'?3:4;
+    var mOpts=moodMap[mKey]||moodMap.chill;
+    html=pProg(5)+pBackBtn(backTo)+pHead(L==='ru'?'Какое настроение?':'What\'s the vibe?',L==='ru'?'Выберите одно':'Choose one')
       +'<div style="display:flex;flex-direction:column;gap:8px">'
-      +(moods[key]||moods.chill).map(o=>pRow(o[0],o[1],o[2],o[3],'p5')).join('')
+      +mOpts.map(function(o){return pRow(o[0],o[1],o[2],o[3],'p5sel');}).join('')
       +'</div>';
   }
   else if(n===6){
-    const minV=PS.clarify==='toddler'?300:PS.clarify==='event'?1000:PS.overnight?500:300;
-    const maxV=PS.clarify==='event'?10000:PS.overnight?8000:5000;
-    const initV=Math.round((minV+(maxV-minV)*0.3)/50)*50;
-    html=pProg(6)+pHead(L==='ru'?'Бюджет на аренду':'Rental budget',L==='ru'?'Перетащите ползунок':'Drag the slider')
-      +'<div style="text-align:center;font-size:26px;font-weight:600;color:var(--gold);margin:8px 0 14px" id="bDisp">'+initV.toLocaleString()+'€</div>'
+    var minV=PS.clarify==='toddler'?300:PS.clarify==='event'?1000:PS.overnight?500:300;
+    var maxV=PS.clarify==='event'?10000:PS.overnight?8000:5000;
+    var initV=Math.round((minV+(maxV-minV)*0.3)/50)*50;
+    html=pProg(6)+pBackBtn(5)+pHead(L==='ru'?'Бюджет на аренду':'Rental budget',L==='ru'?'Перетащите ползунок':'Drag the slider')
+      +'<div style="text-align:center;font-size:26px;font-weight:600;color:var(--gold);margin:8px 0 14px" id="bDisp">'+initV.toLocaleString()+'&#8364;</div>'
       +'<input type="range" id="bSlide" min="'+minV+'" max="'+maxV+'" step="50" value="'+initV+'"'
-      +' oninput="document.getElementById(\'bDisp\').textContent=parseInt(this.value).toLocaleString()+\'€\';pUpdateBCount(parseInt(this.value))"'
+      +' oninput="document.getElementById(\'bDisp\').textContent=parseInt(this.value).toLocaleString()+\'\\u20ac\';pUpdBCnt(parseInt(this.value))"'
       +' style="width:100%;accent-color:var(--gold);height:4px;cursor:pointer;margin-bottom:6px">'
-      +'<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:8px"><span>'+minV.toLocaleString()+'€</span><span>'+maxV.toLocaleString()+'€+</span></div>'
+      +'<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:8px"><span>'+minV.toLocaleString()+'&#8364;</span><span>'+maxV.toLocaleString()+'&#8364;+</span></div>'
       +'<div style="font-size:10px;color:var(--text3);text-align:center;margin-bottom:14px" id="bCnt"></div>'
-      +'<button onclick="p6confirm()" class="book-btn" style="margin:0">'+(L==='ru'?'Продолжить →':'Continue →')+'</button>';
-    setTimeout(()=>pUpdateBCount(initV),50);
+      +'<button onclick="p6go()" class="book-btn" style="margin:0">'+(L==='ru'?'Продолжить \u2192':'Continue \u2192')+'</button>';
+    setTimeout(function(){pUpdBCnt(initV);},50);
   }
   else if(n===7){
-    const overnight=PS.overnight;
-    const rows=overnight
-      ?[pRow(L==='ru'?'1 ночь':'1 night','','24','moon','p7'),pRow(L==='ru'?'2–3 дня':'2–3 days','','60','cal','p7'),pRow(L==='ru'?'Неделя':'Week','','168','cal','p7')]
-      :[pRow(L==='ru'?'4 часа':'4 hours','','4','clock','p7'),pRow(L==='ru'?'6 часов':'6 hours','','6','clock','p7'),pRow(L==='ru'?'8 часов (весь день)':'8 hours (full day)','','8','clock','p7'),pRow(L==='ru'?'Несколько дней':'Several days','','48','cal','p7')];
-    html=pProg(7)+pHead(L==='ru'?'Сколько времени?':'How long?')
-      +'<div style="display:flex;flex-direction:column;gap:8px">'+rows.join('')+'</div>';
+    var tOpts=PS.overnight
+      ?[[L==='ru'?'1 ночь':'1 night','','24','moon'],[L==='ru'?'2–3 дня':'2–3 days','','60','cal'],[L==='ru'?'Неделя':'Week','','168','cal']]
+      :[[L==='ru'?'4 часа':'4 hours','','4','clock'],[L==='ru'?'6 часов':'6 hours','','6','clock'],[L==='ru'?'8 часов (весь день)':'8 hours (full day)','','8','clock'],[L==='ru'?'Несколько дней':'Several days','','48','cal']];
+    html=pProg(7)+pBackBtn(6)+pHead(L==='ru'?'Сколько времени?':'How long?')
+      +'<div style="display:flex;flex-direction:column;gap:8px">'
+      +tOpts.map(function(o){return pRow(o[0],o[1],o[2],o[3],'p7sel');}).join('')
+      +'</div>';
   }
   else if(n===8){
-    html=pProg(8)+pHead(L==='ru'?'Откуда отплываем?':'Departing from?',L==='ru'?'Яхты из соседних марин тоже покажем':'We\'ll also show yachts from nearby marinas')
+    html=pProg(8)+pBackBtn(7)+pHead(L==='ru'?'Откуда отплываем?':'Departing from?',L==='ru'?'Яхты из соседних марин тоже покажем':'We\'ll show yachts from nearby marinas too')
       +'<div style="display:flex;flex-direction:column;gap:8px">'
-      +pRow('Залив Котор / Boka Bay','Tivat · Porto Montenegro · Kotor · Portono​vi · Herceg Novi','kotor','kotor','p8')
-      +pRow('Будва / Budva','Budva · Petrovac','budva','pin','p8')
-      +pRow('Бар / Ульцинь · Bar / Ulcinj','Bar · Ulcinj','bar','pin','p8')
-      +pRow(L==='ru'?'Всё равно — покажите лучшее':'Any marina — show best options','','any','globe','p8')
+      +pRow('Залив Котор / Boka Bay','Tivat \u00b7 Porto Montenegro \u00b7 Kotor \u00b7 Portono\u00advi \u00b7 Herceg Novi','kotor','kotor','p8sel')
+      +pRow('Будва / Budva','Budva \u00b7 Petrovac','budva','pin','p8sel')
+      +pRow('Бар / Ульцинь','Bar \u00b7 Ulcinj','bar','pin','p8sel')
+      +pRow(L==='ru'?'Всё равно — покажите лучшее':'Any marina — show best options','','any','globe','p8sel')
       +'</div>';
   }
 
   w.innerHTML=html;
 }
 
-function pUpdateBCount(v){
-  const el=document.getElementById('bCnt');
+function pUpdBCnt(v){
+  var el=document.getElementById('bCnt');
   if(!el)return;
-  const n=YACHTS.filter(y=>{const mp=getMinPrice(y);return mp&&mp.price<=v;}).length;
+  var n=YACHTS.filter(function(y){var mp=getMinPrice(y);return mp&&mp.price<=v;}).length;
   el.textContent=n>0?(lang==='ru'?'Подходит яхт: '+n:'Yachts available: '+n):(lang==='ru'?'Расширьте диапазон':'Expand range');
 }
 
-// Обработчики
-function p1(val,el){PS.who=val;pSetSel(el);setTimeout(()=>pShowStep(2),260);}
-function p2(val,el){PS.guests=parseInt(val);pSetSel(el);setTimeout(()=>pShowStep(3),260);}
-function p3(val,el){PS.overnight=(val==='yes');pSetSel(el);setTimeout(()=>pShowStep(4),260);}
-function p4(val,el){PS.clarify=val;pSetSel(el);setTimeout(()=>pShowStep(5),260);}
-function p5(val,el){PS.mood=val;pSetSel(el);setTimeout(()=>pShowStep(6),260);}
-function p6confirm(){const sl=document.getElementById('bSlide');PS.budget=sl?parseInt(sl.value):1500;pShowStep(7);}
-function p7(val,el){PS.duration=parseInt(val);pSetSel(el);setTimeout(()=>pShowStep(8),260);}
-function p8(val,el){PS.marina=val;pSetSel(el);setTimeout(()=>pShowResults(),260);}
+// Обработчики выбора — принимают (el, val) вместо onclick inline
+function p1sel(el,val){PS.who=val;pSelRow(el);setTimeout(function(){pShowStep(2);},260);}
+function p2sel(el,val){PS.guests=parseInt(val);pSelRow(el);setTimeout(function(){pShowStep(3);},260);}
+function p3sel(el,val){PS.overnight=(val==='yes');pSelRow(el);setTimeout(function(){pShowStep(4);},260);}
+function p4sel(el,val){PS.clarify=val;pSelRow(el);setTimeout(function(){pShowStep(5);},260);}
+function p5sel(el,val){PS.mood=val;pSelRow(el);setTimeout(function(){pShowStep(6);},260);}
+function p6go(){var sl=document.getElementById('bSlide');PS.budget=sl?parseInt(sl.value):1500;pShowStep(7);}
+function p7sel(el,val){PS.duration=parseInt(val);pSelRow(el);setTimeout(function(){pShowStep(8);},260);}
+function p8sel(el,val){PS.marina=val;pSelRow(el);setTimeout(function(){pShowPickerResults();},260);}
 
-function pSetSel(el){
-  const parent=el.parentElement;
-  if(parent)parent.querySelectorAll('.picker-opt').forEach(x=>x.classList.remove('sel'));
+function pSelRow(el){
+  var parent=el.parentElement;
+  if(parent)parent.querySelectorAll('.picker-opt').forEach(function(x){x.classList.remove('sel');});
   el.classList.add('sel');
 }
 
-// Географические зоны
 function marinaMatch(yMarina,zone){
   if(!yMarina||zone==='any')return true;
-  const zones={kotor:['tivat','porto montenegro','kotor','perast','portono','herceg'],budva:['budva','petrovac'],bar:['bar','ulcinj']};
-  const spots=zones[zone]||[];
-  return spots.some(s=>yMarina.toLowerCase().includes(s));
+  var zones={kotor:['tivat','porto montenegro','kotor','perast','portono','herceg'],budva:['budva','petrovac'],bar:['bar','ulcinj']};
+  var spots=zones[zone]||[];
+  return spots.some(function(s){return yMarina.toLowerCase().indexOf(s)>=0;});
 }
 
-// Алгоритм подбора с %
 function pCalcScore(y){
-  let score=0,max=0;
-  // Вместимость
+  var score=0,max=0;
+  var rules=YACHT_RULES[y.id];
+  if(rules){
+    if(rules.noOvernight&&PS.overnight)return 0;
+    if(rules.minGuests&&PS.guests<rules.minGuests&&PS.who!=='big')return 0;
+    if(rules.weeklyOnly&&PS.duration<168)return 0; // только если выбрана неделя
+  }
   max+=25;
   if(y.capacity>=PS.guests)score+=25;
   else if(y.capacity>=PS.guests-2)score+=12;
-  // Ночёвка
   max+=20;
-  if(PS.overnight){if((y.cabins||0)>=1)score+=20;}
-  else score+=20;
-  // Настроение → тип
+  if(PS.overnight){if((y.cabins||0)>=1)score+=20;}else score+=20;
   max+=30;
-  const mc={relax:['sailing','catamaran'],romantic:['sailing','motor'],luxury:['vip','motor','catamaran'],speed:['motor','speedboat'],sailing:['sailing'],swim:['catamaran','motor','sailing'],scenic:['sailing','catamaran','motor'],cruise:['catamaran','motor'],adventure:['sailing','motor'],water:['motor','speedboat'],party:['motor','catamaran','vip']};
-  const good=mc[PS.mood]||['motor','sailing','catamaran'];
-  if(PS.clarify==='toddler'){if(y.cat==='catamaran')score+=30;else if(y.cat==='motor'&&y.capacity>=PS.guests)score+=15;}
+  var mc={relax:['sailing','catamaran'],romantic:['sailing','motor'],luxury:['vip','motor','catamaran'],speed:['motor','speedboat'],sailing:['sailing'],swim:['catamaran','motor','sailing'],scenic:['sailing','catamaran','motor'],cruise:['catamaran','motor'],adventure:['sailing','motor'],water:['motor','speedboat'],party:['motor','catamaran','vip']};
+  var good=mc[PS.mood]||['motor','sailing','catamaran'];
+  if(PS.clarify==='toddler'){if(y.cat==='catamaran')score+=30;else if(y.cat==='motor')score+=15;}
   else if(PS.clarify==='event'){if(y.capacity>=12)score+=30;else if(y.capacity>=10)score+=15;}
-  else{if(good[0]===y.cat)score+=30;else if(good.includes(y.cat))score+=18;else score+=5;}
-  // Бюджет
+  else{if(good[0]===y.cat)score+=30;else if(good.indexOf(y.cat)>=0)score+=18;else score+=5;}
   max+=15;
-  const mp=getMinPrice(y);const price=mp?mp.price:0;
+  var mp=getMinPrice(y);var price=mp?mp.price:0;
   if(price>0&&price<=PS.budget)score+=15;
   else if(price>0&&price<=PS.budget*1.25)score+=8;
   else if(price===0)score+=10;
-  // Слот длительности
   max+=10;
-  const hasSlot=(y.pricing||[]).some(s=>{
+  var hasSlot=(y.pricing||[]).some(function(s){
     if(PS.duration>=48)return s.unit==='d'||s.unit==='w';
     if(PS.duration>=24)return s.unit==='d';
     if(PS.duration<=4)return s.unit==='h'&&s.t<=4;
     if(PS.duration<=6)return s.unit==='h'&&s.t<=6;
     return s.unit==='h';
   });
-  score+=hasSlot?10:5;max+=0;
+  score+=hasSlot?10:5;
+  // Приоритетный бонус — поднимает в результатах но не выше 99%
+  if(PROMOTED_YACHTS[y.id])score+=12;
   return Math.min(99,Math.round(score/max*100));
 }
 
-function pShowResults(){
-  const L=lang;
-  const w=document.getElementById('pickerContentWrap');
+function pTogFav(yid,btn){
+  if(FAVS.has(yid)){FAVS.delete(yid);btn.textContent='\u2661';btn.style.color='var(--text3)';}
+  else{FAVS.add(yid);btn.textContent='\u2665';btn.style.color='#e05';}
+}
+
+function pSendFavs(){
+  if(!FAVS.size)return;
+  var L=lang;
+  var tgUser=window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initDataUnsafe&&window.Telegram.WebApp.initDataUnsafe.user||null;
+  var name=tgUser?(tgUser.first_name||''):'';
+  var username=tgUser&&tgUser.username?'@'+tgUser.username:'';
+  var tgId=tgUser?tgUser.id:null;
+  var list=[...FAVS].map(function(id){var y=YACHTS[id];if(!y)return'';var mp=getMinPrice(y);return'\u{1F6A2} '+(y.names['en']||'')+(mp?' \u2014 \u043e\u0442 '+mp.price.toLocaleString()+'\u20ac':'')+(y.marina?' ('+y.marina+')':'');}).filter(Boolean).join('\n');
+  var msg='\u{1F49D} \u0421\u041f\u0418\u0421\u041e\u041a \u0418\u0417\u0411\u0420\u0410\u041d\u041d\u042b\u0425 \u042f\u0425\u0422\n--------------------\n'+(name?'\u{1F464} '+name+'\n':'')+(username?'\u{1F4F1} '+username+'\n':'')+(tgId?'\u{1F517} tg://user?id='+tgId+'\n':'')+'\n'+list;
+  var rm=tgId?{inline_keyboard:[[{text:'\u{1F4AC} \u041d\u0430\u043f\u0438\u0441\u0430\u0442\u044c \u043a\u043b\u0438\u0435\u043d\u0442\u0443',url:'tg://user?id='+tgId}]]}:null;
+  sendTgMessage(msg,rm);
+  var btn=document.querySelector('[onclick="pSendFavs()"]');
+  if(btn){btn.textContent=L==='ru'?'\u2713 \u041e\u0442\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u043e!':'\u2713 Sent!';btn.style.background='#2a7a56';setTimeout(function(){btn.textContent=L==='ru'?'\u041e\u0442\u043f\u0440\u0430\u0432\u0438\u0442\u044c \u043c\u0435\u043d\u0435\u0434\u0436\u0435\u0440\u0443':'Send to manager';btn.style.background='var(--gold)';},2500);}
+}
+
+function pShowPickerResults(){
+  var L=lang;
+  var w=document.getElementById('pickerContentWrap');
   if(!w)return;
-  const scored=YACHTS
-    .filter(y=>marinaMatch(y.marina,PS.marina))
-    .map(y=>({y,s:pCalcScore(y)}))
-    .filter(o=>o.s>=30)
-    .sort((a,b)=>b.s-a.s)
+  var scored=YACHTS
+    .filter(function(y){return marinaMatch(y.marina,PS.marina);})
+    .map(function(y){return{y:y,s:pCalcScore(y)};})
+    .filter(function(o){return o.s>=30;})
+    .sort(function(a,b){return b.s-a.s;})
     .slice(0,5);
-  const sc=s=>s>=80?'#2a7a56':s>=60?'#b5893a':'#888';
-  let html='<div style="font-family:\'Cormorant Garamond\',serif;font-size:22px;color:var(--navy);margin-bottom:4px">'+(L==='ru'?'Подобрали для вас':'Selected for you')+'</div>'
-    +'<div style="font-size:11px;color:var(--text3);margin-bottom:14px">'+
-    (scored.length?(scored.length+(L==='ru'?' яхты по вашему запросу':' yachts for your request')):(L==='ru'?'Ничего не найдено — напишите менеджеру':'Nothing found — contact manager'))
+  var sc=function(s){return s>=80?'#2a7a56':s>=60?'#b5893a':'#888';};
+  var html='<div style="font-family:\'Cormorant Garamond\',serif;font-size:22px;color:var(--navy);margin-bottom:4px">'
+    +(L==='ru'?'\u041f\u043e\u0434\u043e\u0431\u0440\u0430\u043b\u0438 \u0434\u043b\u044f \u0432\u0430\u0441':'Selected for you')+'</div>'
+    +'<div style="font-size:11px;color:var(--text3);margin-bottom:14px">'
+    +(scored.length?scored.length+(L==='ru'?' \u044f\u0445\u0442\u044b \u043f\u043e \u0432\u0430\u0448\u0435\u043c\u0443 \u0437\u0430\u043f\u0440\u043e\u0441\u0443':' yachts for your request'):(L==='ru'?'\u041d\u0438\u0447\u0435\u0433\u043e \u043d\u0435 \u043d\u0430\u0448\u043b\u043e\u0441\u044c':'Nothing found'))
     +'</div>';
   if(scored.length){
-    html+=scored.map(({y,s})=>{
-      const mp=getMinPrice(y);const isFav=FAVS.has(y.id);
+    html+=scored.map(function(o){
+      var y=o.y,s=o.s;
+      var mp=getMinPrice(y);
+      var isFav=FAVS.has(y.id);
       return '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:11px 13px;margin-bottom:10px">'
-        +'<div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="closeModal(\'pickerModal\');setTimeout(()=>openDetail('+y.id+'),200)">'
-        +(y.photos&&y.photos.length?'<img src="'+y.photos[0]+'" style="width:60px;height:60px;object-fit:cover;border-radius:var(--rs);flex-shrink:0">'
-          :'<div style="width:60px;height:60px;border-radius:var(--rs);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">⛵</div>')
+        +'<div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="closeModal(\'pickerModal\');setTimeout(function(){openDetail('+y.id+');},200)">'
+        +(y.photos&&y.photos.length?'<img src="'+y.photos[0]+'" style="width:60px;height:60px;object-fit:cover;border-radius:var(--rs);flex-shrink:0" alt="">':'<div style="width:60px;height:60px;border-radius:var(--rs);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">\u26f5</div>')
         +'<div style="flex:1;min-width:0">'
         +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">'
         +'<div style="font-size:13px;font-weight:500;color:var(--navy)">'+(y.names[L]||y.names['en']||'')+'</div>'
-        +'<button onclick="event.stopPropagation();pTogFav('+y.id+',this)" style="background:none;border:none;font-size:20px;cursor:pointer;padding:0;color:'+(isFav?'#e05':'var(--text3)')+'">'+( isFav?'♥':'♡')+'</button>'
+        +'<button onclick="event.stopPropagation();pTogFav('+y.id+',this)" style="background:none;border:none;font-size:20px;cursor:pointer;padding:0;color:'+(isFav?'#e05':'var(--text3)')+'">'+( isFav?'\u2665':'\u2661')+'</button>'
         +'</div>'
         +'<div style="font-size:11px;color:var(--text3);margin-bottom:4px">'+(y.metas[L]||y.metas['en']||'')+'</div>'
-        +'<div style="font-size:12px;color:var(--gold);font-weight:500">'+(mp?'от '+mp.price.toLocaleString()+'€':(L==='ru'?'на запрос':'on request'))+'</div>'
+        +'<div style="font-size:12px;color:var(--gold);font-weight:500">'+(mp?'\u043e\u0442 '+mp.price.toLocaleString()+'\u20ac':(L==='ru'?'\u043d\u0430 \u0437\u0430\u043f\u0440\u043e\u0441':'on request'))+'</div>'
         +'</div></div>'
         +'<div style="margin-top:8px">'
         +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">'
-        +'<div style="font-size:10px;color:var(--text3)">'+(L==='ru'?'Совпадение':'Match')+'</div>'
+        +'<div style="font-size:10px;color:var(--text3)">'+(L==='ru'?'\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435':'Match')+'</div>'
         +'<div style="font-size:11px;font-weight:600;color:'+sc(s)+'">'+s+'%</div></div>'
         +'<div style="height:4px;background:var(--bg3);border-radius:2px;overflow:hidden">'
         +'<div style="height:100%;width:'+s+'%;background:'+sc(s)+';border-radius:2px;transition:width .8s ease"></div></div></div></div>';
     }).join('');
     if(FAVS.size>0){
       html+='<div style="margin-top:4px;padding:10px 12px;background:var(--gold-dim);border:1px solid rgba(181,137,58,.3);border-radius:var(--rs);display:flex;align-items:center;justify-content:space-between">'
-        +'<div style="font-size:12px;color:var(--gold)">♥ '+(L==='ru'?'Избранных':'Saved')+': '+FAVS.size+'</div>'
-        +'<button onclick="pSendFavs()" style="background:var(--gold);border:none;border-radius:var(--rs);padding:6px 12px;font-size:11px;font-weight:500;color:#fff;cursor:pointer;font-family:\'Jost\',sans-serif">'+(L==='ru'?'Отправить менеджеру':'Send to manager')+'</button></div>';
+        +'<div style="font-size:12px;color:var(--gold)">\u2665 '+(L==='ru'?'\u0418\u0437\u0431\u0440\u0430\u043d\u043d\u044b\u0445':'Saved')+': '+FAVS.size+'</div>'
+        +'<button onclick="pSendFavs()" style="background:var(--gold);border:none;border-radius:var(--rs);padding:6px 12px;font-size:11px;font-weight:500;color:#fff;cursor:pointer;font-family:\'Jost\',sans-serif">'+(L==='ru'?'\u041e\u0442\u043f\u0440\u0430\u0432\u0438\u0442\u044c \u043c\u0435\u043d\u0435\u0434\u0436\u0435\u0440\u0443':'Send to manager')+'</button></div>';
     }
-  } else {
-    html+='<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px">'+(L==='ru'?'Ничего не нашли — напишите нам, подберём!':'Nothing found — contact us, we\'ll find it!')
-      +'<br><button onclick="openSpecial()" style="margin-top:10px;background:rgba(26,38,64,0.07);color:var(--navy);border:1.5px solid var(--navy);border-radius:var(--rs);padding:8px 16px;font-size:12px;cursor:pointer;font-family:\'Jost\',sans-serif">'+(L==='ru'?'Написать менеджеру':'Contact manager')+'</button></div>';
+  }else{
+    html+='<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px">'
+      +(L==='ru'?'\u041d\u0438\u0447\u0435\u0433\u043e \u043d\u0435 \u043d\u0430\u0448\u043b\u0438 \u2014 \u043d\u0430\u043f\u0438\u0448\u0438\u0442\u0435 \u043d\u0430\u043c, \u043f\u043e\u0434\u0431\u0435\u0440\u0451\u043c!':'Nothing found \u2014 contact us, we\'ll find it!')
+      +'<br><button onclick="openSpecial()" style="margin-top:10px;background:rgba(26,38,64,0.07);color:var(--navy);border:1.5px solid var(--navy);border-radius:var(--rs);padding:8px 16px;font-size:12px;cursor:pointer;font-family:\'Jost\',sans-serif">'
+      +(L==='ru'?'\u041d\u0430\u043f\u0438\u0441\u0430\u0442\u044c \u043c\u0435\u043d\u0435\u0434\u0436\u0435\u0440\u0443':'Contact manager')+'</button></div>';
   }
-  html+='<button onclick="openPicker()" style="background:transparent;border:none;width:100%;padding:12px;font-size:12px;cursor:pointer;font-family:\'Jost\',sans-serif;color:var(--text3);margin-top:4px">🔄 '+(L==='ru'?'Начать заново':'Start over')+'</button>';
+  html+='<button onclick="openPicker()" style="background:transparent;border:none;width:100%;padding:12px;font-size:12px;cursor:pointer;font-family:\'Jost\',sans-serif;color:var(--text3);margin-top:4px">\ud83d\udd04 '+(L==='ru'?'\u041d\u0430\u0447\u0430\u0442\u044c \u0437\u0430\u043d\u043e\u0432\u043e':'Start over')+'</button>';
   w.innerHTML=html;
 }
 
-function pTogFav(yid,btn){
-  if(FAVS.has(yid)){FAVS.delete(yid);btn.textContent='♡';btn.style.color='var(--text3)';}
-  else{FAVS.add(yid);btn.textContent='♥';btn.style.color='#e05';}
-}
-
-function pSendFavs(){
-  if(!FAVS.size)return;
-  const L=lang;
-  const tgUser=window.Telegram?.WebApp?.initDataUnsafe?.user||null;
-  const name=tgUser?(tgUser.first_name||''):'';
-  const username=tgUser&&tgUser.username?'@'+tgUser.username:'';
-  const tgId=tgUser?tgUser.id:null;
-  const list=[...FAVS].map(id=>{const y=YACHTS[id];if(!y)return'';const mp=getMinPrice(y);return'🛥 '+(y.names['en']||'')+(mp?' — от '+mp.price.toLocaleString()+'€':'')+(y.marina?' ('+y.marina+')':'');}).filter(Boolean).join('\n');
-  const msg='💝 СПИСОК ИЗБРАННЫХ ЯХТ\n--------------------\n'+(name?'👤 '+name+'\n':'')+(username?'✈️ '+username+'\n':'')+(tgId?'🔗 tg://user?id='+tgId+'\n':'')+'\n'+list+'\n--------------------\n'+(L==='ru'?'Клиент хочет обсудить эти варианты':'Client wants to discuss these options');
-  sendTgMessage(msg,tgId?{inline_keyboard:[[{text:'💬 Написать клиенту',url:'tg://user?id='+tgId}]]}:null);
-  const btn=document.querySelector('[onclick="pSendFavs()"]');
-  if(btn){btn.textContent=L==='ru'?'✓ Отправлено!':'✓ Sent!';btn.style.background='#2a7a56';setTimeout(()=>{btn.textContent=L==='ru'?'Отправить менеджеру':'Send to manager';btn.style.background='var(--gold)';},2500);}
-}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 
 
